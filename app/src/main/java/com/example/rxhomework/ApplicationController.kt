@@ -8,10 +8,10 @@ import com.example.rxhomework.storage_logic.StorageManager
 
 class ApplicationController: Application() {
     companion object {
-        var context: Context? = null
+        lateinit var context: Context
+        lateinit var storageManager: StorageManager
     }
 
-    private lateinit var storageManager: StorageManager
     override fun onCreate() {
         super.onCreate()
         context = this

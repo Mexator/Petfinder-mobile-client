@@ -37,7 +37,7 @@ object APIKeysHolder : LifecycleObserver {
 
     fun getAccessToken(): Single<String> {
         if (isTokenUpdateNeeded()) {
-            //TODO: CHECK THAT (DISPOSABLE) DOES NOT PRODUCE MEMORY LEAK!!!
+            //TODO: DISPOSABLE PRODUCE MEMORY LEAK!!!
             val apiCall =
                 NetworkService
                     .petfinderAPI
@@ -63,12 +63,15 @@ object APIKeysHolder : LifecycleObserver {
     private fun save() {
         // Save only of initialized. We don't need to store default nulls
         if (isInitialized()) {
-            val manager = StorageManager.getInstance(ApplicationController.context!!)
-            manager
+            ApplicationController.storageManager
                 .tokensPrefs
                 .edit()
                 .putString("access_token", accessToken)
-                .putString("initialized_in",manager.defaultDateTimeFormat.format(initializedIn!!))
+                .putString("initialized_in",
+                    ApplicationController
+                    .storageManager
+                    .defaultDateTimeFormat
+                    .format(initializedIn!!))
                 .putInt("expires_in", expirationTime)
                 .apply()
         }
@@ -76,14 +79,17 @@ object APIKeysHolder : LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     private fun load() {
-        val manager = StorageManager.getInstance(ApplicationController.context!!)
-        val prefs = manager.tokensPrefs
+        val prefs = ApplicationController.storageManager.tokensPrefs
 
         this.accessToken = prefs.getString("access_token", null)
         val rawDate = prefs.getString("initialized_in", "")
 
         try {
-            this.initializedIn = manager.defaultDateTimeFormat.parse(rawDate!!)
+            this.initializedIn =
+                ApplicationController
+                .storageManager
+                .defaultDateTimeFormat
+                .parse(rawDate!!)
         } catch (ex:ParseException)
         {
             this.initializedIn = null
