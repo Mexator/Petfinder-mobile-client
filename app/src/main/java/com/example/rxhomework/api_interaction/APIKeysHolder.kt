@@ -55,7 +55,7 @@ object APIKeysHolder : LifecycleObserver {
                 }
 
             // Return observable with string
-            return apiCall.map { t: JsonObject -> t["access_token"].toString()}
+            return apiCall.map { t: JsonObject -> t["access_token"].toString() }
         } else
             return Single.just(accessToken)
     }
@@ -67,11 +67,13 @@ object APIKeysHolder : LifecycleObserver {
                 .tokensPrefs
                 .edit()
                 .putString("access_token", accessToken)
-                .putString("initialized_in",
+                .putString(
+                    "initialized_in",
                     ApplicationController
-                    .storageManager
-                    .defaultDateTimeFormat
-                    .format(initializedIn!!))
+                        .storageManager
+                        .defaultDateTimeFormat
+                        .format(initializedIn!!)
+                )
                 .putInt("expires_in", expirationTime)
                 .apply()
         }
@@ -87,11 +89,10 @@ object APIKeysHolder : LifecycleObserver {
         try {
             this.initializedIn =
                 ApplicationController
-                .storageManager
-                .defaultDateTimeFormat
-                .parse(rawDate!!)
-        } catch (ex:ParseException)
-        {
+                    .storageManager
+                    .defaultDateTimeFormat
+                    .parse(rawDate!!)
+        } catch (ex: ParseException) {
             this.initializedIn = null
         }
 

@@ -7,10 +7,10 @@ import com.example.rxhomework.basic_logic.SingletonHolder
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StorageManager(context: Context){
+class StorageManager(context: Context) {
     var tokensPrefs: SharedPreferences
         private set
-    var defaultDateTimeFormat:SimpleDateFormat
+    var defaultDateTimeFormat: SimpleDateFormat
         private set
 
     init {
@@ -18,5 +18,6 @@ class StorageManager(context: Context){
         tokensPrefs = context.getSharedPreferences(filename, Context.MODE_PRIVATE)
         defaultDateTimeFormat = SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.US)
     }
-    companion object: SingletonHolder<StorageManager, Context>(::StorageManager)
+
+    companion object : SingletonHolder<StorageManager, Context>(::StorageManager)
 }
