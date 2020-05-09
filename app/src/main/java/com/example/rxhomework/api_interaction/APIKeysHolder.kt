@@ -6,7 +6,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.R
 import com.example.rxhomework.network.NetworkService
-import com.example.rxhomework.storage_logic.StorageManager
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import io.reactivex.Single
@@ -79,7 +78,7 @@ object APIKeysHolder : LifecycleObserver {
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun load() {
         val prefs = ApplicationController.storageManager.tokensPrefs
 
