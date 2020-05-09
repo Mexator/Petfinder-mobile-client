@@ -1,109 +1,101 @@
 package com.example.rxhomework.api_interaction
 
-import android.app.Activity
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.R
 import com.example.rxhomework.basic_logic.SingletonHolder
 import com.example.rxhomework.network.NetworkService
 import com.example.rxhomework.storage_logic.StorageManager
-import com.google.gson.JsonElement
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import io.reactivex.Single
+import org.json.JSONObject
+import java.text.ParseException
 import java.util.*
 
 class APIKeysHolder(context: Context) : LifecycleObserver {
-    private val apiKey: String
-    private val apiSecret: String
+    private val TAG = APIKeysHolder.javaClass.simpleName
 
-    lateinit var accessToken: String
-        private set
+    private val apiKey = ApplicationController.context!!.getString(R.string.API_KEY)
+    private val apiSecret = ApplicationController.context!!.getString(R.string.API_SECRET)
 
-    private lateinit var initializedIn: Date
+    private var accessToken: String? = null
+    private var initializedIn: Date? = null
     private var expirationTime: Int = -1
 
-    private val millisToSecs = 1 / 1000
+    private val millisToSecs = 1e-3
 
-    init {
-        apiKey = ApplicationController.context!!.getString(R.string.API_KEY)
-        apiSecret = ApplicationController.context!!.getString(R.string.API_SECRET)
+    private fun isInitialized(): Boolean {
+        return (accessToken != null && initializedIn != null && expirationTime != -1)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    private fun updateTokens() {
-        //Try to read access data from disk. If fail - perform auth request
-        val tokenPrefs = StorageManager.
-        getInstance(ApplicationController.context!!)
-            .tokensPrefs
+    private fun isTokenUpdateNeeded(): Boolean {
+        return if (isInitialized())
+            ((Date().time - initializedIn!!.time) * millisToSecs < expirationTime)
+        else true
+    }
 
-        val rawToken = tokenPrefs.getString("access_token", null)
-        val rawDate = tokenPrefs.getString("initialized_in", null)
-        val rawExpirationTime = tokenPrefs.getInt("expires_in", -1)
-
-        if (rawToken == null ||
-            rawDate == null ||
-            rawExpirationTime == -1
-        ) {
-            NetworkService
-                .petfinderAPI
-                .getAuthToken(
-                    api_key = apiKey,
-                    api_secret = apiSecret
-                ).enqueue(object : Callback<JsonElement> {
-                    override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                        val body = response.body()!!.asJsonObject
-                        accessToken = body["access_token"].asString
-                        expirationTime = body["expires_in"].asInt
-                        initializedIn = Date()
-                    }
-
-                    override fun onFailure(call: Call<JsonElement>, t: Throwable) {
-                        TODO("Not yet implemented")
-                    }
-                })
-        } else {
-            val preParsed =
-                StorageManager.getInstance(ApplicationController.context!!).defaultDateTimeFormat.parse(rawDate)!!
-            if ((Date().time - preParsed.time) * millisToSecs < rawExpirationTime) {
+    fun getAccessToken(): Single<String> {
+        if (isTokenUpdateNeeded()) {
+            //TODO: CHECK THAT (DISPOSABLE) DOES NOT PRODUCE MEMORY LEAK!!!
+            val apiCall =
                 NetworkService
                     .petfinderAPI
-                    .getAuthToken(
-                        api_key = apiKey,
-                        api_secret = apiSecret
-                    ).enqueue(object : Callback<JsonElement> {
-                        override fun onResponse(
-                            call: Call<JsonElement>,
-                            response: Response<JsonElement>
-                        ) {
-                            val body = response.body()!!.asJsonObject
-                            accessToken = body["access_token"].asString
-                            expirationTime = body["expires_in"].asInt
-                            initializedIn = Date()
-                        }
+                    .getAuthToken(api_key = apiKey, api_secret = apiSecret)
 
-                        override fun onFailure(call: Call<JsonElement>, t: Throwable) {
-                            TODO("Not yet implemented")
+            // Subscribe here to update class members and save to disc
+            apiCall
+                .subscribe(
+                    { v: JSONObject ->
+                        run {
+                            this.accessToken = v.getString("access_token")
+                            this.expirationTime = v.getInt("expires_in")
+                            this.initializedIn = Date()
+                            this.save()
                         }
-                    })
-            } else {
-                accessToken = rawToken!!
-                initializedIn =
-                    StorageManager.getInstance(ApplicationController.context!!).defaultDateTimeFormat.parse(rawDate)!!
-                expirationTime = rawExpirationTime
-            }
-        }
+                    },
+                    { Log.d(TAG, "API keys received and processed") }
+                )
+                .dispose()
 
+            // Return observable with string
+            return apiCall.map { t: JSONObject -> t.getString("access_token") }
+        } else
+            return Single.just(accessToken)
     }
 
-    private var activity:Activity?=null
-    fun activityRecognitionHelper(lifecycleOwner: LifecycleOwner, activity: Activity){
-        this.activity = activity;
-        lifecycleOwner.lifecycle.addObserver(this);
+    private fun save() {
+        // Save only of initialized. We don't need to store default nulls
+        if (isInitialized()) {
+            val manager = StorageManager.getInstance(ApplicationController.context!!)
+            manager
+                .tokensPrefs
+                .edit()
+                .putString("access_token", accessToken)
+                .putString("initialized_in",manager.defaultDateTimeFormat.format(initializedIn!!))
+                .putInt("expires_in", expirationTime)
+                .apply()
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    private fun load() {
+        val manager = StorageManager.getInstance(ApplicationController.context!!)
+        val prefs = manager.tokensPrefs
+
+        this.accessToken = prefs.getString("access_token", null)
+        val rawDate = prefs.getString("initialized_in", "")
+
+        try {
+            this.initializedIn = manager.defaultDateTimeFormat.parse(rawDate!!)
+        } catch (ex:ParseException)
+        {
+            this.initializedIn = null
+        }
+
+        this.expirationTime = prefs.getInt("expires_in", -1)
     }
 
     companion object : SingletonHolder<APIKeysHolder, Context>(::APIKeysHolder)

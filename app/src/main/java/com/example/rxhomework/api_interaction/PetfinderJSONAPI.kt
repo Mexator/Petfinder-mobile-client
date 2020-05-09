@@ -1,6 +1,8 @@
 package com.example.rxhomework.api_interaction
 
 import com.google.gson.JsonElement
+import io.reactivex.Single
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -12,5 +14,5 @@ public interface PetfinderJSONAPI{
         @Field("grant_type") type:String = "client_credentials",
         @Field("client_id") api_key:String,
         @Field("client_secret") api_secret:String
-    ):Call<JsonElement>
+    ): Single<JSONObject>
 }

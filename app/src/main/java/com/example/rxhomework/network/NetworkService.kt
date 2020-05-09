@@ -2,6 +2,7 @@ package com.example.rxhomework.network
 
 import com.example.rxhomework.api_interaction.PetfinderJSONAPI
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkService{
@@ -12,6 +13,7 @@ object NetworkService{
         mRetrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
             .build()
         petfinderAPI = mRetrofit.create(PetfinderJSONAPI::class.java)
     }
