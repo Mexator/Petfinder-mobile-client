@@ -12,7 +12,7 @@ import io.reactivex.Single
 import java.text.ParseException
 import java.util.*
 
-object APIKeysHolder : LifecycleObserver {
+object APIKeysHolder{
     private val TAG = APIKeysHolder.javaClass.simpleName
 
     private val apiKey = ApplicationController.context!!.getString(R.string.API_KEY)
@@ -24,13 +24,17 @@ object APIKeysHolder : LifecycleObserver {
 
     private val millisToSecs = 1e-3
 
+    init {
+        load()
+    }
+
     private fun isInitialized(): Boolean {
         return (accessToken != null && initializedIn != null && expirationTime != -1)
     }
 
     private fun isTokenUpdateNeeded(): Boolean {
         return if (isInitialized())
-            ((Date().time - initializedIn!!.time) * millisToSecs < expirationTime)
+            ((Date().time - initializedIn!!.time) * millisToSecs >= expirationTime)
         else true
     }
 
@@ -78,7 +82,6 @@ object APIKeysHolder : LifecycleObserver {
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     private fun load() {
         val prefs = ApplicationController.storageManager.tokensPrefs
 
