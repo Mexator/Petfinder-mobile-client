@@ -11,6 +11,6 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         // Setup observer that will perform token update
-        lifecycle.addObserver(APIKeysHolder.getInstance(baseContext))
+        lifecycle.addObserver(APIKeysHolder)
     }
 }

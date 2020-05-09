@@ -1,21 +1,19 @@
 package com.example.rxhomework.api_interaction
 
-import android.content.Context
-import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.R
-import com.example.rxhomework.basic_logic.SingletonHolder
 import com.example.rxhomework.network.NetworkService
 import com.example.rxhomework.storage_logic.StorageManager
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import io.reactivex.Single
-import org.json.JSONObject
 import java.text.ParseException
 import java.util.*
 
-class APIKeysHolder(context: Context) : LifecycleObserver {
+object APIKeysHolder : LifecycleObserver {
     private val TAG = APIKeysHolder.javaClass.simpleName
 
     private val apiKey = ApplicationController.context!!.getString(R.string.API_KEY)
@@ -45,23 +43,19 @@ class APIKeysHolder(context: Context) : LifecycleObserver {
                     .petfinderAPI
                     .getAuthToken(api_key = apiKey, api_secret = apiSecret)
 
-            // Subscribe here to update class members and save to disc
-            apiCall
-                .subscribe(
-                    { v: JSONObject ->
-                        run {
-                            this.accessToken = v.getString("access_token")
-                            this.expirationTime = v.getInt("expires_in")
-                            this.initializedIn = Date()
-                            this.save()
-                        }
-                    },
-                    { Log.d(TAG, "API keys received and processed") }
-                )
-                .dispose()
+            // Subscribe here to update class members and save to dis
+            val disposable = apiCall
+                .subscribe { v: JsonObject ->
+                    run {
+                        this.accessToken = v["access_token"].toString()
+                        this.expirationTime = v["expires_in"].asInt
+                        this.initializedIn = Date()
+                        this.save()
+                    }
+                }
 
             // Return observable with string
-            return apiCall.map { t: JSONObject -> t.getString("access_token") }
+            return apiCall.map { t: JsonObject -> t["access_token"].toString()}
         } else
             return Single.just(accessToken)
     }
@@ -97,6 +91,4 @@ class APIKeysHolder(context: Context) : LifecycleObserver {
 
         this.expirationTime = prefs.getInt("expires_in", -1)
     }
-
-    companion object : SingletonHolder<APIKeysHolder, Context>(::APIKeysHolder)
 }
