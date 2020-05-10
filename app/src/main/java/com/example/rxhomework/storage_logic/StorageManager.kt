@@ -16,7 +16,7 @@ class StorageManager(context: Context) {
     init {
         val filename = context.resources.getString(R.string.tokens_file_name)
         tokensPreferences = context.getSharedPreferences(filename, Context.MODE_PRIVATE)
-        defaultDateTimeFormat = SimpleDateFormat("dd-MM-yyyy hh:mm:ss", Locale.US)
+        defaultDateTimeFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US)
     }
 
     companion object : SingletonHolder<StorageManager, Context>(::StorageManager)
