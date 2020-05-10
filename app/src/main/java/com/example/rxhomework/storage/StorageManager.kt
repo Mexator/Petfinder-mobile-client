@@ -1,4 +1,4 @@
-package com.example.rxhomework.storage_logic
+package com.example.rxhomework.storage
 
 import android.content.Context
 import android.content.SharedPreferences

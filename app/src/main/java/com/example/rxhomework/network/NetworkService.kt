@@ -1,6 +1,6 @@
 package com.example.rxhomework.network
 
-import com.example.rxhomework.api_interaction.PetfinderJSONAPI
+import com.example.rxhomework.network.api_interaction.PetfinderJSONAPI
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory

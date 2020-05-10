@@ -2,9 +2,7 @@ package com.example.rxhomework
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
-import android.util.Log
-import com.example.rxhomework.storage_logic.StorageManager
+import com.example.rxhomework.storage.StorageManager
 
 class ApplicationController : Application() {
     companion object {

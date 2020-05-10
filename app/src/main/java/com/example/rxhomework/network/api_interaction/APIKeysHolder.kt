@@ -76,19 +76,21 @@ object APIKeysHolder{
     private fun save() {
         // Save only of initialized. We don't need to store default nulls
         if (isInitialized()) {
-            ApplicationController.storageManager
+            with(ApplicationController.storageManager
                 .tokensPreferences
-                .edit()
-                .putString("access_token", accessToken)
-                .putString(
+                .edit()) {
+                clear()
+                putString("access_token", accessToken)
+                putString(
                     "initialized_in",
                     ApplicationController
                         .storageManager
                         .defaultDateTimeFormat
                         .format(initializedIn!!)
                 )
-                .putInt("expires_in", expirationTime)
-                .apply()
+                putInt("expires_in", expirationTime)
+                apply()
+            }
         }
     }
 
