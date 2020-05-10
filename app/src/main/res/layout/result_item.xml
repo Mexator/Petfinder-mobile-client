@@ -22,7 +22,7 @@
         android:layout_marginHorizontal="10dp"
         android:maxLines="3"
         android:ellipsize="end"
-        android:text="Nebula is a shorthaired, shy cat. She is very affectionate once she warms up to you.Nebula is a shorthaired, shy cat. She is very affectionate once she warms up to you.Nebula is a shorthaired, shy cat. She is very affectionate once she warms up to you."
+        android:text="@string/sample_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imageView"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
@@ -57,7 +57,7 @@
             style="@style/DetailsLabelView"
             android:layout_width="98dp"
             android:layout_height="match_parent"
-            android:text="12"
+            android:text="@string/sample_age"
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/nameTextView" />
