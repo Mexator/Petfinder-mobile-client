@@ -1,14 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.DetailsFragment">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-</FrameLayout>
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/imagesViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout style="@style/OuterLinearLayout">
+
+                <LinearLayout style="@style/InnerLinearLayout">
+
+                    <TextView
+                        style="@style/DetailsLabelView"
+                        android:text="@string/details_breed"/>
+
+                    <TextView style="@style/DetailsValueView"
+                        android:id="@+id/breed"/>
+                </LinearLayout>
+
+                <LinearLayout style="@style/InnerLinearLayout">
+
+                    <TextView
+                        style="@style/DetailsLabelView"
+                        android:text="@string/details_age" />
+
+                    <TextView style="@style/DetailsValueView"
+                        android:id="@+id/age"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/OuterLinearLayout">
+
+                <LinearLayout style="@style/InnerLinearLayout">
+
+                    <TextView
+                        style="@style/DetailsLabelView"
+                        android:text="@string/details_organization" />
+
+                    <TextView style="@style/DetailsValueView"
+                        android:id="@+id/organization"/>
+                </LinearLayout>
+
+                <LinearLayout style="@style/InnerLinearLayout">
+
+                    <TextView
+                        style="@style/DetailsLabelView"
+                        android:text="@string/details_color" />
+
+                    <TextView style="@style/DetailsValueView"
+                        android:id="@+id/color"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/OuterLinearLayout">
+
+                <LinearLayout style="@style/InnerLinearLayout">
+
+                    <TextView
+                        style="@style/DetailsLabelView"
+                        android:text="@string/details_type" />
+
+                    <TextView style="@style/DetailsValueView"
+                        android:id="@+id/type"/>
+                </LinearLayout>
+
+                <LinearLayout style="@style/InnerLinearLayout">
+
+                    <TextView
+                        style="@style/DetailsLabelView"
+                        android:text="@string/details_name" />
+
+                    <TextView style="@style/DetailsValueView"
+                        android:id="@+id/name"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/OuterLinearLayout">
+
+                <LinearLayout style="@style/InnerLinearLayout">
+
+                    <TextView
+                        style="@style/DetailsLabelView"
+                        android:text="@string/details_gender" />
+
+                    <TextView style="@style/DetailsValueView"
+                        android:id="@+id/gender"/>
+                </LinearLayout>
+
+                <LinearLayout style="@style/InnerLinearLayout">
+
+                    <TextView
+                        style="@style/DetailsLabelView"
+                        android:text="@string/details_size" />
+
+                    <TextView style="@style/DetailsValueView"
+                        android:id="@+id/size"/>
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout style="@style/OuterLinearLayout">
+
+                <LinearLayout style="@style/InnerLinearLayout">
+                    <CheckBox
+                        android:id="@+id/childrenCheckBox"
+                        style="@style/DetailsCheckboxView"
+                        android:text="@string/details_children"/>
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/InnerLinearLayout">
+                    <CheckBox
+                        android:id="@+id/catsCheckBox"
+                        style="@style/DetailsCheckboxView"
+                        android:text="@string/details_cats"/>
+                </LinearLayout>
+
+                <LinearLayout style="@style/InnerLinearLayout">
+                    <CheckBox
+                        android:id="@+id/dogsCheckBox"
+                        style="@style/DetailsCheckboxView"
+                        android:text="@string/details_dogs"/>
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout style="@style/OuterLinearLayout">
+
+                <LinearLayout style="@style/InnerLinearLayout">
+                    <CheckBox
+                        android:id="@+id/neuteredCheckBox"
+                        style="@style/DetailsCheckboxView"
+                        android:text="@string/details_spayed_neutered"/>
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/InnerLinearLayout">
+                    <CheckBox
+                        android:id="@+id/trainedCheckBox"
+                        style="@style/DetailsCheckboxView"
+                        android:text="@string/details_house_trained"/>
+                </LinearLayout>
+
+                <LinearLayout style="@style/InnerLinearLayout">
+                    <CheckBox
+                        android:id="@+id/specialNeedsCheckBox"
+                        style="@style/DetailsCheckboxView"
+                        android:text="@string/details_special_needs"/>
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout style="@style/OuterLinearLayout">
+
+                <LinearLayout style="@style/InnerLinearLayout">
+                    <CheckBox
+                        android:id="@+id/declawedCheckBox"
+                        style="@style/DetailsCheckboxView"
+                        android:text="@string/details_declawed"/>
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/InnerLinearLayout">
+                    <CheckBox
+                        android:id="@+id/shotsCheckBox"
+                        style="@style/DetailsCheckboxView"
+                        android:text="@string/details_shots_current"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+</ScrollView>
