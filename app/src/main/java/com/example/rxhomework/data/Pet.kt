@@ -1,4 +1,4 @@
 package com.example.rxhomework.data
 
-class Pet {
+data class Pet(val name:String) {
 }
