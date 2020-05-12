@@ -11,12 +11,12 @@ abstract class PetDB : RoomDatabase() {
 
     companion object {
         @Volatile
-        private var databseInstance: PetDB? = null
+        private var databaseInstance: PetDB? = null
 
-        fun getDatabasenIstance(mContext: Context): PetDB =
-            databseInstance ?: synchronized(this) {
-                databseInstance ?: buildDatabaseInstance(mContext).also {
-                    databseInstance = it
+        fun getDatabaseInstance(mContext: Context): PetDB =
+            databaseInstance ?: synchronized(this) {
+                databaseInstance ?: buildDatabaseInstance(mContext).also {
+                    databaseInstance = it
                 }
             }
 
@@ -31,4 +31,4 @@ abstract class PetDB : RoomDatabase() {
 
 const val DB_VERSION = 1
 
-const val DB_NAME = "PersonDataSample.db"
+const val DB_NAME = "Pets.db"
