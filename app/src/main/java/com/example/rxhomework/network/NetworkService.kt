@@ -1,12 +1,19 @@
 package com.example.rxhomework.network
 
 import com.example.rxhomework.network.api_interaction.PetfinderJSONAPI
+import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.InetAddress
 
-object NetworkService{
+object NetworkService {
     private const val BASE_URL = "https://api.petfinder.com/v2/"
+    private const val INTERNET_CHECK_URL = "https://api.petfinder.com"
+
     val petfinderAPI: PetfinderJSONAPI
     private var mRetrofit: Retrofit
     init {
@@ -16,5 +23,14 @@ object NetworkService{
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
             .build()
         petfinderAPI = mRetrofit.create(PetfinderJSONAPI::class.java)
+    }
+
+    fun isConnectedToInternet(): Single<Boolean> {
+        // Just check whether we can resolve IP for our target API endpoint
+        return Single
+            .defer{Single.just(InetAddress.getByName(INTERNET_CHECK_URL).toString())}
+            .subscribeOn(Schedulers.io())
+            .onErrorReturnItem("Error")
+            .map {it == "Error"}
     }
 }
