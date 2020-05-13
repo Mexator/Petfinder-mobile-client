@@ -60,7 +60,7 @@ object APIKeysHolder{
             val disposable = apiCall
                 .subscribe { v: JsonObject ->
                     run {
-                        this.accessToken = v["access_token"].toString()
+                        this.accessToken = v["access_token"].asString
                         this.expirationTime = v["expires_in"].asInt
                         this.initializedIn = Date()
                         this.save()
@@ -68,7 +68,7 @@ object APIKeysHolder{
                 }
 
             // Return observable with string
-            return apiCall.map { t: JsonObject -> t["access_token"].toString() }
+            return apiCall.map { t: JsonObject -> t["access_token"].asString }
         } else
             return Single.just(accessToken)
     }
