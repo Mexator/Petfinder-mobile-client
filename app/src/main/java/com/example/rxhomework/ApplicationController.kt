@@ -5,7 +5,9 @@ import android.content.Context
 import android.util.Log
 import com.example.rxhomework.data.PetRepository
 import com.example.rxhomework.network.NetworkService
+import com.example.rxhomework.network.api_interaction.APIKeysHolder
 import com.example.rxhomework.storage.StorageManager
+import io.reactivex.schedulers.Schedulers
 
 class ApplicationController : Application() {
     private val TAG = ApplicationController::class.java.toString()
@@ -22,11 +24,14 @@ class ApplicationController : Application() {
         storageManager = StorageManager
         networkService = NetworkService
 
-        val petRep = PetRepository()
-        petRep
-            .getPets()
+        val disp = APIKeysHolder
+            .getAccessToken()
+            .subscribeOn(Schedulers.io())
+            .toObservable()
+            .flatMap { NetworkService.petfinderAPI.getPets("Bearer $it",null,null) }
             .subscribe(
-                {it -> Log.i(TAG,it.get(0).name)}
-            )
+                {Log.i(TAG,it.toString())},
+                {Log.i(TAG,it.toString())}
+        )
     }
 }
