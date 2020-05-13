@@ -6,13 +6,16 @@ import com.example.rxhomework.storage.PetDB
 import com.example.rxhomework.storage.PetEntity
 import com.example.rxhomework.storage.Type
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class LocalDataSource : DataSource {
     private val db = PetDB.getDatabaseInstance(ApplicationController.context)
     override fun getPets(type: Type?, breed: Breed?): Single<List<PetEntity>> {
-        return (if (type == null || breed == null) db.petDao()
-            .getAllPets() else db.petDao().getPets(type, breed)).subscribeOn(Schedulers.io())
+        val dao = db.petDao()
+        return (if (type != null) {
+            if (breed != null) dao.getPets(type, breed)
+            else dao.getPetsByType(type)
+        } else if (breed != null) dao.getPetsByBreed(breed)
+        else dao.getAllPets()).subscribeOn(Schedulers.io())
     }
 }

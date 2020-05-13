@@ -10,6 +10,10 @@ import io.reactivex.Single
 interface PetDao {
     @Query("select * from ${PetEntity.TABLE_NAME} where ${PetEntity.BREED} = :breed and ${PetEntity.TYPE} = :type")
     fun getPets(type: Type, breed: Breed): Single<List<PetEntity>>
+    @Query("select * from ${PetEntity.TABLE_NAME} where ${PetEntity.TYPE} = :type")
+    fun getPetsByType(type: Type): Single<List<PetEntity>>
+    @Query("select * from ${PetEntity.TABLE_NAME} where ${PetEntity.BREED} = :breed")
+    fun getPetsByBreed(breed: Breed): Single<List<PetEntity>>
     @Query("select * from ${PetEntity.TABLE_NAME}")
     fun getAllPets(): Single<List<PetEntity>>
     @Query("select * from ${PhotoEntity.TABLE_NAME}")
