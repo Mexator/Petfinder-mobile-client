@@ -1,15 +1,24 @@
 package com.example.rxhomework.data
 
-import com.example.rxhomework.storage.Breed
+import com.example.rxhomework.network.NetworkService
+import com.example.rxhomework.network.api_interaction.APIKeysHolder
 import com.example.rxhomework.storage.PetEntity
-import com.example.rxhomework.storage.Type
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import io.reactivex.Single
+import java.util.*
 
-class RemoteDataSource : DataSource {
-    override fun getPets(type: Type?, breed: Breed?): Single<List<PetEntity>> {
-        val pets = ArrayList<PetEntity>()
-        val pet = PetEntity(0,"remotePet", "", "", "null", null, null)
-        pets.add(pet)
-        return Single.just(pets)
+
+object RemoteDataSource : DataSource {
+    override fun getPets(animalType: String?, animalBreed: String?): Single<List<PetEntity>> {
+
+        val listType = object : TypeToken<ArrayList<PetEntity>>() {}.type
+        val gson = Gson()
+
+        return APIKeysHolder
+            .getAccessToken()
+            .flatMap { NetworkService.petfinderAPI.getPets("Bearer $it", animalType, animalBreed) }
+            .map { it.get("animals").asJsonArray }
+            .flatMap { Single.just(gson.fromJson<ArrayList<PetEntity>>(it, listType)) }
     }
 }
