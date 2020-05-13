@@ -14,6 +14,5 @@ class LocalDataSource : DataSource {
     override fun getPets(type: Type?, breed: Breed?): Single<List<PetEntity>> {
         return (if (type == null || breed == null) db.petDao()
             .getAllPets() else db.petDao().getPets(type, breed)).subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
     }
 }
