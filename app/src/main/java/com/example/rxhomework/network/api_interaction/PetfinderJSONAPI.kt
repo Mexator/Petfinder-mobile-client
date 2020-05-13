@@ -22,5 +22,5 @@ public interface PetfinderJSONAPI {
         @Header("Authorization") token: String,
         @Query("type") type: Type?,
         @Query("breed") breed: Breed?
-    ): Observable<JsonObject>
+    ): Single<JsonObject>
 }
