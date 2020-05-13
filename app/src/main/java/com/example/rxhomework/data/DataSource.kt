@@ -6,5 +6,6 @@ import com.example.rxhomework.storage.Type
 import io.reactivex.Single
 
 interface DataSource {
-    fun getPets(type: Type?, breed: Breed?): Single<List<PetEntity>>
+
+    fun getPets(animalType:String?=null, animalBreed:String?=null):Single<List<PetEntity>>
 }
