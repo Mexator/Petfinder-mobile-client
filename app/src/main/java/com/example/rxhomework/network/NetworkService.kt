@@ -6,6 +6,8 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,9 +21,16 @@ object NetworkService {
 
     val petfinderAPI: PetfinderJSONAPI
     private var mRetrofit: Retrofit
+    private var queryLogger: HttpLoggingInterceptor
     init {
+        queryLogger = HttpLoggingInterceptor()
+        queryLogger.level = HttpLoggingInterceptor.Level.BODY
+
+        val client = OkHttpClient.Builder().addInterceptor(queryLogger).build()
+
         mRetrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
             .build()
