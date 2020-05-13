@@ -20,7 +20,8 @@ data class PetEntity(
     @ColumnInfo(name = TYPE)
     val type: Type,
     @ColumnInfo(name = BREED)
-    val breed: Breed?
+    val breed: Breed?,
+    val previewPicPath: String?
 ) {
     companion object {
         const val TABLE_NAME = "pets"
