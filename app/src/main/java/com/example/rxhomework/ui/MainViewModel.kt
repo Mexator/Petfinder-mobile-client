@@ -2,13 +2,15 @@ package com.example.rxhomework.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.data.PetRepository
 import com.example.rxhomework.storage.Breed
 import com.example.rxhomework.storage.PetEntity
 import com.example.rxhomework.storage.Type
 import io.reactivex.disposables.CompositeDisposable
 
-class MainViewModel(private val repository: PetRepository) : ViewModel() {
+class MainViewModel : ViewModel() {
+    private val repository = ApplicationController.petRepository
     private val compositeDisposable = CompositeDisposable()
     var petsList = MutableLiveData<List<PetEntity>>()
     fun getPets(type: Type?, breed: Breed?) {

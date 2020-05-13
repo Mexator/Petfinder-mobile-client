@@ -8,7 +8,7 @@ import io.reactivex.Single
 class RemoteDataSource : DataSource {
     override fun getPets(type: Type?, breed: Breed?): Single<List<PetEntity>> {
         val pets = ArrayList<PetEntity>()
-        val pet = PetEntity(0,"remotePet", "", "", "null", null)
+        val pet = PetEntity(0,"remotePet", "", "", "null", null, null)
         pets.add(pet)
         return Single.just(pets)
     }
