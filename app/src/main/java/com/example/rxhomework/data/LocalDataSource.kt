@@ -12,7 +12,8 @@ import io.reactivex.schedulers.Schedulers
 class LocalDataSource : DataSource {
     private val db = PetDB.getDatabaseInstance(ApplicationController.context)
     override fun getPets(type: Type?, breed: Breed?): Single<List<PetEntity>> {
-        return (if (type != null && breed != null) db.petDao().getPets(type, breed) else db.petDao()
-            .getAllPets()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        return (if (type == null || breed == null) db.petDao()
+            .getAllPets() else db.petDao().getPets(type, breed)).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 }
