@@ -21,9 +21,12 @@ object LocalDataSource : DataSource {
         else dao.getAllPets()).subscribeOn(Schedulers.io())
     }
 
-    fun savePets(it: Single<List<PetEntity>>):Completable
+    fun savePets(it: Single<List<PetEntity>>):Unit
     {
-        Log.d("save","save")
-        return Completable.complete()
+        it.subscribe( {
+            it?.forEach {
+                db.petDao().insertPet(it)
+            }
+        },{})
     }
 }

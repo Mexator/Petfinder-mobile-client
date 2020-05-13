@@ -28,11 +28,5 @@ class ApplicationController : Application() {
         storageManager = StorageManager
         networkService = NetworkService
         petRepository = PetRepository(RemoteDataSource, LocalDataSource)
-
-        val disp = petRepository.getPets()
-            .subscribe(
-                {Log.i(TAG,it.size.toString())},
-                {Log.i(TAG,it.toString())}
-        )
     }
 }

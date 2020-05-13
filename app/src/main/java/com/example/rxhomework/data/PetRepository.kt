@@ -15,11 +15,11 @@ class PetRepository(
             .isConnectedToInternet()
             .flatMap {
                 if (it) {
-                    val ret = remoteDataSource.getPets()
+                    val ret = remoteDataSource.getPets(type, breed)
                     localDataSource.savePets(ret)
                     ret
                 } else {
-                    localDataSource.getPets()
+                    localDataSource.getPets(type, breed)
                 }
             }
     }

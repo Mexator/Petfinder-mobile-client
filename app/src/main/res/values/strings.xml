@@ -28,13 +28,11 @@
     <string name="sample_description">Nebula is a shorthaired, shy cat. She is very affectionate once she warms up to you.</string>
 
     <string-array name="types">
-        <item>dog</item>
-        <item>cat</item>
-        <item>small-furry</item>
-        <item>bird</item>
-        <item>scales-fins-other</item>
-        <item>barnyard</item>
-        <item>rabbit</item>
-        <item>horse</item>
+        <item>Dog</item>
+        <item>Cat</item>
+        <item>Bird</item>
+        <item>Barnyard</item>
+        <item>Rabbit</item>
+        <item>Horse</item>
     </string-array>
 </resources>
