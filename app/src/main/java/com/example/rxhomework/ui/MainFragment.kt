@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rxhomework.R
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -22,10 +23,25 @@ class MainFragment : Fragment() {
     private var viewModel: MainViewModel? = null
     private var petDataAdapter: PetDataAdapter? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    fun getPets() {
+        animal_type_spinner?.selectedItem.toString().let {
+            viewModel?.getPets(it, null)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_main, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel?.petsList?.observe(this, Observer {
+        petDataAdapter = PetDataAdapter()
+        viewModel?.petsList?.observe(viewLifecycleOwner, Observer {
             if (!it.isNullOrEmpty()) {
                 recyclerView.visibility = View.VISIBLE
                 petDataAdapter?.setData(it)
@@ -48,23 +64,9 @@ class MainFragment : Fragment() {
                 getPets()
             }
         }
-        animal_breed_spinner?.onItemSelectedListener = itemSelectorListener
         animal_type_spinner?.onItemSelectedListener = itemSelectorListener
-    }
-
-    fun getPets() {
-        animal_breed_spinner?.selectedItem.toString().let {
-            val type = animal_type_spinner?.selectedItem.toString()
-            viewModel?.getPets(type, it)
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.adapter = petDataAdapter
     }
 
     companion object {
