@@ -8,4 +8,34 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="DetailsLabelView">
+       <item name="android:layout_width">match_parent</item>
+       <item name="android:textSize">18sp</item>
+       <item name="android:layout_height">wrap_content</item>
+       <item name="android:padding">10dp</item>
+    </style>
+    <style name="DetailsValueView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:text">@string/sample_text</item>
+        <item name="android:textColor">#575757</item>
+    </style>
+    <style name="DetailsCheckboxView" parent="DetailsValueView">
+        <item name="android:clickable">false</item>
+    </style>
+    <style name="InnerLinearLayout">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="OuterLinearLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:baselineAligned">false</item>
+    </style>
 </resources>

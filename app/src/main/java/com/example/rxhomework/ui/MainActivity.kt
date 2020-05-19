@@ -1,7 +1,8 @@
-package com.example.rxhomework
+package com.example.rxhomework.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.rxhomework.R
 
 class MainActivity : AppCompatActivity() {
 
