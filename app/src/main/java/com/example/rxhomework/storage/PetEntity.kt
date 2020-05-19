@@ -16,7 +16,7 @@ data class PetEntity(
     val id: Long,
     val age: Age?,
     val name: Name,
-    val description: Description,
+    val description: Description?,
     @ColumnInfo(name = TYPE)
     val type: Type,
     @ColumnInfo(name = BREED)

@@ -9,12 +9,8 @@
     <Spinner
         android:id="@+id/animal_type_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <Spinner
-        android:id="@+id/animal_breed_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:entries="@array/types"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

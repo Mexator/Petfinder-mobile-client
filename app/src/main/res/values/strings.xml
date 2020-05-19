@@ -27,4 +27,12 @@
     <string name="sample_age">12</string>
     <string name="sample_description">Nebula is a shorthaired, shy cat. She is very affectionate once she warms up to you.</string>
 
+    <string-array name="types">
+        <item>Dog</item>
+        <item>Cat</item>
+        <item>Bird</item>
+        <item>Barnyard</item>
+        <item>Rabbit</item>
+        <item>Horse</item>
+    </string-array>
 </resources>

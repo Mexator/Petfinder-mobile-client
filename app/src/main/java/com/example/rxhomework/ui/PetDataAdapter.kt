@@ -43,14 +43,6 @@ class PetDataAdapter: RecyclerView.Adapter<PetDataAdapter.DataViewHolder>() {
                 nameTextView.text = pet.name
                 ageTextView.text = pet.age
                 descriptionTextView.text = pet.description
-                pet.previewPicPath?.let {
-                    val imgFile = File(it)
-                    if(imgFile.exists())
-                    {
-                        val image = BitmapFactory.decodeFile(imgFile.absolutePath)
-                        imageView.setImageBitmap(image)
-                    }
-                }
             }
         }
     }
