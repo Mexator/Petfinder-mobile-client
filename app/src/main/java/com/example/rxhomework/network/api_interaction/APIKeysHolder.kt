@@ -6,10 +6,11 @@ import com.example.rxhomework.R
 import com.example.rxhomework.network.NetworkService
 import com.example.rxhomework.pojo.TokenResponse
 import io.reactivex.Single
+import retrofit2.HttpException
 import java.text.ParseException
 import java.util.*
 
-object APIKeysHolder{
+object APIKeysHolder {
     private val TAG = APIKeysHolder.javaClass.simpleName
 
     private val apiKey = ApplicationController.context!!.getString(R.string.API_KEY)
@@ -43,14 +44,22 @@ object APIKeysHolder{
                     .getAuthToken(api_key = apiKey, api_secret = apiSecret)
 
             val disposable = apiCall
-                .subscribe( { v: TokenResponse ->
+                .subscribe({ v: TokenResponse ->
                     run {
                         this.accessToken = v.access_token
                         this.expirationTime = v.expires_in
                         this.initializedIn = Date()
                         this.save()
-                    }},
-                    {e-> Log.d(TAG, e.toString())}
+                    }
+                }, { e ->
+                    Log.e(TAG, e.toString())
+                    if (e is HttpException && e.code() == 401) {
+                        Log.wtf(
+                            TAG,
+                            "Probably, you did not change values of API key and secret in secrets.xml file"
+                        )
+                    }
+                }
                 )
 
             // Return observable with string
@@ -62,9 +71,11 @@ object APIKeysHolder{
     private fun save() {
         // Save only of initialized. We don't need to store default nulls
         if (isInitialized()) {
-            with(ApplicationController.storageManager
-                .tokensPreferences
-                .edit()) {
+            with(
+                ApplicationController.storageManager
+                    .tokensPreferences
+                    .edit()
+            ) {
                 clear()
                 putString("access_token", accessToken)
                 putString(
