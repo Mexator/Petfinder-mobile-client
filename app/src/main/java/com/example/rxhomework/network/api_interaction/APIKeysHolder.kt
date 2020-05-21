@@ -1,9 +1,10 @@
 package com.example.rxhomework.network.api_interaction
 
+import android.util.Log
 import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.R
 import com.example.rxhomework.network.NetworkService
-import com.google.gson.JsonObject
+import com.example.rxhomework.pojo.TokenResponse
 import io.reactivex.Single
 import java.text.ParseException
 import java.util.*
@@ -42,17 +43,18 @@ object APIKeysHolder{
                     .getAuthToken(api_key = apiKey, api_secret = apiSecret)
 
             val disposable = apiCall
-                .subscribe { v: JsonObject ->
+                .subscribe( { v: TokenResponse ->
                     run {
-                        this.accessToken = v["access_token"].asString
-                        this.expirationTime = v["expires_in"].asInt
+                        this.accessToken = v.access_token
+                        this.expirationTime = v.expires_in
                         this.initializedIn = Date()
                         this.save()
-                    }
-                }
+                    }},
+                    {e-> Log.d(TAG, e.toString())}
+                )
 
             // Return observable with string
-            return apiCall.map { t: JsonObject -> t["access_token"].asString }
+            return apiCall.map { t: TokenResponse -> t.access_token }
         } else
             return Single.just(accessToken)
     }
