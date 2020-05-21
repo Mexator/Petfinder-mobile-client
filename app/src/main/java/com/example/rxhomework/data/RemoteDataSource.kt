@@ -20,6 +20,5 @@ object RemoteDataSource : DataSource {
             .getAccessToken()
             .flatMap { NetworkService.petfinderAPI.getPets("Bearer $it", animalType, animalBreed) }
             .map {a:AnimalsResponse -> a.animals }
-            .flatMap { Single.just(gson.fromJson<ArrayList<PetEntity>>(it, listType)) }
     }
 }
