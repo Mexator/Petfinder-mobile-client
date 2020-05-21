@@ -11,6 +11,9 @@ typealias Description = String
 typealias Breed = String
 
 @Entity(tableName = PetEntity.TABLE_NAME)
+/**
+ * Represents both POJO Pet class for network request and data stored in the local database
+ */
 data class PetEntity(
     @PrimaryKey
     val id: Long,
