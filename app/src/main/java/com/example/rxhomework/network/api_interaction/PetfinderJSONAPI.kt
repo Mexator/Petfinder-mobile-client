@@ -1,5 +1,6 @@
 package com.example.rxhomework.network.api_interaction
 
+import com.example.rxhomework.pojo.AnimalsResponse
 import com.example.rxhomework.pojo.TokenResponse
 import com.example.rxhomework.storage.Breed
 import com.example.rxhomework.storage.Type
@@ -22,5 +23,5 @@ interface PetfinderJSONAPI {
         @Header("Authorization") token: String,
         @Query("type") type: Type?,
         @Query("breed") breed: Breed?
-    ): Single<JsonObject>
+    ): Single<AnimalsResponse>
 }
