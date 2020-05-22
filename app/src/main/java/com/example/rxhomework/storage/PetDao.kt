@@ -1,9 +1,6 @@
 package com.example.rxhomework.storage
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import com.example.rxhomework.data.pojo.Breed
 import com.example.rxhomework.data.pojo.PetEntity
 import com.example.rxhomework.data.pojo.Type
@@ -25,4 +22,7 @@ interface PetDao {
     fun insertPet(pet: PetEntity)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPhoto(photo: PhotoEntity)
+
+    @Query("delete from ${PetEntity.TABLE_NAME}")
+    fun clearPetsTable()
 }

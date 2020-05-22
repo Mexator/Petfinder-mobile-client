@@ -21,10 +21,15 @@ object LocalDataSource : DataSource {
 
     fun savePets(it: Single<List<PetEntity>>):Unit
     {
+        deletePets()
         it.subscribe( {
             it?.forEach {
                 db.petDao().insertPet(it)
             }
         },{})
+    }
+
+    private fun deletePets():Unit {
+        db.petDao().clearPetsTable()
     }
 }
