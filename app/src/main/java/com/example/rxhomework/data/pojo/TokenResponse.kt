@@ -1,4 +1,4 @@
-package com.example.rxhomework.pojo
+package com.example.rxhomework.data.pojo
 
 data class TokenResponse(
     val token_type: String,

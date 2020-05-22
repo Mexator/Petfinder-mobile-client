@@ -4,6 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.example.rxhomework.data.pojo.Breed
+import com.example.rxhomework.data.pojo.PetEntity
+import com.example.rxhomework.data.pojo.Type
 import io.reactivex.Single
 
 @Dao

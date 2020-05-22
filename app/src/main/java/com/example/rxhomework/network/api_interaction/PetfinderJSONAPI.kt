@@ -1,10 +1,9 @@
 package com.example.rxhomework.network.api_interaction
 
-import com.example.rxhomework.pojo.AnimalsResponse
-import com.example.rxhomework.pojo.TokenResponse
-import com.example.rxhomework.storage.Breed
-import com.example.rxhomework.storage.Type
-import com.google.gson.JsonObject
+import com.example.rxhomework.data.pojo.AnimalsResponse
+import com.example.rxhomework.data.pojo.TokenResponse
+import com.example.rxhomework.data.pojo.Breed
+import com.example.rxhomework.data.pojo.Type
 import io.reactivex.Single
 import retrofit2.http.*
 

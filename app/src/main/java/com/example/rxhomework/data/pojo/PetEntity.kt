@@ -1,4 +1,4 @@
-package com.example.rxhomework.storage
+package com.example.rxhomework.data.pojo
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

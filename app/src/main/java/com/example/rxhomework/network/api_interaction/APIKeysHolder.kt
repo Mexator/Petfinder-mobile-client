@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.R
 import com.example.rxhomework.network.NetworkService
-import com.example.rxhomework.pojo.TokenResponse
+import com.example.rxhomework.data.pojo.TokenResponse
 import io.reactivex.Single
 import retrofit2.HttpException
 import java.text.ParseException

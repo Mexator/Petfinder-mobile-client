@@ -1,12 +1,10 @@
 package com.example.rxhomework.data
 
-import android.util.Log
 import com.example.rxhomework.ApplicationController
-import com.example.rxhomework.storage.Breed
+import com.example.rxhomework.data.pojo.Breed
 import com.example.rxhomework.storage.PetDB
-import com.example.rxhomework.storage.PetEntity
-import com.example.rxhomework.storage.Type
-import io.reactivex.Completable
+import com.example.rxhomework.data.pojo.PetEntity
+import com.example.rxhomework.data.pojo.Type
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 

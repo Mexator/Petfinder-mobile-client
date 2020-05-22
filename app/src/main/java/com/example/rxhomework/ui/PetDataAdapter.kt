@@ -1,14 +1,12 @@
 package com.example.rxhomework.ui
 
-import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rxhomework.R
-import com.example.rxhomework.storage.PetEntity
+import com.example.rxhomework.data.pojo.PetEntity
 import kotlinx.android.synthetic.main.result_item.view.*
-import java.io.File
 
 class PetDataAdapter: RecyclerView.Adapter<PetDataAdapter.DataViewHolder>() {
     private var petList = mutableListOf<PetEntity>()

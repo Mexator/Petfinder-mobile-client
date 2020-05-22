@@ -3,10 +3,9 @@ package com.example.rxhomework.ui
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.rxhomework.ApplicationController
-import com.example.rxhomework.data.PetRepository
-import com.example.rxhomework.storage.Breed
-import com.example.rxhomework.storage.PetEntity
-import com.example.rxhomework.storage.Type
+import com.example.rxhomework.data.pojo.Breed
+import com.example.rxhomework.data.pojo.PetEntity
+import com.example.rxhomework.data.pojo.Type
 import io.reactivex.disposables.CompositeDisposable
 
 class MainViewModel : ViewModel() {

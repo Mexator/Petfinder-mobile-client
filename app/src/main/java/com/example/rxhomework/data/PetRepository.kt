@@ -1,9 +1,9 @@
 package com.example.rxhomework.data
 
 import com.example.rxhomework.network.NetworkService
-import com.example.rxhomework.storage.Breed
-import com.example.rxhomework.storage.PetEntity
-import com.example.rxhomework.storage.Type
+import com.example.rxhomework.data.pojo.Breed
+import com.example.rxhomework.data.pojo.PetEntity
+import com.example.rxhomework.data.pojo.Type
 import io.reactivex.Single
 
 class PetRepository(

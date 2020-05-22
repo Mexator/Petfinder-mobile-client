@@ -1,8 +1,6 @@
 package com.example.rxhomework.data
 
-import com.example.rxhomework.storage.Breed
-import com.example.rxhomework.storage.PetEntity
-import com.example.rxhomework.storage.Type
+import com.example.rxhomework.data.pojo.PetEntity
 import io.reactivex.Single
 
 interface Repository {
