@@ -53,13 +53,13 @@
             app:layout_constraintStart_toEndOf="@+id/nameTextView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-        <ImageView
-            android:id="@+id/pet_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_launcher_foreground"
-            tools:layout_editor_absoluteY="37dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/pet_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_launcher_background" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
