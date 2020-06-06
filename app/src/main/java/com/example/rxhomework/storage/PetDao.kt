@@ -1,9 +1,6 @@
 package com.example.rxhomework.storage
 
 import androidx.room.*
-import com.example.rxhomework.data.pojo.Breed
-import com.example.rxhomework.data.pojo.PetEntity
-import com.example.rxhomework.data.pojo.Type
 import io.reactivex.Single
 
 @Dao

@@ -5,13 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rxhomework.R
-import com.example.rxhomework.data.pojo.PetEntity
+import com.example.rxhomework.data.pojo.Pet
+import com.example.rxhomework.storage.PetEntity
 import kotlinx.android.synthetic.main.result_item.view.*
 
 class PetDataAdapter: RecyclerView.Adapter<PetDataAdapter.DataViewHolder>() {
-    private var petList = mutableListOf<PetEntity>()
+    private var petList = mutableListOf<Pet>()
 
-    fun setData(list: List<PetEntity>) {
+    fun setData(list: List<Pet>) {
         petList.clear()
         petList.addAll(list)
         notifyDataSetChanged()
@@ -36,7 +37,7 @@ class PetDataAdapter: RecyclerView.Adapter<PetDataAdapter.DataViewHolder>() {
 
     inner class DataViewHolder(
         itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun setData(pet: PetEntity) {
+        fun setData(pet: Pet) {
             itemView.apply {
                 nameTextView.text = pet.name
                 ageTextView.text = pet.age

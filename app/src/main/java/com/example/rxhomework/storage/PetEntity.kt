@@ -1,8 +1,9 @@
-package com.example.rxhomework.data.pojo
+package com.example.rxhomework.storage
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.rxhomework.data.pojo.Pet
 
 typealias Type = String
 typealias Age = String
@@ -30,5 +31,8 @@ data class PetEntity(
         const val TABLE_NAME = "pets"
         const val TYPE = "type"
         const val BREED = "breed"
+    }
+    fun toPet(): Pet {
+        return Pet(id, age, name, description, type, breed, null)
     }
 }

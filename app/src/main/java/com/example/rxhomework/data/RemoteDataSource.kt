@@ -3,18 +3,13 @@ package com.example.rxhomework.data
 import com.example.rxhomework.network.NetworkService
 import com.example.rxhomework.network.api_interaction.APIKeysHolder
 import com.example.rxhomework.data.pojo.AnimalsResponse
-import com.example.rxhomework.data.pojo.PetEntity
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.example.rxhomework.data.pojo.Pet
 import io.reactivex.Single
-import java.util.*
 
 
 object RemoteDataSource : DataSource {
-    override fun getPets(animalType: String?, animalBreed: String?): Single<List<PetEntity>> {
+    override fun getPets(animalType: String?, animalBreed: String?): Single<List<Pet>> {
 
-        val listType = object : TypeToken<ArrayList<PetEntity>>() {}.type
-        val gson = Gson()
 
         return APIKeysHolder
             .getAccessToken()
