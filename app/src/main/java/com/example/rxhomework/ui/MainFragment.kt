@@ -15,6 +15,7 @@ import com.example.rxhomework.R
 import com.example.rxhomework.mvvm.viewmodel.MainViewModel
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -26,10 +27,11 @@ import kotlinx.android.synthetic.main.fragment_main.*
 class MainFragment : Fragment() {
     private var viewModel: MainViewModel? = null
     private var petDataAdapter: PetDataAdapter? = null
+    private var compositeDisposable = CompositeDisposable()
 
     fun getPets() {
         animal_type_spinner?.selectedItem.toString().let {
-            viewModel?.getPets(it, null)
+            viewModel?.updatePetsList(it, null)
         }
     }
 
@@ -48,7 +50,10 @@ class MainFragment : Fragment() {
         subscribeToProgressIndicator()
 
         petDataAdapter = PetDataAdapter()
-        viewModel?.petsList?.observe(viewLifecycleOwner, Observer {
+
+        val job = viewModel!!.getPetsList()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
             if (!it.isNullOrEmpty()) {
                 recyclerView.visibility = View.VISIBLE
                 petDataAdapter?.setData(it)
@@ -56,7 +61,9 @@ class MainFragment : Fragment() {
                 recyclerView.visibility = View.GONE
                 Toast.makeText(context, "No Records Found", Toast.LENGTH_LONG).show()
             }
-        })
+        }
+        compositeDisposable.add(job)
+
         val itemSelectorListener = object : OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
@@ -78,8 +85,8 @@ class MainFragment : Fragment() {
 
     // Uses progress boolean to show and hide progressBar when needed
     private fun subscribeToProgressIndicator() {
-        viewModel?.let { model ->
-            model.getUpdating()
+        val job =
+            viewModel!!.getUpdating()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     pets_loading.visibility =
@@ -88,6 +95,6 @@ class MainFragment : Fragment() {
                         } else
                             View.INVISIBLE
                 }
-        }
+        compositeDisposable.add(job)
     }
 }

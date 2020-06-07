@@ -15,22 +15,23 @@ class MainViewModel : ViewModel() {
     private val repository = ApplicationController.actualPetRepository
 
     private val compositeDisposable = CompositeDisposable()
-    var petsList = MutableLiveData<List<Pet>>()
+
+    private var petsList: BehaviorSubject<List<Pet>> = BehaviorSubject.create()
+    fun getPetsList(): Observable<List<Pet>> = petsList
 
     private var updating: BehaviorSubject<Boolean> = BehaviorSubject.create()
-    fun getUpdating():Observable<Boolean> {
-        return  updating
-    }
+    fun getUpdating(): Observable<Boolean> = updating
 
-    fun getPets(type: Type?, breed: Breed?) {
+    fun updatePetsList(type: Type?, breed: Breed?) {
         updating.onNext(true)
         repository.getPets(type, breed).subscribe({
-            if(!it.isNullOrEmpty()) {
-                petsList.postValue(it)
-            }
-            else {
-                petsList.postValue(listOf())
-            }
+            petsList.onNext(
+                if (!it.isNullOrEmpty()) {
+                    it
+                } else {
+                    listOf()
+                }
+            )
             updating.onNext(false)
         }, {}).let {
             compositeDisposable.add(it)
