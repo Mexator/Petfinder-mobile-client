@@ -5,13 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.AdapterView.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rxhomework.R
+import com.example.rxhomework.mvvm.viewmodel.MainViewModel
+import io.reactivex.Scheduler
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_main.*
 
 /**
@@ -39,7 +43,10 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Setup ViewModel
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        subscribeToProgressIndicator()
+
         petDataAdapter = PetDataAdapter()
         viewModel?.petsList?.observe(viewLifecycleOwner, Observer {
             if (!it.isNullOrEmpty()) {
@@ -69,21 +76,18 @@ class MainFragment : Fragment() {
         recyclerView.adapter = petDataAdapter
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MainFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MainFragment().apply {
-                arguments = Bundle().apply {
+    // Uses progress boolean to show and hide progressBar when needed
+    private fun subscribeToProgressIndicator() {
+        viewModel?.let { model ->
+            model.getUpdating()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    pets_loading.visibility =
+                        if (it) {
+                            View.VISIBLE
+                        } else
+                            View.INVISIBLE
                 }
-            }
+        }
     }
 }

@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/detailsFragment"
-        android:name="com.example.rxhomework.ui.DetailsFragment"
+        android:name="com.example.rxhomework.ui.details.DetailsFragment"
         android:label="fragment_details"
         tools:layout="@layout/fragment_details" >
         <action
