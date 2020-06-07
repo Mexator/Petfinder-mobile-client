@@ -1,6 +1,5 @@
 package com.example.rxhomework.network
 
-import android.util.Log
 import com.example.rxhomework.network.api_interaction.PetfinderJSONAPI
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers

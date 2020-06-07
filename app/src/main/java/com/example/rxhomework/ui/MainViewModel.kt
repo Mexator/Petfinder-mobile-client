@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.data.pojo.Pet
 import com.example.rxhomework.storage.Breed
-import com.example.rxhomework.storage.PetEntity
 import com.example.rxhomework.storage.Type
 import io.reactivex.disposables.CompositeDisposable
 

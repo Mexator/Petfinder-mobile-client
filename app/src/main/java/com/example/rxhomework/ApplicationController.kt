@@ -2,8 +2,8 @@ package com.example.rxhomework
 
 import android.app.Application
 import android.content.Context
-import com.example.rxhomework.data.LocalDataSource
 import com.example.rxhomework.data.ActualPetRepository
+import com.example.rxhomework.data.LocalDataSource
 import com.example.rxhomework.data.RemoteDataSource
 import com.example.rxhomework.network.NetworkService
 import com.example.rxhomework.storage.StorageManager

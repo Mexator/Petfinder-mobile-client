@@ -7,11 +7,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rxhomework.R
 import com.example.rxhomework.data.pojo.Pet
-import com.example.rxhomework.storage.PetEntity
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.result_item.*
 import kotlinx.android.synthetic.main.result_item.view.*
 import java.net.URL
 

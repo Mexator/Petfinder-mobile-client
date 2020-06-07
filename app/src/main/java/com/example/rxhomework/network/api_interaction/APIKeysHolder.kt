@@ -3,8 +3,8 @@ package com.example.rxhomework.network.api_interaction
 import android.util.Log
 import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.R
-import com.example.rxhomework.network.NetworkService
 import com.example.rxhomework.data.pojo.TokenResponse
+import com.example.rxhomework.network.NetworkService
 import io.reactivex.Single
 import retrofit2.HttpException
 import java.text.ParseException
