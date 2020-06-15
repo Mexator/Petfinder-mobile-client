@@ -1,4 +1,4 @@
-package com.example.rxhomework.ui.details
+package com.example.rxhomework.ui.fragment.details
 
 import android.os.Bundle
 import android.view.LayoutInflater
