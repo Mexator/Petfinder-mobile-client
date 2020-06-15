@@ -31,20 +31,7 @@ import kotlinx.android.synthetic.main.result_item.*
 import java.net.URL
 
 class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
-    LayoutContainer {
-    var age: TextView
-    var description: TextView
-    var picture: ImageView
-    var name: TextView
-    init {
-        with(containerView) {
-            description = findViewById(R.id.petDescription)
-            age = findViewById(R.id.petAge)
-            picture = findViewById(R.id.petPreview)
-            name = findViewById(R.id.petName)
-        }
-    }
-}
+    LayoutContainer
 
 class MainFragment : Fragment() {
     private var viewModel: MainViewModel? = null
@@ -68,6 +55,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         // Setup ViewModel
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         subscribeToProgressIndicator()
@@ -125,9 +113,9 @@ class MainFragment : Fragment() {
             withLayoutManager(LinearLayoutManager(context))
             withItem<Pet, PetHolder>(R.layout.result_item) {
                 onBind(::PetHolder) { _, item ->
-                    description.text = item.description
-                    name.text = item.name
-                    age.text = item.age
+                    petDescription.text = item.description
+                    petName.text = item.name
+                    petAge.text = item.age
                     // TODO: Reusable loader
                     item.photos?.let {
                         if (it.isNotEmpty()) {
@@ -137,7 +125,7 @@ class MainFragment : Fragment() {
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(
-                                    { bmp -> this.picture.setImageBitmap(bmp) },
+                                    { bmp -> petPreview.setImageBitmap(bmp) },
                                     {}
                                 )
 
