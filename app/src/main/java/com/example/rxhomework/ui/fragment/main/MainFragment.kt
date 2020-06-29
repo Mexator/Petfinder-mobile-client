@@ -1,5 +1,6 @@
 package com.example.rxhomework.ui.fragment.main
 
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
@@ -7,9 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.AdapterView.*
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -21,6 +20,7 @@ import com.afollestad.recyclical.withItem
 import com.example.rxhomework.R
 import com.example.rxhomework.data.pojo.Pet
 import com.example.rxhomework.mvvm.viewmodel.MainViewModel
+import com.example.rxhomework.utils.Optional
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -31,7 +31,53 @@ import kotlinx.android.synthetic.main.result_item.*
 import java.net.URL
 
 class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
-    LayoutContainer
+    LayoutContainer {
+    private val compositeDisposable = CompositeDisposable()
+
+    fun bind(pet: Pet) {
+
+        petDescription.text = pet.description
+        petAge.text = pet.age
+        petName.text = pet.name
+
+        setImage(pet)
+    }
+
+    private fun setImage(pet: Pet) {
+        petPreview.setImageResource(R.drawable.photo_placeholder)
+        val job = getPhoto(pet)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { photo ->
+                if (!photo.isEmpty())
+                    photo?.let { petPreview.setImageBitmap(photo.get()) }
+            }
+        compositeDisposable.add(job)
+    }
+
+    private fun getPhoto(pet: Pet): Single<Optional<Bitmap>> {
+        var mUrl: URL? = null
+
+        pet.photos?.let {
+            if (it.isNotEmpty()) {
+                mUrl = URL(it[0].small)
+            }
+        }
+
+        mUrl?.let {
+            return Single
+                .defer {
+                    Single.just(
+                        Optional(
+                            BitmapFactory.decodeStream(it.openStream())
+                        )
+                    )
+                }
+                .subscribeOn(Schedulers.io())
+        }
+
+        return Single.just(Optional<Bitmap>(null))
+    }
+}
 
 class MainFragment : Fragment() {
     private var viewModel: MainViewModel? = null
@@ -44,7 +90,6 @@ class MainFragment : Fragment() {
             viewModel?.updatePetsList(it, null)
         }
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -113,24 +158,7 @@ class MainFragment : Fragment() {
             withLayoutManager(LinearLayoutManager(context))
             withItem<Pet, PetHolder>(R.layout.result_item) {
                 onBind(::PetHolder) { _, item ->
-                    petDescription.text = item.description
-                    petName.text = item.name
-                    petAge.text = item.age
-                    // TODO: Reusable loader
-                    item.photos?.let {
-                        if (it.isNotEmpty()) {
-                            val url = URL(it[0].small)
-                            Single
-                                .defer { Single.just(BitmapFactory.decodeStream(url.openStream())) }
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(
-                                    { bmp -> petPreview.setImageBitmap(bmp) },
-                                    {}
-                                )
-
-                        }
-                    }
+                    bind(item)
                 }
                 hasStableIds { it.id }
             }
