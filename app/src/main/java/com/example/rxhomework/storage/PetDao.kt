@@ -22,4 +22,7 @@ interface PetDao {
     fun insertPet(pet: PetEntity)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPhoto(photo: PhotoEntity)
+
+    @Query("delete from ${PetEntity.TABLE_NAME}")
+    fun clearPetsTable()
 }

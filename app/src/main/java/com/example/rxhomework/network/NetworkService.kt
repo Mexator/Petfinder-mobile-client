@@ -1,6 +1,5 @@
 package com.example.rxhomework.network
 
-import android.util.Log
 import com.example.rxhomework.network.api_interaction.PetfinderJSONAPI
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -9,13 +8,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.net.InetAddress
 
 object NetworkService {
-    private val TAG = NetworkService::class.java.toString()
+    private val TAG = NetworkService.javaClass.simpleName
 
     private const val BASE_URL = "https://api.petfinder.com/v2/"
-    private const val INTERNET_CHECK_URL = "petfinder.com"
+    private const val INTERNET_CHECK_URL = "google.com"
+    private const val TIMEOUT = 5L
 
     val petfinderAPI: PetfinderJSONAPI
     private var mRetrofit: Retrofit
@@ -37,12 +36,13 @@ object NetworkService {
     }
 
     fun isConnectedToInternet(): Single<Boolean> {
-        // Just check whether we can resolve IP for our target API endpoint
+        // Just check whether we can ping google (our API endpoint does not respond to ping requests)
+        val command = "ping -c 1 -W $TIMEOUT $INTERNET_CHECK_URL";
         return Single
-            .defer{Single.just(InetAddress.getByName(INTERNET_CHECK_URL).toString())}
+            .defer{Single.just(Runtime.getRuntime().exec(command).waitFor())}
             .subscribeOn(Schedulers.io())
-            .doOnError { it -> Log.i(TAG,it.toString()) }
-            .onErrorReturnItem("Error")
-            .map { it != "Error" }
+            // Trick to map an error to just a false value
+            .onErrorReturnItem(-1)
+            .map { it == 0 }
     }
 }

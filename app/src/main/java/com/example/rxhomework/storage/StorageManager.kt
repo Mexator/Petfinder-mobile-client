@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.R
-import com.example.rxhomework.basic_logic.SingletonHolder
 import java.text.SimpleDateFormat
 import java.util.*
 
