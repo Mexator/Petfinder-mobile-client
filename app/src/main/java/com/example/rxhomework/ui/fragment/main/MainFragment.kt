@@ -33,6 +33,8 @@ import java.net.URL
 class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer {
     private val compositeDisposable = CompositeDisposable()
+    private val LOADING_POSITION = 0
+    private val PHOTO_POSITION = 1
 
     fun bind(pet: Pet) {
 
@@ -40,6 +42,7 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
         petAge.text = pet.age
         petName.text = pet.name
 
+        photoWrapper.displayedChild = LOADING_POSITION
         setImage(pet)
     }
 
@@ -49,7 +52,8 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { photo ->
                 if (!photo.isEmpty())
-                    photo?.let { petPreview.setImageBitmap(photo.get()) }
+                    petPreview.setImageBitmap(photo.get())
+                photoWrapper.displayedChild = PHOTO_POSITION
             }
         compositeDisposable.add(job)
     }
