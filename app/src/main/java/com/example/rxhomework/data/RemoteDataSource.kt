@@ -10,7 +10,6 @@ import io.reactivex.Single
 object RemoteDataSource : DataSource {
     override fun getPets(animalType: String?, animalBreed: String?): Single<List<Pet>> {
 
-
         return APIKeysHolder
             .getAccessToken()
             .flatMap { NetworkService.petfinderAPI.getPets("Bearer $it", animalType, animalBreed) }
