@@ -1,6 +1,5 @@
 package com.example.rxhomework.network
 
-import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.network.api_interaction.PetfinderJSONAPI
 import com.example.rxhomework.utils.HtmlDeserializer
 import com.google.gson.GsonBuilder
@@ -26,7 +25,7 @@ object NetworkService {
         val client = OkHttpClient.Builder()
             .addInterceptor(
                 HttpLoggingInterceptor()
-                    .setLevel(HttpLoggingInterceptor.Level.BODY)
+                    .setLevel(HttpLoggingInterceptor.Level.BASIC)
             )
 
         val gson = GsonBuilder()

@@ -11,12 +11,12 @@ import io.reactivex.schedulers.Schedulers
 
 object LocalDataSource : DataSource {
     private val db = PetDB.getDatabaseInstance(ApplicationController.context)
-    override fun getPets(type: Type?, breed: Breed?): Single<List<Pet>> {
+    override fun getPets(animalType: Type?, animalBreed: Breed?, page:Int): Single<List<Pet>> {
         val dao = db.petDao()
-        return (if (type != null) {
-            if (breed != null) dao.getPets(type, breed).map { it.map { it.toPet() } }
-            else dao.getPetsByType(type).map { it.map { it.toPet() } }
-        } else if (breed != null) dao.getPetsByBreed(breed).map { it.map { it.toPet() } }
+        return (if (animalType != null) {
+            if (animalBreed != null) dao.getPets(animalType, animalBreed).map { it.map { it.toPet() } }
+            else dao.getPetsByType(animalType).map { it.map { it.toPet() } }
+        } else if (animalBreed != null) dao.getPetsByBreed(animalBreed).map { it.map { it.toPet() } }
         else dao.getAllPets().map { it.map { it.toPet() } }).subscribeOn(Schedulers.io())
     }
 

@@ -8,11 +8,13 @@ import io.reactivex.Single
 
 
 object RemoteDataSource : DataSource {
-    override fun getPets(animalType: String?, animalBreed: String?): Single<List<Pet>> {
+    val TAG = RemoteDataSource::class.simpleName
+
+    override fun getPets(animalType: String?, animalBreed: String?, page:Int): Single<List<Pet>> {
 
         return APIKeysHolder
             .getAccessToken()
-            .flatMap { NetworkService.petfinderAPI.getPets("Bearer $it", animalType, animalBreed) }
+            .flatMap { NetworkService.petfinderAPI.getPets("Bearer $it", animalType, animalBreed, page) }
             .map {a:AnimalsResponse -> a.animals }
     }
 }

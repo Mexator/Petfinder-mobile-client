@@ -10,16 +10,18 @@ class ActualPetRepository(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) : Repository {
-    override fun getPets(type: Type?, breed: Breed?): Single<List<Pet>> {
+    val TAG = ActualPetRepository::class.simpleName
+
+    override fun getPets(animalType: Type?, animalBreed: Breed?, page:Int?): Single<List<Pet>> {
         return NetworkService
             .isConnectedToInternet()
             .flatMap {
                 if (it) {
-                    val ret = remoteDataSource.getPets(type, breed)
+                    val ret = remoteDataSource.getPets(animalType, animalBreed, page?: 1)
                     localDataSource.savePets(ret)
                     ret
                 } else {
-                    localDataSource.getPets(type, breed)
+                    localDataSource.getPets(animalType, animalBreed)
                 }
             }
     }

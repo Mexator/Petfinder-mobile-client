@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.recyclical.datasource.emptyDataSourceTyped
 import com.afollestad.recyclical.setup
 import com.afollestad.recyclical.withItem
@@ -26,6 +27,7 @@ class MainFragment : Fragment() {
     private var compositeDisposable = CompositeDisposable()
     private var petDataSource = emptyDataSourceTyped<Pet>()
     private val TAG = MainFragment::class.simpleName
+    private val PRELOAD_MARGIN = 10
 
     fun getPets() {
         animal_type_spinner?.selectedItem.toString().let {
@@ -98,6 +100,7 @@ class MainFragment : Fragment() {
 
     private fun setupRecyclerView() {
         recyclerView.setHasFixedSize(false)
+
         recyclerView.setup {
             withDataSource(petDataSource)
             withLayoutManager(LinearLayoutManager(context))
@@ -105,9 +108,21 @@ class MainFragment : Fragment() {
                 onBind(::PetHolder) { _, item ->
                     bind(item)
                 }
-                hasStableIds { it.id }
             }
         }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val lastPosition = layoutManager.findLastVisibleItemPosition()
+                val totalItems = layoutManager.itemCount
+                if (totalItems - lastPosition <= PRELOAD_MARGIN) {
+                    viewModel?.loadNextPage()
+                }
+            }
+        })
     }
 
     private fun setupSwipeRefresh() {
