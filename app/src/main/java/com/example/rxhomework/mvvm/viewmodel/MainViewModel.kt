@@ -1,6 +1,5 @@
 package com.example.rxhomework.mvvm.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.data.pojo.Pet
@@ -12,7 +11,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 
 class MainViewModel : ViewModel() {
-    val TAG = MainViewModel::class.simpleName
     private val repository = ApplicationController.actualPetRepository
 
     private val compositeDisposable = CompositeDisposable()

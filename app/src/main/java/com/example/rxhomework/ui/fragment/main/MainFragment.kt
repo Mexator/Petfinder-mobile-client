@@ -17,6 +17,7 @@ import com.afollestad.recyclical.setup
 import com.afollestad.recyclical.withItem
 import com.example.rxhomework.R
 import com.example.rxhomework.data.pojo.Pet
+import com.example.rxhomework.extensions.getTag
 import com.example.rxhomework.mvvm.viewmodel.MainViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -26,7 +27,6 @@ class MainFragment : Fragment() {
     private var viewModel: MainViewModel? = null
     private var compositeDisposable = CompositeDisposable()
     private var petDataSource = emptyDataSourceTyped<Pet>()
-    private val TAG = MainFragment::class.simpleName
     private val PRELOAD_MARGIN = 10
 
     fun getPets() {
@@ -59,7 +59,7 @@ class MainFragment : Fragment() {
                     Toast.makeText(context, "No Records Found", Toast.LENGTH_LONG).show()
                 }
             },
-                { Log.e(TAG, it.toString()) })
+                { Log.e((this as Any).getTag(), it.toString()) })
 
 
         job?.let { compositeDisposable.add(it) }

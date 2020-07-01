@@ -12,8 +12,6 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 object NetworkService {
-    private val TAG = NetworkService.javaClass.simpleName
-
     private const val BASE_URL = "https://api.petfinder.com/v2/"
     private const val INTERNET_CHECK_URL = "google.com"
     private const val TIMEOUT = 5L

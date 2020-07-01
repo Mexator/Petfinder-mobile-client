@@ -6,16 +6,17 @@ import com.example.rxhomework.data.ActualPetRepository
 import com.example.rxhomework.data.LocalDataSource
 import com.example.rxhomework.data.RemoteDataSource
 import com.example.rxhomework.network.NetworkService
+import com.example.rxhomework.network.api_interaction.APIKeysHolder
 import com.example.rxhomework.storage.StorageManager
 
 class ApplicationController : Application() {
-    private val TAG = ApplicationController::class.java.toString()
 
     companion object {
         lateinit var context: Context
         lateinit var storageManager: StorageManager
         lateinit var networkService: NetworkService
         lateinit var actualPetRepository: ActualPetRepository
+        lateinit var keysHolder: APIKeysHolder
     }
 
     override fun onCreate() {
@@ -23,6 +24,7 @@ class ApplicationController : Application() {
         context = this
         storageManager = StorageManager
         networkService = NetworkService
+        keysHolder = APIKeysHolder(getString(R.string.API_KEY), getString(R.string.API_SECRET))
         actualPetRepository = ActualPetRepository(RemoteDataSource, LocalDataSource)
     }
 }

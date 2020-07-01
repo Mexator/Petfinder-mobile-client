@@ -10,7 +10,6 @@ class ActualPetRepository(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) : Repository {
-    val TAG = ActualPetRepository::class.simpleName
 
     override fun getPets(animalType: Type?, animalBreed: Breed?, page:Int?): Single<List<Pet>> {
         return NetworkService

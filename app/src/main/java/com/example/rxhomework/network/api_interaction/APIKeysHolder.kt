@@ -2,19 +2,18 @@ package com.example.rxhomework.network.api_interaction
 
 import android.util.Log
 import com.example.rxhomework.ApplicationController
-import com.example.rxhomework.R
 import com.example.rxhomework.data.pojo.TokenResponse
+import com.example.rxhomework.extensions.getTag
 import com.example.rxhomework.network.NetworkService
 import io.reactivex.Single
 import retrofit2.HttpException
 import java.text.ParseException
 import java.util.*
 
-object APIKeysHolder {
-    private val TAG = APIKeysHolder.javaClass.simpleName
-
-    private val apiKey = ApplicationController.context!!.getString(R.string.API_KEY)
-    private val apiSecret = ApplicationController.context!!.getString(R.string.API_SECRET)
+class APIKeysHolder(
+    private val apiKey: String,
+    private val apiSecret: String
+) {
 
     private var accessToken: String? = null
     private var initializedIn: Date? = null
@@ -23,7 +22,7 @@ object APIKeysHolder {
     private val millisToSecs = 1e-3
 
     init {
-        load()
+        loadFromPreferences()
     }
 
     private fun isInitialized(): Boolean {
@@ -49,13 +48,13 @@ object APIKeysHolder {
                         this.accessToken = v.access_token
                         this.expirationTime = v.expires_in
                         this.initializedIn = Date()
-                        this.save()
+                        this.saveToPreferences()
                     }
                 }, { e ->
-                    Log.e(TAG, e.toString())
+                    Log.e(getTag(), e.toString())
                     if (e is HttpException && e.code() == 401) {
                         Log.wtf(
-                            TAG,
+                            getTag(),
                             "Probably, you did not change values of API key and secret in secrets.xml file"
                         )
                     }
@@ -68,7 +67,7 @@ object APIKeysHolder {
             return Single.just(accessToken)
     }
 
-    private fun save() {
+    private fun saveToPreferences() {
         // Save only of initialized. We don't need to store default nulls
         if (isInitialized()) {
             with(
@@ -91,7 +90,7 @@ object APIKeysHolder {
         }
     }
 
-    private fun load() {
+    private fun loadFromPreferences() {
         val prefs = ApplicationController.storageManager.tokensPreferences
 
         this.accessToken = prefs.getString("access_token", null)
