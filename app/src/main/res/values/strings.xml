@@ -35,4 +35,6 @@
         <item>Rabbit</item>
         <item>Horse</item>
     </string-array>
+
+<!--    Error messages -->
 </resources>
