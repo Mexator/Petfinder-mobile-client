@@ -48,7 +48,7 @@
             <ProgressBar
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:indeterminate="true"/>
+                android:indeterminate="true" />
 
             <ImageView
                 android:id="@+id/petPreview"
@@ -58,6 +58,16 @@
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ic_launcher_background" />
         </ViewFlipper>
+
+        <TextView
+            android:id="@+id/no_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_image"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="@id/photoWrapper"
+            app:layout_constraintStart_toStartOf="@id/photoWrapper"
+            app:layout_constraintTop_toBottomOf="@id/photoWrapper" />
 
         <TextView
             android:id="@+id/petName"

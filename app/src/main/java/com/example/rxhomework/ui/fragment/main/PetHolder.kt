@@ -27,6 +27,7 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
         petAge.text = pet.age
         petName.text = pet.name
 
+        no_img.visibility = View.INVISIBLE
         photoWrapper.displayedChild = LOADING_POSITION
         setImage(pet)
     }
@@ -36,8 +37,10 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
         val job = getPhoto(pet)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { photo ->
-                if (!photo.isEmpty())
+                if (!photo.isEmpty()) {
                     petPreview.setImageBitmap(photo.get())
+                } else
+                    no_img.visibility = View.VISIBLE
                 photoWrapper.displayedChild = PHOTO_POSITION
             }
         compositeDisposable.add(job)
