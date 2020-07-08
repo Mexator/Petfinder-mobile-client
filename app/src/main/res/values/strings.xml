@@ -26,6 +26,7 @@
     <string name="sample_text">Sample Text</string>
     <string name="sample_age">12</string>
     <string name="sample_description">Nebula is a shorthaired, shy cat. She is very affectionate once she warms up to you.</string>
+    <string name="no_image">no image</string>
 
     <string-array name="types">
         <item>Dog</item>
@@ -35,4 +36,6 @@
         <item>Rabbit</item>
         <item>Horse</item>
     </string-array>
+
+<!--    Error messages -->
 </resources>

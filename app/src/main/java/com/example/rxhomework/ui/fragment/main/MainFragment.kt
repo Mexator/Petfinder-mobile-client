@@ -1,7 +1,5 @@
 package com.example.rxhomework.ui.fragment.main
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,75 +17,17 @@ import com.afollestad.recyclical.setup
 import com.afollestad.recyclical.withItem
 import com.example.rxhomework.R
 import com.example.rxhomework.data.pojo.Pet
+import com.example.rxhomework.extensions.getTag
 import com.example.rxhomework.mvvm.viewmodel.MainViewModel
-import com.example.rxhomework.utils.Optional
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.result_item.*
-import java.net.URL
-
-class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
-    LayoutContainer {
-    private val compositeDisposable = CompositeDisposable()
-    private val LOADING_POSITION = 0
-    private val PHOTO_POSITION = 1
-
-    fun bind(pet: Pet) {
-
-        petDescription.text = pet.description
-        petAge.text = pet.age
-        petName.text = pet.name
-
-        photoWrapper.displayedChild = LOADING_POSITION
-        setImage(pet)
-    }
-
-    private fun setImage(pet: Pet) {
-        petPreview.setImageResource(R.drawable.photo_placeholder)
-        val job = getPhoto(pet)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { photo ->
-                if (!photo.isEmpty())
-                    petPreview.setImageBitmap(photo.get())
-                photoWrapper.displayedChild = PHOTO_POSITION
-            }
-        compositeDisposable.add(job)
-    }
-
-    private fun getPhoto(pet: Pet): Single<Optional<Bitmap>> {
-        var mUrl: URL? = null
-
-        pet.photos?.let {
-            if (it.isNotEmpty()) {
-                mUrl = URL(it[0].small)
-            }
-        }
-
-        mUrl?.let {
-            return Single
-                .defer {
-                    Single.just(
-                        Optional(
-                            BitmapFactory.decodeStream(it.openStream())
-                        )
-                    )
-                }
-                .subscribeOn(Schedulers.io())
-        }
-
-        return Single.just(Optional<Bitmap>(null))
-    }
-}
 
 class MainFragment : Fragment() {
     private var viewModel: MainViewModel? = null
     private var compositeDisposable = CompositeDisposable()
     private var petDataSource = emptyDataSourceTyped<Pet>()
-    private val TAG = MainFragment::class.simpleName
+    private val PRELOAD_MARGIN = 10
 
     fun getPets() {
         animal_type_spinner?.selectedItem.toString().let {
@@ -114,11 +54,12 @@ class MainFragment : Fragment() {
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({
                 petDataSource.set(it)
+                swipeRefresh.isRefreshing = false
                 if (it.isNullOrEmpty()) {
                     Toast.makeText(context, "No Records Found", Toast.LENGTH_LONG).show()
                 }
             },
-                { Log.e(TAG, it.toString()) })
+                { Log.e((this as Any).getTag(), it.toString()) })
 
 
         job?.let { compositeDisposable.add(it) }
@@ -137,7 +78,9 @@ class MainFragment : Fragment() {
         }
         animal_type_spinner?.onItemSelectedListener = itemSelectorListener
         recyclerView.visibility = View.VISIBLE
+
         setupRecyclerView()
+        setupSwipeRefresh()
     }
 
     // Uses progress boolean to show and hide progressBar when needed
@@ -157,6 +100,7 @@ class MainFragment : Fragment() {
 
     private fun setupRecyclerView() {
         recyclerView.setHasFixedSize(false)
+
         recyclerView.setup {
             withDataSource(petDataSource)
             withLayoutManager(LinearLayoutManager(context))
@@ -164,8 +108,29 @@ class MainFragment : Fragment() {
                 onBind(::PetHolder) { _, item ->
                     bind(item)
                 }
-                hasStableIds { it.id }
             }
         }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val lastPosition = layoutManager.findLastVisibleItemPosition()
+                val totalItems = layoutManager.itemCount
+                if (totalItems - lastPosition <= PRELOAD_MARGIN) {
+                    viewModel?.loadNextPage()
+                }
+            }
+        })
+    }
+
+    private fun setupSwipeRefresh() {
+        swipeRefresh.setOnRefreshListener { getPets() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 }

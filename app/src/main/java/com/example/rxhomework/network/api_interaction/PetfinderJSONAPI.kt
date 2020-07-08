@@ -21,6 +21,7 @@ interface PetfinderJSONAPI {
     fun getPets(
         @Header("Authorization") token: String,
         @Query("type") type: Type?,
-        @Query("breed") breed: Breed?
+        @Query("breed") breed: Breed?,
+        @Query("page") page: Int?
     ): Single<AnimalsResponse>
 }
