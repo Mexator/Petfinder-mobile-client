@@ -21,7 +21,7 @@ class ActualPetRepository(
             .flatMap {
                 if (it) {
                     val ret = remoteDataSource.getPets(animalType, animalBreed, page?: 1)
-//                    localDataSource.savePets(ret)
+                    localDataSource.savePets(ret)
                     ret
                 } else {
                     localDataSource.getPets(animalType, animalBreed)

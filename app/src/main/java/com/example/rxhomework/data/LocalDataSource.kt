@@ -27,8 +27,8 @@ object LocalDataSource : DataSource, KoinComponent {
 
     fun savePets(it: Single<List<Pet>>): Unit {
         deletePets()
-        it.subscribe({
-            it?.forEach {
+        val job = it.map {
+            it.forEach {
                 db.petDao().insertPet(
                     PetEntity(
                         it.id,
@@ -41,7 +41,7 @@ object LocalDataSource : DataSource, KoinComponent {
                     )
                 )
             }
-        }, {})
+        }
     }
 
     private fun deletePets(): Unit {
