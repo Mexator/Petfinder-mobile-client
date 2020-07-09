@@ -1,13 +1,11 @@
 package com.example.rxhomework.mvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.data.Repository
 import com.example.rxhomework.data.pojo.Pet
 import com.example.rxhomework.storage.Breed
 import com.example.rxhomework.storage.Type
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import org.koin.core.KoinComponent
@@ -23,7 +21,7 @@ class MainViewModel : ViewModel(), KoinComponent {
     private var pageLoading: BehaviorSubject<Boolean> = BehaviorSubject.create()
 
     fun getPetsList() = petsList as Observable<List<Pet>>
-    fun getUpdating() = updating as Observable<Boolean>
+    fun getUpdatingStatus() = updating as Observable<Boolean>
     fun getPageLoading() = pageLoading as Observable<Boolean>
 
     private var currentPage: Int = 1
@@ -38,7 +36,6 @@ class MainViewModel : ViewModel(), KoinComponent {
             currentType = type
 
             val job = repository.getPets(type, breed)
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { value ->
                     petsList.onNext(value ?: listOf())
                     updating.onNext(false)

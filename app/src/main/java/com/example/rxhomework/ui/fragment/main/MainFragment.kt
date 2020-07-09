@@ -24,71 +24,46 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main.*
 
 class MainFragment : Fragment() {
-    private var viewModel: MainViewModel? = null
+    private lateinit var viewModel: MainViewModel
+
     private var compositeDisposable = CompositeDisposable()
+
     private var petDataSource = emptyDataSourceTyped<Pet>()
+
     private val PRELOAD_MARGIN = 10
 
-    fun getPets() {
-        animal_type_spinner?.selectedItem.toString().let {
-            viewModel?.updatePetsList(it, null)
-        }
-    }
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d((this as Any).getTag(), "onCreate()")
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d((this as Any).getTag(), "onViewCreated()")
 
         // Setup ViewModel
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        subscribeToProgressIndicator()
 
-        val job = viewModel
-            ?.getPetsList()
-            ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribe({
-                petDataSource.set(it)
-                swipeRefresh.isRefreshing = false
-                if (it.isNullOrEmpty()) {
-                    Toast.makeText(context, "No Records Found", Toast.LENGTH_LONG).show()
-                }
-            },
-                { Log.e((this as Any).getTag(), it.toString()) })
-
-
-        job?.let { compositeDisposable.add(it) }
-
-        val itemSelectorListener = object : OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                getPets()
-            }
-        }
-        animal_type_spinner?.onItemSelectedListener = itemSelectorListener
-        recyclerView.visibility = View.VISIBLE
-
+        // Setup Subscriptions
         setupRecyclerView()
+        setupSpinner()
         setupSwipeRefresh()
+        subscribeToProgressIndicator()
+        setupPetsUpdating()
     }
 
     // Uses progress boolean to show and hide progressBar when needed
     private fun subscribeToProgressIndicator() {
         val job =
-            viewModel!!.getUpdating()
+            viewModel
+                .getUpdatingStatus()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
+                    Log.d((this as Any).getTag(), "visible = $it")
                     pets_loading.visibility =
                         if (it) {
                             View.VISIBLE
@@ -119,14 +94,54 @@ class MainFragment : Fragment() {
                 val lastPosition = layoutManager.findLastVisibleItemPosition()
                 val totalItems = layoutManager.itemCount
                 if (totalItems - lastPosition <= PRELOAD_MARGIN) {
-                    viewModel?.loadNextPage()
+                    viewModel.loadNextPage()
                 }
             }
         })
     }
 
     private fun setupSwipeRefresh() {
-        swipeRefresh.setOnRefreshListener { getPets() }
+        swipeRefresh.setOnRefreshListener {
+            Log.d((this as Any).getTag(), "swipeRefresh()")
+
+            animal_type_spinner?.selectedItem.toString().let {
+                viewModel.updatePetsList(it, null)
+            }
+        }
+    }
+
+    private fun setupPetsUpdating() {
+        val job = viewModel
+            .getPetsList()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { list ->
+                petDataSource.set(list)
+
+                swipeRefresh.isRefreshing = false
+
+                if (list.isNullOrEmpty()) {
+                    Toast.makeText(context, "No Records Found", Toast.LENGTH_LONG).show()
+                }
+            }
+
+        job?.let { compositeDisposable.add(it) }
+    }
+
+    private fun setupSpinner() {
+        animal_type_spinner?.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                animal_type_spinner?.selectedItem.toString().let {
+                    viewModel.updatePetsList(it, null)
+                }
+            }
+        }
     }
 
     override fun onDestroy() {
