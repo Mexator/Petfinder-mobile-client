@@ -50,7 +50,7 @@ class MainFragment : Fragment() {
         setupSwipeRefresh()
         subscribeToProgressIndicator()
     }
-    
+
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.dispose()
@@ -108,6 +108,14 @@ class MainFragment : Fragment() {
                 viewModel.updatePetsList(it, null)
             }
         }
+        val job = viewModel
+            .getUpdatingStatus()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (!it)
+                    swipeRefresh.isRefreshing = it
+            }
+        compositeDisposable.add(job)
     }
 
     private fun setupSpinner() {
