@@ -25,10 +25,10 @@ object LocalDataSource : DataSource, KoinComponent {
         else dao.getAllPets().map { it.map { it.toPet() } }).subscribeOn(Schedulers.io())
     }
 
-    fun savePets(it: Single<List<Pet>>): Unit {
+    fun savePets(content: Single<List<Pet>>) {
         deletePets()
-        val job = it.map {
-            it.forEach {
+        val job = content.doOnEvent{ list: List<Pet>, _ ->
+            list.forEach {
                 db.petDao().insertPet(
                     PetEntity(
                         it.id,
