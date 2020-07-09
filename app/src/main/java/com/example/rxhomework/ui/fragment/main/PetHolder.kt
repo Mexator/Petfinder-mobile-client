@@ -17,11 +17,13 @@ import java.net.URL
 
 class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer {
-    private val compositeDisposable = CompositeDisposable()
+    private var compositeDisposable = CompositeDisposable()
     private val LOADING_POSITION = 0
     private val PHOTO_POSITION = 1
 
     fun bind(pet: Pet) {
+        compositeDisposable.dispose()
+        compositeDisposable = CompositeDisposable()
 
         petDescription.text = pet.description
         petAge.text = pet.age

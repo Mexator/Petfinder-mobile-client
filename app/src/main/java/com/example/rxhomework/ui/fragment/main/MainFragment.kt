@@ -7,12 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.recyclical.datasource.emptyDataSourceTyped
 import com.afollestad.recyclical.setup
 import com.afollestad.recyclical.withItem
 import com.example.rxhomework.R
@@ -27,8 +25,6 @@ class MainFragment : Fragment() {
     private lateinit var viewModel: MainViewModel
 
     private var compositeDisposable = CompositeDisposable()
-
-    private var petDataSource = emptyDataSourceTyped<Pet>()
 
     private val PRELOAD_MARGIN = 10
 
@@ -53,7 +49,11 @@ class MainFragment : Fragment() {
         setupSpinner()
         setupSwipeRefresh()
         subscribeToProgressIndicator()
-        setupPetsUpdating()
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 
     // Uses progress boolean to show and hide progressBar when needed
@@ -77,7 +77,7 @@ class MainFragment : Fragment() {
         recyclerView.setHasFixedSize(false)
 
         recyclerView.setup {
-            withDataSource(petDataSource)
+            withDataSource(viewModel.petDataSource)
             withLayoutManager(LinearLayoutManager(context))
             withItem<Pet, PetHolder>(R.layout.result_item) {
                 onBind(::PetHolder) { _, item ->
@@ -110,23 +110,6 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun setupPetsUpdating() {
-        val job = viewModel
-            .getPetsList()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { list ->
-                petDataSource.set(list)
-
-                swipeRefresh.isRefreshing = false
-
-                if (list.isNullOrEmpty()) {
-                    Toast.makeText(context, "No Records Found", Toast.LENGTH_LONG).show()
-                }
-            }
-
-        job?.let { compositeDisposable.add(it) }
-    }
-
     private fun setupSpinner() {
         animal_type_spinner?.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -142,10 +125,5 @@ class MainFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
     }
 }
