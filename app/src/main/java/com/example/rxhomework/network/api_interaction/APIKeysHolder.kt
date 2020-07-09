@@ -1,13 +1,10 @@
 package com.example.rxhomework.network.api_interaction
 
 import android.util.Log
-import com.example.rxhomework.ApplicationController
 import com.example.rxhomework.data.pojo.TokenResponse
 import com.example.rxhomework.extensions.getTag
+import com.example.rxhomework.storage.StorageManager
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.SingleSubject
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import retrofit2.HttpException
@@ -18,12 +15,12 @@ class APIKeysHolder(
     private val apiKey: String,
     private val apiSecret: String
 ) : KoinComponent {
+    private val api: PetfinderJSONAPI by inject()
+    private val storageManager: StorageManager by inject()
 
     private var accessToken: String? = null
     private var initializedIn: Date? = null
     private var expirationTime: Int = -1
-
-    private val api: PetfinderJSONAPI by inject()
 
     private val millisToSecs = 1e-3
 
@@ -73,16 +70,14 @@ class APIKeysHolder(
         // Save only of initialized. We don't need to store default nulls
         if (isInitialized()) {
             with(
-                ApplicationController.storageManager
+                storageManager
                     .tokensPreferences
                     .edit()
             ) {
                 clear()
                 putString("access_token", accessToken)
                 putString(
-                    "initialized_in",
-                    ApplicationController
-                        .storageManager
+                    "initialized_in", storageManager
                         .defaultDateTimeFormat
                         .format(initializedIn!!)
                 )
@@ -93,17 +88,15 @@ class APIKeysHolder(
     }
 
     private fun loadFromPreferences() {
-        val prefs = ApplicationController.storageManager.tokensPreferences
+        val prefs = storageManager.tokensPreferences
 
         this.accessToken = prefs.getString("access_token", null)
         val rawDate = prefs.getString("initialized_in", "")
 
         try {
-            this.initializedIn =
-                ApplicationController
-                    .storageManager
-                    .defaultDateTimeFormat
-                    .parse(rawDate!!)
+            this.initializedIn = storageManager
+                .defaultDateTimeFormat
+                .parse(rawDate!!)
         } catch (ex: ParseException) {
             this.initializedIn = null
         }
