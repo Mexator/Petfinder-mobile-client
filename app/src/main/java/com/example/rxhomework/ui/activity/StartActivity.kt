@@ -16,19 +16,17 @@ class StartActivity : AppCompatActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val loginDestination = activityNavigator.createDestination()
-            .setIntent(Intent(this, MainActivity::class.java))
+            .setIntent(Intent(this, LoginActivity::class.java))
         val mainDestination = activityNavigator.createDestination()
             .setIntent(Intent(this, MainActivity::class.java))
 
         if (isAccountExist()) {
             activityNavigator.navigate(mainDestination, null, null, null)
         } else {
-            val dest = activityNavigator.createDestination()
-                .setIntent(Intent(this, LoginActivity::class.java))
             activityNavigator.navigate(loginDestination, null, null, null)
         }
     }
 
-    private fun isAccountExist(): Boolean = true
-//        accountManager.getAccountsByType(ACCOUNT_TYPE).isNotEmpty()
+    private fun isAccountExist(): Boolean =
+        accountManager.getAccountsByType(ACCOUNT_TYPE).isNotEmpty()
 }

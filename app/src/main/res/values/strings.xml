@@ -37,5 +37,10 @@
         <item>Horse</item>
     </string-array>
 
+    <!-- Login    -->
+    <string name="hint_login">Login (email)</string>
+    <string name="hint_password">Password</string>
+    <string name="text_log_in">Log in</string>
+
     <!--    Error messages -->
 </resources>
