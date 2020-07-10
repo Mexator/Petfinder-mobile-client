@@ -4,26 +4,27 @@ import android.accounts.AccountManager
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.ActivityNavigator
 import com.example.rxhomework.Accounts.ACCOUNT_TYPE
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class StartActivity : AppCompatActivity(), KoinComponent {
     private val accountManager: AccountManager by inject()
-    private val activityNavigator = ActivityNavigator(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val loginDestination = activityNavigator.createDestination()
-            .setIntent(Intent(this, LoginActivity::class.java))
-        val mainDestination = activityNavigator.createDestination()
-            .setIntent(Intent(this, MainActivity::class.java))
+
+        val navFlags =
+            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION
 
         if (isAccountExist()) {
-            activityNavigator.navigate(mainDestination, null, null, null)
+            val mainIntent = Intent(this, MainActivity::class.java)
+            mainIntent.flags = navFlags
+            startActivity(mainIntent)
         } else {
-            activityNavigator.navigate(loginDestination, null, null, null)
+            val loginIntent = Intent(this, LoginActivity::class.java)
+            loginIntent.flags = navFlags
+            startActivity(loginIntent)
         }
     }
 

@@ -9,12 +9,15 @@ import com.example.rxhomework.data.Repository
 import com.example.rxhomework.network.NetworkService
 import com.example.rxhomework.network.api_interaction.APIKeysHolder
 import com.example.rxhomework.network.api_interaction.PetfinderJSONAPI
+import com.example.rxhomework.network.api_interaction.PetfinderUserAPI
+import com.example.rxhomework.network.interceptor.CookieInterceptor
 import com.example.rxhomework.utils.HtmlDeserializer
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.CallAdapter
 import retrofit2.Converter
@@ -22,7 +25,8 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-private const val BASE_URL = "https://api.petfinder.com/v2/"
+private const val JSON_BASE_URL = "https://api.petfinder.com/v2/"
+private const val USER_API_BASE_URL = "https://www.petfinder.com/"
 
 val networkModule = module {
 
@@ -32,7 +36,7 @@ val networkModule = module {
 
     single { createLoggingInterceptor() }
 
-    single { createClient(listOf(get<HttpLoggingInterceptor>())) }
+    single { createClient(listOf(get<HttpLoggingInterceptor>(), CookieInterceptor())) }
 
     single { createGson() }
 
@@ -40,15 +44,17 @@ val networkModule = module {
 
     single<CallAdapter.Factory> { RxJava2CallAdapterFactory.createAsync() }
 
-    single<Retrofit> { createRetrofit(get(), get(), get()) }
+    single<Retrofit>(named("JSON")) { createRetrofit(get(), get(), get(), JSON_BASE_URL) }
+    single<Retrofit>(named("User")) { createRetrofit(get(), get(), get(), USER_API_BASE_URL) }
 
-    single { get<Retrofit>().create(PetfinderJSONAPI::class.java) }
+    single { get<Retrofit>(named("JSON")).create(PetfinderJSONAPI::class.java) }
+    single { get<Retrofit>(named("User")).create(PetfinderUserAPI::class.java) }
 
     single<Repository> { ActualPetRepository(RemoteDataSource, LocalDataSource) }
 }
 
 fun createLoggingInterceptor() = HttpLoggingInterceptor()
-    .setLevel(HttpLoggingInterceptor.Level.BASIC)
+    .setLevel(HttpLoggingInterceptor.Level.BODY)
 
 fun createClient(interceptors: List<Interceptor>): OkHttpClient {
     val clientBuilder = OkHttpClient.Builder()
@@ -69,10 +75,11 @@ fun createConverterFactory(gson: Gson): GsonConverterFactory =
 fun createRetrofit(
     client: OkHttpClient,
     callAdapterFactory: CallAdapter.Factory,
-    converterFactory: Converter.Factory
+    converterFactory: Converter.Factory,
+    baseUrl: String
 ): Retrofit =
     Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(baseUrl)
         .client(client)
         .addCallAdapterFactory(callAdapterFactory)
         .addConverterFactory(converterFactory)
