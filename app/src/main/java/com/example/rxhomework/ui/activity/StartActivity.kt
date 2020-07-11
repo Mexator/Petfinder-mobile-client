@@ -1,33 +1,50 @@
 package com.example.rxhomework.ui.activity
 
-import android.accounts.AccountManager
 import android.content.Intent
 import android.os.Bundle
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
-import com.example.rxhomework.Accounts.ACCOUNT_TYPE
+import androidx.lifecycle.ViewModelProvider
+import com.example.rxhomework.R
+import com.example.rxhomework.mvvm.viewmodel.StartViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_start.*
 import org.koin.core.KoinComponent
-import org.koin.core.inject
 
 class StartActivity : AppCompatActivity(), KoinComponent {
-    private val accountManager: AccountManager by inject()
+    private lateinit var viewModel: StartViewModel
+
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_start)
 
-        val navFlags =
-            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION
+        val anim = AnimationUtils.loadAnimation(this, R.anim.animation_scale_loop)
+        splash.startAnimation(anim)
 
-        if (isAccountExist()) {
-            val mainIntent = Intent(this, MainActivity::class.java)
-            mainIntent.flags = navFlags
-            startActivity(mainIntent)
-        } else {
-            val loginIntent = Intent(this, LoginActivity::class.java)
-            loginIntent.flags = navFlags
-            startActivity(loginIntent)
-        }
+        viewModel = ViewModelProvider(this).get(StartViewModel::class.java)
+
+        setupCheckAccountSubscription()
     }
 
-    private fun isAccountExist(): Boolean =
-        accountManager.getAccountsByType(ACCOUNT_TYPE).isNotEmpty()
+    private fun setupCheckAccountSubscription() {
+        val job =
+            viewModel.checkAccountExistence()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { value ->
+                    val dest =
+                        if (value) MainActivity::class.java
+                        else LoginActivity::class.java
+
+                    val intent = Intent(this, dest)
+
+                    startActivity(intent)
+                    this.finish()
+                }
+        compositeDisposable.add(job)
+    }
 }
