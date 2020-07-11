@@ -10,13 +10,15 @@ import java.util.*
 
 object StorageManager : KoinComponent {
     private var tokensPreferences: SharedPreferences
-    private var defaultDateTimeFormat: SimpleDateFormat
+    private var authPreferences: SharedPreferences
+    private var defaultDateTimeFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US)
     private val appContext: Context by inject()
 
     init {
-        val filename = appContext.resources.getString(R.string.tokens_file_name)
-        tokensPreferences = appContext.getSharedPreferences(filename, Context.MODE_PRIVATE)
-        defaultDateTimeFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US)
+        val tokensFilename = appContext.resources.getString(R.string.tokens_file_name)
+        tokensPreferences = appContext.getSharedPreferences(tokensFilename, Context.MODE_PRIVATE)
+        val authFilename = appContext.resources.getString(R.string.auth_file_name)
+        authPreferences = appContext.getSharedPreferences(authFilename, Context.MODE_PRIVATE)
     }
 
     fun saveAPIKeys(token: String, initializedIn: Date, expiresIn: Int) {
@@ -40,5 +42,22 @@ object StorageManager : KoinComponent {
 
         val expirationTime = tokensPreferences.getInt("expires_in", -1)
         return Triple(accessToken, date, expirationTime)
+    }
+
+    fun saveCredentials(username: String, password: String) {
+        with(authPreferences.edit()) {
+            clear()
+            putString("login", username)
+            putString("password", password)
+            apply()
+        }
+    }
+
+    fun loadCredentials(): Pair<String, String> {
+        with(authPreferences) {
+            val login = getString("login", "")!!
+            val password = getString("password", "")!!
+            return login to password
+        }
     }
 }

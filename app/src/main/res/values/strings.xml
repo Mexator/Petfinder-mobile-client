@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">RxHomework</string>
-
+    <!--SharedPreferences filenames-->
     <string name="tokens_file_name">TOKENS</string>
+    <string name="auth_file_name">AUTH</string>
 
     <string name="details_name">Name</string>
     <string name="details_breed">Breed</string>

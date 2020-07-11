@@ -1,18 +1,25 @@
 package com.mexator.petfinder_client.mvvm.viewmodel
 
-import android.accounts.AccountManager
 import androidx.lifecycle.ViewModel
-import com.mexator.petfinder_client.Accounts
+import com.mexator.petfinder_client.data.Repository
+import com.mexator.petfinder_client.storage.StorageManager
 import io.reactivex.Single
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import java.util.concurrent.TimeUnit
 
 class StartViewModel : ViewModel(), KoinComponent {
-    private val accountManager: AccountManager by inject()
+    private val repository: Repository by inject()
+    private val storageManager: StorageManager by inject()
 
     fun checkAccountExistence(): Single<Boolean> {
-        return Single.just(accountManager.getAccountsByType(Accounts.ACCOUNT_TYPE).isNotEmpty())
-            .delay(1000,TimeUnit.MILLISECONDS)
+        val loginNotEmpty = storageManager.loadCredentials().first.isNotEmpty()
+        val passNotEmpty = storageManager.loadCredentials().second.isNotEmpty()
+        return Single.just(loginNotEmpty and passNotEmpty)
+    }
+
+    fun checkAccountValidity(): Single<Boolean> {
+        val (username, password) = storageManager.loadCredentials()
+        return repository.areUserCredentialsValid(username, password)
+            .onErrorReturnItem(false)
     }
 }
