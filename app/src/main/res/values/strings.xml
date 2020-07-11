@@ -42,6 +42,6 @@
     <string name="hint_password">Password</string>
     <string name="text_log_in">Log in</string>
     <string name="text_sign_in">Sing up</string>
-
+    <string name="text_error_login">Error during login. Check you login and password are entered correctly</string>
     <!--    Error messages -->
 </resources>

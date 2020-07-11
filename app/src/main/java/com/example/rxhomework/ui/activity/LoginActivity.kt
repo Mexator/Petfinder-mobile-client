@@ -11,10 +11,15 @@ import com.example.rxhomework.R
 import com.example.rxhomework.extensions.getTag
 import com.example.rxhomework.mvvm.viewmodel.LoginViewModel
 import com.example.rxhomework.network.api_interaction.CookieHolder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var viewModel: LoginViewModel
+
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,18 +32,20 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun onConfirmButtonClicked() {
-        viewModel.checkUserCredentials(
-            login_edit.editText!!.text.toString(),
-            password_edit.editText!!.text.toString(),
-            ::onCheckFinished
-        )
+        val login = login_edit.editText!!.text.toString()
+        val pass = password_edit.editText!!.text.toString()
+        val job = viewModel.isCredentialDataValid(login, pass)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { value -> onCheckFinished(value) }
+        compositeDisposable.add(job)
     }
 
     private fun onCheckFinished(checkResult: Boolean) {
         if (checkResult)
             onSuccessfulLogin()
         else
-            Log.d(getTag(), "Wrong login")
+            Toast.makeText(this, R.string.text_error_login, Toast.LENGTH_SHORT).show()
     }
 
     private fun onSuccessfulLogin() {
