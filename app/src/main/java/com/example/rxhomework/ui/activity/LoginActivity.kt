@@ -1,14 +1,12 @@
 package com.example.rxhomework.ui.activity
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.lifecycle.ViewModel
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.ActivityNavigator
-import androidx.navigation.NavOptions
 import com.example.rxhomework.R
 import com.example.rxhomework.extensions.getTag
 import com.example.rxhomework.mvvm.viewmodel.LoginViewModel
@@ -25,6 +23,7 @@ class LoginActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         button_submit.setOnClickListener { onConfirmButtonClicked() }
+        button_sign_up.setOnClickListener { onSignUpButtonClicked() }
     }
 
     private fun onConfirmButtonClicked() {
@@ -47,5 +46,13 @@ class LoginActivity : AppCompatActivity() {
         val mainIntent = Intent(this, MainActivity::class.java)
         mainIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(mainIntent)
+        finish()
+    }
+
+    private fun onSignUpButtonClicked() {
+        val signUpUrl = "https://www.petfinder.com/"
+        val browserIntent = Intent(Intent.ACTION_VIEW)
+        browserIntent.data = Uri.parse(signUpUrl)
+        startActivity(browserIntent)
     }
 }

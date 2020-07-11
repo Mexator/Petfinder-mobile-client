@@ -41,6 +41,7 @@
     <string name="hint_login">Login (email)</string>
     <string name="hint_password">Password</string>
     <string name="text_log_in">Log in</string>
+    <string name="text_sign_in">Sing up</string>
 
     <!--    Error messages -->
 </resources>
