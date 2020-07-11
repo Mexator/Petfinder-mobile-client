@@ -3,12 +3,11 @@ package com.example.rxhomework.ui.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.rxhomework.R
-import com.example.rxhomework.extensions.getTag
 import com.example.rxhomework.mvvm.viewmodel.LoginViewModel
 import com.example.rxhomework.network.api_interaction.CookieHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,8 +26,14 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
+        setupProgressSubscription()
         button_submit.setOnClickListener { onConfirmButtonClicked() }
         button_sign_up.setOnClickListener { onSignUpButtonClicked() }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 
     private fun onConfirmButtonClicked() {
@@ -61,5 +66,16 @@ class LoginActivity : AppCompatActivity() {
         val browserIntent = Intent(Intent.ACTION_VIEW)
         browserIntent.data = Uri.parse(signUpUrl)
         startActivity(browserIntent)
+    }
+
+    private fun setupProgressSubscription() {
+        val job =
+            viewModel.getProgressIndicator()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    progress.visibility = if (it) View.VISIBLE else View.GONE
+                    button_submit.isEnabled = !it
+                }
+        compositeDisposable.add(job)
     }
 }

@@ -9,6 +9,16 @@
     android:padding="16dp"
     tools:context=".ui.activity.LoginActivity">
 
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+
+        app:layout_constraintBottom_toTopOf="@id/login_edit"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -82,7 +92,7 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_sign_in"
+        android:text="@string/text_sign_up"
 
         app:layout_constraintBaseline_toBaselineOf="@+id/button_submit"
         app:layout_constraintStart_toEndOf="@+id/button_submit"
