@@ -47,4 +47,9 @@ class StartActivity : AppCompatActivity(), KoinComponent {
                 }
         compositeDisposable.add(job)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
+    }
 }
