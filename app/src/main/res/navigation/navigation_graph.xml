@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.example.rxhomework.ui.fragment.main.MainFragment"
+        android:name="com.mexator.petfinder_client.ui.fragment.main.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" />
     <fragment
         android:id="@+id/detailsFragment"
-        android:name="com.example.rxhomework.ui.fragment.details.DetailsFragment"
+        android:name="com.mexator.petfinder_client.ui.fragment.details.DetailsFragment"
         android:label="fragment_details"
         tools:layout="@layout/fragment_details" >
         <action
