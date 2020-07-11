@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.afollestad.recyclical.setup
@@ -84,6 +85,7 @@ class MainFragment : Fragment() {
                     bind(item)
                 }
             }
+            withClickListener { findNavController().navigate(R.id.action_mainFragment_to_detailsFragment) }
         }
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
