@@ -1,12 +1,12 @@
 package com.mexator.petfinder_client.ui.fragment.details
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.api.load
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.pojo.PetPhoto
 import kotlinx.android.extensions.LayoutContainer
@@ -38,7 +38,9 @@ class PetPhotoAdapter : ListAdapter<PetPhoto, PetPhotoViewHolder>(PetPhotoDiff) 
 
     override fun onBindViewHolder(holder: PetPhotoViewHolder, position: Int) {
         with(holder) {
-            photo.setImageResource(R.drawable.photo_placeholder)
+            photo.load(currentList[position].medium) {
+                placeholder(R.drawable.photo_placeholder)
+            }
         }
     }
 }
