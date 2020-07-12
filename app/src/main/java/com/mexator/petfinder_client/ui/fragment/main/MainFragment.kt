@@ -70,7 +70,10 @@ class MainFragment : Fragment() {
                     bind(item)
                 }
             }
-            withClickListener { findNavController().navigate(R.id.action_mainFragment_to_detailsFragment) }
+            withClickListener { pos ->
+                val bundle = Bundle()
+                bundle.putParcelable("content", petDataSource[pos])
+                findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundle) }
         }
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

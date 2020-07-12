@@ -9,7 +9,7 @@
         android:id="@+id/mainFragment"
         android:name="com.mexator.petfinder_client.ui.fragment.main.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" >
+        tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
@@ -18,9 +18,12 @@
         android:id="@+id/detailsFragment"
         android:name="com.mexator.petfinder_client.ui.fragment.details.DetailsFragment"
         android:label="fragment_details"
-        tools:layout="@layout/fragment_details" >
+        tools:layout="@layout/fragment_details">
         <action
             android:id="@+id/action_detailsFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <argument
+            android:name="content"
+            app:argType="com.mexator.petfinder_client.data.pojo.Pet" />
     </fragment>
 </navigation>

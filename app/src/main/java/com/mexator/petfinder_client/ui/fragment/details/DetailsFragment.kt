@@ -7,13 +7,17 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.mexator.petfinder_client.R
+import com.mexator.petfinder_client.data.pojo.Pet
+import com.mexator.petfinder_client.data.pojo.PetPhoto
 import kotlinx.android.synthetic.main.fragment_details.*
 
 class DetailsFragment : Fragment() {
+    private lateinit var pet: Pet
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            pet = it["content"] as Pet
         }
     }
 
@@ -27,8 +31,11 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val adapter = PetPhotoAdapter()
 
-        pager.adapter = PetPhotoAdapter()
+        adapter.submitList(pet.photos)
+        pager.adapter = adapter
+
         TabLayoutMediator(tabs,pager,true) { _, _ ->}.attach()
     }
 }
