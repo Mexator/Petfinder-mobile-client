@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.afollestad.recyclical.datasource.emptyDataSourceTyped
 import com.afollestad.recyclical.setup
 import com.afollestad.recyclical.withItem
 import com.mexator.petfinder_client.R
@@ -28,13 +29,14 @@ class MainFragment : Fragment() {
     private var compositeDisposable = CompositeDisposable()
 
     private val PRELOAD_MARGIN = 10
+    private val petDataSource = emptyDataSourceTyped<Pet>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d((this as Any).getTag(), "onCreate()")
+        Log.d((this as Any).getTag(), "onCreateView()")
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -46,39 +48,22 @@ class MainFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         // Setup Subscriptions
+        subscribeToViewState()
         setupRecyclerView()
         setupSpinner()
         setupSwipeRefresh()
-        subscribeToProgressIndicator()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.dispose()
-    }
-
-    // Uses progress boolean to show and hide progressBar when needed
-    private fun subscribeToProgressIndicator() {
-        val job =
-            viewModel
-                .getUpdatingStatus()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    Log.d((this as Any).getTag(), "visible = $it")
-                    pets_loading.visibility =
-                        if (it) {
-                            View.VISIBLE
-                        } else
-                            View.INVISIBLE
-                }
-        compositeDisposable.add(job)
+    override fun onDestroyView() {
+        compositeDisposable.clear()
+        super.onDestroyView()
     }
 
     private fun setupRecyclerView() {
         recyclerView.setHasFixedSize(false)
 
         recyclerView.setup {
-            withDataSource(viewModel.petDataSource)
+            withDataSource(petDataSource)
             withLayoutManager(LinearLayoutManager(context))
             withItem<Pet, PetHolder>(R.layout.result_item) {
                 onBind(::PetHolder) { _, item ->
@@ -104,24 +89,14 @@ class MainFragment : Fragment() {
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
-            Log.d((this as Any).getTag(), "swipeRefresh()")
-
-            animal_type_spinner?.selectedItem.toString().let {
-                viewModel.updatePetsList(it, null)
-            }
+            viewModel.updatePetsList(animal_type_spinner.selectedItem.toString(), null)
         }
-        val job = viewModel
-            .getUpdatingStatus()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                if (!it)
-                    swipeRefresh.isRefreshing = it
-            }
-        compositeDisposable.add(job)
     }
 
     private fun setupSpinner() {
         animal_type_spinner?.onItemSelectedListener = object : OnItemSelectedListener {
+            var first: Boolean = true
+
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             override fun onItemSelected(
@@ -130,10 +105,26 @@ class MainFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                animal_type_spinner?.selectedItem.toString().let {
-                    viewModel.updatePetsList(it, null)
-                }
+                if (!(first and viewModel.listNotEmpty))
+                    viewModel.updatePetsList(animal_type_spinner.selectedItem.toString(), null)
+                first = false
             }
         }
+    }
+
+    private fun subscribeToViewState() {
+        val job = viewModel.viewState
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { state ->
+                Log.d((this as Any).getTag(), "State update: updating = ${state.updating}")
+                petDataSource.set(state.petList, { old, new -> old.id == new.id }) { _, _ -> true }
+                pets_loading.visibility =
+                    if (state.updating) {
+                        View.VISIBLE
+                    } else
+                        View.INVISIBLE
+                if (!state.updating) swipeRefresh.isRefreshing = false
+            }
+        compositeDisposable.add(job)
     }
 }
