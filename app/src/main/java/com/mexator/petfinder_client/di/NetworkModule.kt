@@ -1,6 +1,8 @@
 package com.mexator.petfinder_client.di
 
 import android.content.Context
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.ActualPetRepository
 import com.mexator.petfinder_client.data.LocalDataSource
@@ -12,8 +14,6 @@ import com.mexator.petfinder_client.network.api_interaction.PetfinderJSONAPI
 import com.mexator.petfinder_client.network.api_interaction.PetfinderUserAPI
 import com.mexator.petfinder_client.network.interceptor.CookieInterceptor
 import com.mexator.petfinder_client.utils.HtmlDeserializer
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

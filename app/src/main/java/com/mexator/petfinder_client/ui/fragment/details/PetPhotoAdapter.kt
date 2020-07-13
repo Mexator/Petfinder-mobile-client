@@ -39,7 +39,12 @@ class PetPhotoAdapter : ListAdapter<PetPhoto, PetPhotoViewHolder>(PetPhotoDiff) 
     override fun onBindViewHolder(holder: PetPhotoViewHolder, position: Int) {
         with(holder) {
             photo.load(currentList[position].medium) {
-                placeholder(R.drawable.photo_placeholder)
+                crossfade(true)
+                placeholder(R.color.transparent)
+                this.target {
+                    progress.visibility = View.GONE
+                    photo.setImageDrawable(it)
+                }
             }
         }
     }
