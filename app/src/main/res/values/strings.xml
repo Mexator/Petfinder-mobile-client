@@ -44,5 +44,8 @@
     <string name="text_log_in">Log in</string>
     <string name="text_sign_up">Sign up</string>
     <string name="text_error_login">Error during login. Check you login and password are entered correctly</string>
+
+    <!-- Pet detail view   -->
+    <string name="text_button_ask_about">Ask about pet</string>
     <!--    Error messages -->
 </resources>

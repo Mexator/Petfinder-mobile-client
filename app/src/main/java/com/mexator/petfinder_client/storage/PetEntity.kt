@@ -33,6 +33,6 @@ data class PetEntity(
         const val BREED = "breed"
     }
     fun toPet(): Pet {
-        return Pet(id, age, name, description, type, breed, null)
+        return Pet(id, "",age, name, description, type, breed, null)
     }
 }

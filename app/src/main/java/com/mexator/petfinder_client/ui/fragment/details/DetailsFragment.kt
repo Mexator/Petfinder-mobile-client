@@ -1,5 +1,7 @@
 package com.mexator.petfinder_client.ui.fragment.details
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,11 +33,29 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = PetPhotoAdapter()
+        setupPhotos()
+        setPetFields()
+        setupButton()
+    }
 
+    private fun setupPhotos() {
+        val adapter = PetPhotoAdapter()
         adapter.submitList(pet.photos)
         pager.adapter = adapter
+        TabLayoutMediator(tabs, pager, true) { _, _ -> }.attach()
+    }
 
-        TabLayoutMediator(tabs,pager,true) { _, _ ->}.attach()
+    private fun setPetFields() {
+        detail_age.text = pet.age
+        detail_type.text = pet.type
+        detail_name.text = pet.name
+    }
+
+    private fun setupButton() {
+        button_ask_about.setOnClickListener {
+            val browserIntent = Intent(Intent.ACTION_VIEW)
+            browserIntent.data = Uri.parse(pet.url)
+            startActivity(browserIntent)
+        }
     }
 }
