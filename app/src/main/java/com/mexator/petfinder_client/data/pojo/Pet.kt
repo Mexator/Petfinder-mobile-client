@@ -8,9 +8,10 @@ data class Pet(
     val id: Long,
     val url: String,
     val age: String?,
+    val gender: String,
     val name: String,
     val description: String?,
     val type: String,
-    val breed: String?,
+    val breeds: Breed,
     val photos: List<PetPhoto>?
 ) : Parcelable

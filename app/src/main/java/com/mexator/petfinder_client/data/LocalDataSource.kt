@@ -36,7 +36,7 @@ object LocalDataSource : DataSource, KoinComponent {
                         it.name,
                         it.description,
                         it.type,
-                        it.breed,
+                        it.breeds.primary,
                         ""
                     )
                 )

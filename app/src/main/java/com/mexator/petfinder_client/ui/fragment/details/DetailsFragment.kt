@@ -3,6 +3,7 @@ package com.mexator.petfinder_client.ui.fragment.details
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.pojo.Pet
-import com.mexator.petfinder_client.data.pojo.PetPhoto
+import com.mexator.petfinder_client.extensions.getText
 import kotlinx.android.synthetic.main.fragment_details.*
 
 class DetailsFragment : Fragment() {
@@ -49,6 +50,21 @@ class DetailsFragment : Fragment() {
         detail_age.text = pet.age
         detail_type.text = pet.type
         detail_name.text = pet.name
+        detail_description.movementMethod = LinkMovementMethod.getInstance()
+        val desc = context?.getText(R.string.link_read_more, pet.url, pet.description ?: "")
+        detail_description.text = desc
+
+        detail_breed.text =
+            when {
+                pet.breeds.mixed && (pet.breeds.secondary != null) -> getString(
+                    R.string.breed_placeholder,
+                    pet.breeds.primary,
+                    pet.breeds.secondary
+                )
+                pet.breeds.unknown -> getString(R.string.breed_unknown)
+                else -> pet.breeds.primary
+            }
+        detail_gender.text = pet.gender
     }
 
     private fun setupButton() {

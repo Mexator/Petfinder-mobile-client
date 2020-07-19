@@ -32,7 +32,18 @@ data class PetEntity(
         const val TYPE = "type"
         const val BREED = "breed"
     }
+
     fun toPet(): Pet {
-        return Pet(id, "",age, name, description, type, breed, null)
+        return Pet(
+            id,
+            "",
+            age,
+            "",
+            name,
+            description,
+            type,
+            com.mexator.petfinder_client.data.pojo.Breed(breed!!, null, false, false),
+            null
+        )
     }
 }
