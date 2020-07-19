@@ -51,7 +51,9 @@ class DetailsFragment : Fragment() {
         detail_type.text = pet.type
         detail_name.text = pet.name
         detail_description.movementMethod = LinkMovementMethod.getInstance()
-        val desc = context?.getText(R.string.link_read_more, pet.url, pet.description ?: "")
+
+        val description = pet.description ?: ""
+        val desc = context?.getText(R.string.link_read_more, pet.url, description)
         detail_description.text = desc
 
         detail_breed.text =
