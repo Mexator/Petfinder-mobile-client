@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
             android:paddingHorizontal="10dp"
+            android:paddingVertical="@dimen/top_toolbar_padding"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
