@@ -50,5 +50,7 @@
     <string name="link_read_more"><![CDATA[%2$s <a href="%1$s">Read more on Petfinder</a>]]></string>
     <string name="breed_placeholder">Half %1s, \nhalf %2s</string>
     <string name="breed_unknown">Unknown breed</string>
+    <!-- Navigation drawer    -->
+    <string name="username_placeholder">%1s %2s</string>
     <!--    Error messages -->
 </resources>

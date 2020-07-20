@@ -1,7 +1,9 @@
 package com.mexator.petfinder_client.data
 
 import com.mexator.petfinder_client.data.pojo.Pet
+import com.mexator.petfinder_client.data.pojo.User
 import com.mexator.petfinder_client.network.NetworkService
+import com.mexator.petfinder_client.network.api_interaction.CookieHolder
 import com.mexator.petfinder_client.network.api_interaction.PetfinderUserAPI
 import com.mexator.petfinder_client.storage.Breed
 import com.mexator.petfinder_client.storage.Type
@@ -42,4 +44,11 @@ class ActualPetRepository(
         return petfinderUserAPI.checkLogin(body)
             .map { it.success }
     }
+
+    override fun getUser(): Single<User> {
+        return petfinderUserAPI.getMe("PFSESSION=${CookieHolder.userCookie}")
+            .map { it.user }
+    }
+
+
 }
