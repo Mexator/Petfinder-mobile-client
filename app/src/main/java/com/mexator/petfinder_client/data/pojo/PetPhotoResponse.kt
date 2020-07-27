@@ -4,7 +4,7 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class PetPhoto(
+data class PetPhotoResponse(
     val small: String,
     val medium: String,
     val large: String,

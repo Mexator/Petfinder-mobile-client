@@ -1,13 +1,14 @@
 package com.mexator.petfinder_client.di
 
 import android.content.Context
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.ActualPetRepository
-import com.mexator.petfinder_client.data.LocalDataSource
-import com.mexator.petfinder_client.data.RemoteDataSource
 import com.mexator.petfinder_client.data.Repository
+import com.mexator.petfinder_client.data.actual.ActualPetRepository
+import com.mexator.petfinder_client.data.actual.LocalDataSource
+import com.mexator.petfinder_client.data.actual.RemoteDataSource
 import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.network.api_interaction.APIKeysHolder
 import com.mexator.petfinder_client.network.api_interaction.PetfinderJSONAPI
@@ -50,7 +51,14 @@ val networkModule = module {
     single { get<Retrofit>(named("JSON")).create(PetfinderJSONAPI::class.java) }
     single { get<Retrofit>(named("User")).create(PetfinderUserAPI::class.java) }
 
-    single<Repository> { ActualPetRepository(RemoteDataSource, LocalDataSource) }
+    single<Repository> {
+        ActualPetRepository(
+            RemoteDataSource,
+            LocalDataSource
+        )
+    }
+
+    single { Glide.with(get<Context>())}
 }
 
 fun createLoggingInterceptor() = HttpLoggingInterceptor()

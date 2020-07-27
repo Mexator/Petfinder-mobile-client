@@ -69,11 +69,13 @@ class MainFragment : Fragment() {
                 onBind(::PetHolder) { _, item ->
                     bind(item)
                 }
+                onRecycled { it.dispose() }
             }
             withClickListener { pos ->
                 val bundle = Bundle()
                 bundle.putParcelable("content", petDataSource[pos])
-                findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundle) }
+                findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundle)
+            }
         }
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

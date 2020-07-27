@@ -4,8 +4,6 @@ import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.Repository
 import com.mexator.petfinder_client.data.pojo.Pet
 import com.mexator.petfinder_client.mvvm.viewstate.MainViewState
-import com.mexator.petfinder_client.storage.Breed
-import com.mexator.petfinder_client.storage.Type
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
@@ -34,7 +32,7 @@ class MainViewModel : ViewModel(), KoinComponent {
         )
     }
 
-    fun updatePetsList(type: Type?, breed: Breed?) {
+    fun updatePetsList(type: String?, breed: String?) {
         _viewState.value?.let { state ->
             if (!state.updating) {
                 _viewState.onNext(state.copy(updating = true))
@@ -61,7 +59,7 @@ class MainViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    private fun receiveUpdate(value: List<Pet>, type: Type?, breed: Breed?) {
+    private fun receiveUpdate(value: List<Pet>, type: String?, breed: String?) {
         listNotEmpty = value.isNotEmpty()
         currentPage = 1
         _viewState.onNext(

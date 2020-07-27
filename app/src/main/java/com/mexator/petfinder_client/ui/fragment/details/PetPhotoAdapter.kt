@@ -8,24 +8,24 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.api.load
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.pojo.PetPhoto
+import com.mexator.petfinder_client.data.pojo.PetPhotoResponse
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_detail_photo_page.*
 
 class PetPhotoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer
 
-val PetPhotoDiff = object : DiffUtil.ItemCallback<PetPhoto>() {
-    override fun areItemsTheSame(oldItem: PetPhoto, newItem: PetPhoto): Boolean {
+val PetPhotoDiff = object : DiffUtil.ItemCallback<PetPhotoResponse>() {
+    override fun areItemsTheSame(oldItem: PetPhotoResponse, newItem: PetPhotoResponse): Boolean {
         return oldItem.small == newItem.small
     }
 
-    override fun areContentsTheSame(oldItem: PetPhoto, newItem: PetPhoto): Boolean {
+    override fun areContentsTheSame(oldItem: PetPhotoResponse, newItem: PetPhotoResponse): Boolean {
         return oldItem == newItem
     }
 }
 
-class PetPhotoAdapter : ListAdapter<PetPhoto, PetPhotoViewHolder>(PetPhotoDiff) {
+class PetPhotoAdapter : ListAdapter<PetPhotoResponse, PetPhotoViewHolder>(PetPhotoDiff) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetPhotoViewHolder =
         PetPhotoViewHolder(
             LayoutInflater.from(parent.context)

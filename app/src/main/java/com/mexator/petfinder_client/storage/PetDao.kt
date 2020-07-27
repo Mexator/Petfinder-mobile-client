@@ -8,18 +8,27 @@ import io.reactivex.Single
 
 @Dao
 interface PetDao {
-    @Query("select * from ${PetEntity.TABLE_NAME} where ${PetEntity.BREED} = :breed and ${PetEntity.TYPE} = :type")
-    fun getPets(type: Type, breed: Breed): Single<List<PetEntity>>
-    @Query("select * from ${PetEntity.TABLE_NAME} where ${PetEntity.TYPE} = :type")
-    fun getPetsByType(type: Type): Single<List<PetEntity>>
-    @Query("select * from ${PetEntity.TABLE_NAME} where ${PetEntity.BREED} = :breed")
-    fun getPetsByBreed(breed: Breed): Single<List<PetEntity>>
+    @Query("select * from ${PetEntity.TABLE_NAME} where breed = :breed and type = :type")
+    fun getPets(type: String, breed: String): Single<List<PetEntity>>
+
+    @Query("select * from ${PetEntity.TABLE_NAME} where type = :type")
+    fun getPetsByType(type: String): Single<List<PetEntity>>
+
+    @Query("select * from ${PetEntity.TABLE_NAME} where breed = :breed")
+    fun getPetsByBreed(breed: String): Single<List<PetEntity>>
+
     @Query("select * from ${PetEntity.TABLE_NAME}")
     fun getAllPets(): Single<List<PetEntity>>
-    @Query("select * from ${PhotoEntity.TABLE_NAME}")
+
+    @Query("select * from photos")
     fun getAllPhotos(): Single<List<PhotoEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPet(pet: PetEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertPets(pets: List<PetEntity>)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPhoto(photo: PhotoEntity)
 
