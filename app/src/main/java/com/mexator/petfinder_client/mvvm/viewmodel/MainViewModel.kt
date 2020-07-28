@@ -2,7 +2,7 @@ package com.mexator.petfinder_client.mvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.Repository
-import com.mexator.petfinder_client.data.pojo.Pet
+import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.mvvm.viewstate.MainViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -59,7 +59,7 @@ class MainViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    private fun receiveUpdate(value: List<Pet>, type: String?, breed: String?) {
+    private fun receiveUpdate(value: List<PetModel>, type: String?, breed: String?) {
         listNotEmpty = value.isNotEmpty()
         currentPage = 1
         _viewState.onNext(
@@ -72,7 +72,7 @@ class MainViewModel : ViewModel(), KoinComponent {
         )
     }
 
-    private fun receivePage(state: MainViewState, page: List<Pet>) {
+    private fun receivePage(state: MainViewState, page: List<PetModel>) {
         _viewState.onNext(
             state.copy(
                 updating = false,

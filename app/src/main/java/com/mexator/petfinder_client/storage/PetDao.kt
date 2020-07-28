@@ -8,13 +8,13 @@ import io.reactivex.Single
 
 @Dao
 interface PetDao {
-    @Query("select * from ${PetEntity.TABLE_NAME} where breed = :breed and type = :type")
+    @Query("select * from ${PetEntity.TABLE_NAME} where breeds like '%' || :breed || '%' and type = :type")
     fun getPets(type: String, breed: String): Single<List<PetEntity>>
 
     @Query("select * from ${PetEntity.TABLE_NAME} where type = :type")
     fun getPetsByType(type: String): Single<List<PetEntity>>
 
-    @Query("select * from ${PetEntity.TABLE_NAME} where breed = :breed")
+    @Query("select * from ${PetEntity.TABLE_NAME} where breeds like '%' || :breed || '%'")
     fun getPetsByBreed(breed: String): Single<List<PetEntity>>
 
     @Query("select * from ${PetEntity.TABLE_NAME}")

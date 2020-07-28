@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable
 import com.mexator.petfinder_client.data.DataSource
 import com.mexator.petfinder_client.data.Repository
 import com.mexator.petfinder_client.data.model.PetModel
-import com.mexator.petfinder_client.data.pojo.Pet
+import com.mexator.petfinder_client.data.pojo.PetResponse
 import com.mexator.petfinder_client.data.pojo.User
 import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.network.api_interaction.CookieHolder
@@ -23,7 +23,7 @@ class ActualPetRepository(
     private val networkService: NetworkService by inject()
     private val petfinderUserAPI: PetfinderUserAPI by inject()
 
-    override fun getPets(animalType: String?, animalBreed: String?, page: Int?): Single<List<Pet>> {
+    override fun getPets(animalType: String?, animalBreed: String?, page: Int?): Single<List<PetModel>> {
         return networkService
             .isConnectedToInternet()
             .flatMap {
@@ -41,7 +41,7 @@ class ActualPetRepository(
 
     override fun getPetPhotos(pet: PetModel, size: DataSource.PhotoSize): Single<List<Drawable>> =
         if (pet.source == PetModel.StorageLocation.REMOTE) {
-            remoteDataSource.getPetPhotos(pet as Pet, size)
+            remoteDataSource.getPetPhotos(pet as PetResponse, size)
         } else
             localDataSource.getPetPhotos(pet as PetEntity, size)
 

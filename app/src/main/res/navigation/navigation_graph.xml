@@ -24,6 +24,6 @@
             app:destination="@id/mainFragment" />
         <argument
             android:name="content"
-            app:argType="com.mexator.petfinder_client.data.pojo.Pet" />
+            app:argType="com.mexator.petfinder_client.data.model.PetModel" />
     </fragment>
 </navigation>

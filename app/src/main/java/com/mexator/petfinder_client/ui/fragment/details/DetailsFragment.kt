@@ -10,17 +10,23 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.pojo.Pet
+import com.mexator.petfinder_client.data.DataSource
+import com.mexator.petfinder_client.data.Repository
+import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.extensions.getText
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_details.*
+import org.koin.android.ext.android.inject
 
 class DetailsFragment : Fragment() {
-    private lateinit var pet: Pet
+    private lateinit var pet: PetModel
+    private val repository: Repository by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            pet = it["content"] as Pet
+            pet = it["content"] as PetModel
         }
     }
 
@@ -41,7 +47,14 @@ class DetailsFragment : Fragment() {
 
     private fun setupPhotos() {
         val adapter = PetPhotoAdapter()
-        adapter.submitList(pet.photos)
+
+        repository.getPetPhotos(pet, DataSource.PhotoSize.MEDIUM)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { value ->
+                adapter.submitList(value)
+            }
+
         pager.adapter = adapter
         TabLayoutMediator(tabs, pager, true) { _, _ -> }.attach()
     }

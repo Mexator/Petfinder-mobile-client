@@ -1,10 +1,10 @@
 package com.mexator.petfinder_client.mvvm.viewstate
 
-import com.mexator.petfinder_client.data.pojo.Pet
+import com.mexator.petfinder_client.data.model.PetModel
 
 data class MainViewState(
     val updating: Boolean,
-    val petList: List<Pet>,
+    val petList: List<PetModel>,
     val requestType: String?,
     val requestBreed: String?
 )

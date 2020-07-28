@@ -1,31 +1,30 @@
 package com.mexator.petfinder_client.ui.fragment.details
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil.api.load
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.pojo.PetPhotoResponse
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_detail_photo_page.*
 
 class PetPhotoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer
 
-val PetPhotoDiff = object : DiffUtil.ItemCallback<PetPhotoResponse>() {
-    override fun areItemsTheSame(oldItem: PetPhotoResponse, newItem: PetPhotoResponse): Boolean {
-        return oldItem.small == newItem.small
+val PetPhotoDiff = object : DiffUtil.ItemCallback<Drawable>() {
+    override fun areItemsTheSame(oldItem: Drawable, newItem: Drawable): Boolean {
+        return false
     }
 
-    override fun areContentsTheSame(oldItem: PetPhotoResponse, newItem: PetPhotoResponse): Boolean {
-        return oldItem == newItem
+    override fun areContentsTheSame(oldItem: Drawable, newItem: Drawable): Boolean {
+        return false
     }
 }
 
-class PetPhotoAdapter : ListAdapter<PetPhotoResponse, PetPhotoViewHolder>(PetPhotoDiff) {
+class PetPhotoAdapter : ListAdapter<Drawable, PetPhotoViewHolder>(PetPhotoDiff) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetPhotoViewHolder =
         PetPhotoViewHolder(
             LayoutInflater.from(parent.context)
@@ -37,15 +36,6 @@ class PetPhotoAdapter : ListAdapter<PetPhotoResponse, PetPhotoViewHolder>(PetPho
     }
 
     override fun onBindViewHolder(holder: PetPhotoViewHolder, position: Int) {
-        with(holder) {
-            photo.load(currentList[position].medium) {
-                crossfade(true)
-                placeholder(R.color.transparent)
-                this.target {
-                    progress.visibility = View.GONE
-                    photo.setImageDrawable(it)
-                }
-            }
-        }
+        holder.photo.setImageDrawable(currentList[position])
     }
 }

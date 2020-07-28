@@ -16,9 +16,11 @@ import com.afollestad.recyclical.datasource.emptyDataSourceTyped
 import com.afollestad.recyclical.setup
 import com.afollestad.recyclical.withItem
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.pojo.Pet
+import com.mexator.petfinder_client.data.model.PetModel
+import com.mexator.petfinder_client.data.pojo.PetResponse
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.mvvm.viewmodel.MainViewModel
+import com.mexator.petfinder_client.storage.PetEntity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -29,7 +31,7 @@ class MainFragment : Fragment() {
     private var compositeDisposable = CompositeDisposable()
 
     private val PRELOAD_MARGIN = 10
-    private val petDataSource = emptyDataSourceTyped<Pet>()
+    private val petDataSource = emptyDataSourceTyped<PetModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,7 +67,13 @@ class MainFragment : Fragment() {
         recyclerView.setup {
             withDataSource(petDataSource)
             withLayoutManager(LinearLayoutManager(context))
-            withItem<Pet, PetHolder>(R.layout.result_item) {
+            withItem<PetResponse, PetHolder>(R.layout.result_item) {
+                onBind(::PetHolder) { _, item ->
+                    bind(item)
+                }
+                onRecycled { it.dispose() }
+            }
+            withItem<PetEntity, PetHolder>(R.layout.result_item) {
                 onBind(::PetHolder) { _, item ->
                     bind(item)
                 }

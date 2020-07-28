@@ -2,21 +2,27 @@ package com.mexator.petfinder_client.ui.fragment.main
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import coil.api.load
-import coil.request.RequestDisposable
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.pojo.Pet
+import com.mexator.petfinder_client.data.DataSource
+import com.mexator.petfinder_client.data.Repository
+import com.mexator.petfinder_client.data.model.PetModel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.result_item.*
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
-    LayoutContainer {
-    private var disposable: RequestDisposable? = null
+    LayoutContainer, KoinComponent {
+    private val repository: Repository by inject()
     private val LOADING_POSITION = 0
     private val PHOTO_POSITION = 1
+    private val compositeDisposable = CompositeDisposable()
 
-    fun bind(pet: Pet) {
-        disposable?.dispose()
+    fun bind(pet: PetModel) {
+        compositeDisposable.clear()
 
         petDescription.text = pet.description
         petAge.text = pet.age
@@ -25,21 +31,22 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
         no_img.visibility = View.INVISIBLE
         photoWrapper.displayedChild = LOADING_POSITION
 
-        if (pet.photos.isNullOrEmpty()) {
-            petPreview.setImageResource(R.drawable.photo_placeholder)
-            no_img.visibility = View.VISIBLE
-            photoWrapper.displayedChild = PHOTO_POSITION
-        } else {
-            disposable = petPreview.load(pet.photos[0].small) {
-                this.target {
-                    petPreview.setImageDrawable(it)
-                    photoWrapper.displayedChild = PHOTO_POSITION
-                }
+        petPreview.setImageResource(R.drawable.photo_placeholder)
+        no_img.visibility = View.VISIBLE
+
+        val job = repository.getPetPhotos(pet, DataSource.PhotoSize.SMALL)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { list ->
+                if (list.isNotEmpty())
+                    petPreview.setImageDrawable(list[0])
+
+                photoWrapper.displayedChild = PHOTO_POSITION
             }
-        }
+        compositeDisposable.add(job)
     }
 
     fun dispose() {
-        disposable?.dispose()
+        compositeDisposable.clear()
     }
 }
