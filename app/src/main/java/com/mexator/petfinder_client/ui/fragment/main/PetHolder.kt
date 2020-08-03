@@ -37,10 +37,10 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
         val job = repository.getPetPhotos(pet, DataSource.PhotoSize.SMALL)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { list ->
-                if (list.isNotEmpty())
+            .subscribe { list, error ->
+                if (error == null && !list.isNullOrEmpty()) {
                     petPreview.setImageDrawable(list[0])
-
+                }
                 photoWrapper.displayedChild = PHOTO_POSITION
             }
         compositeDisposable.add(job)
