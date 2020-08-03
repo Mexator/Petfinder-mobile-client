@@ -2,17 +2,22 @@ package com.mexator.petfinder_client.data
 
 import android.graphics.drawable.Drawable
 import com.mexator.petfinder_client.data.model.PetModel
+import com.mexator.petfinder_client.data.pojo.SearchParameters
 import io.reactivex.Single
 
 interface PetRepository {
-    fun getPets(
-        animalType: String? = null,
-        animalBreed: String? = null,
-        page: Int? = 1
-    ): Single<List<PetModel>>
+    /**
+     * Set passed arguments as searched now
+     */
+    fun setupPageSource(params: SearchParameters)
 
-    fun getPetPhotos(
-        pet: PetModel,
-        size: DataSource.PhotoSize
-    ): Single<List<Drawable>>
+    /**
+     * Return next page of current pet search
+     */
+    fun getPage(page: Int): Single<List<PetModel>>
+
+    /**
+     * Return observable list of photos for given pet.
+     */
+    fun getPetPhotos(pet: PetModel, size: DataSource.PhotoSize): Single<List<Drawable>>
 }

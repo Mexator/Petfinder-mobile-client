@@ -6,6 +6,7 @@ import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.pojo.PetResponse
+import com.mexator.petfinder_client.data.pojo.SearchParameters
 import com.mexator.petfinder_client.data.pojo.User
 import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.network.api_interaction.CookieHolder
@@ -20,29 +21,24 @@ class ActualRepository(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
 ) : PetRepository, UserDataRepository, KoinComponent {
-
-    // To check network status
+    // Dependencies
     private val networkService: NetworkService by inject()
     private val petfinderUserAPI: PetfinderUserAPI by inject()
+    // State variables
+    private var parameters: SearchParameters = SearchParameters(null, null)
+    private var useRemoteSource: Boolean? = null
 
-    override fun getPets(
-        animalType: String?, animalBreed: String?,
-        page: Int?
-    ): Single<List<PetModel>> {
+    override fun setupPageSource(params: SearchParameters) {
+        parameters = params.copy()
+        useRemoteSource = null
+    }
 
-        return networkService
-            .isConnectedToInternet()
-            .flatMap {
-                if (it) {
-                    remoteDataSource.getPets(
-                        animalType,
-                        animalBreed,
-                        page ?: 1
-                    ).doOnSuccess { list -> localDataSource.savePets(list, page == 1) }
-                } else {
-                    localDataSource.getPets(animalType, animalBreed, page)
-                }
-            }
+    override fun getPage(page: Int): Single<List<PetModel>> {
+        return when (useRemoteSource) {
+            null -> loadFirstPage()
+            true -> remoteDataSource.getPets(parameters, page)
+            false -> localDataSource.getPets(parameters, page)
+        }.map { it as List<PetModel> }
     }
 
     override fun getPetPhotos(pet: PetModel, size: DataSource.PhotoSize): Single<List<Drawable>> =
@@ -51,7 +47,6 @@ class ActualRepository(
                 .doOnSuccess { localDataSource.savePetPhotos(it, pet.id) }
         } else
             localDataSource.getPetPhotos(pet as PetEntity, size)
-
 
     override fun areUserCredentialsValid(username: String, password: String): Single<Boolean> {
         val body = MultipartBody.Builder()
@@ -65,7 +60,22 @@ class ActualRepository(
     }
 
     override fun getUser(): Single<User> {
-        return petfinderUserAPI.getMe("PFSESSION=${CookieHolder.userCookie}")
+        return petfinderUserAPI
+            .getMe("PFSESSION=${CookieHolder.userCookie}")
             .map { it.user }
+    }
+
+    private fun loadFirstPage(): Single<List<PetModel>> {
+        return networkService
+            .isConnectedToInternet()
+            .doOnSuccess { useRemoteSource = it }
+            .flatMap {
+                if (it) {
+                    remoteDataSource.getPets(parameters, 1)
+                        .doOnSuccess { list -> localDataSource.savePets(list, true) }
+                } else {
+                    localDataSource.getPets(parameters, 1)
+                }
+            }
     }
 }

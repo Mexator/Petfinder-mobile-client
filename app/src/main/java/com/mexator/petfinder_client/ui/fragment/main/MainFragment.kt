@@ -102,7 +102,7 @@ class MainFragment : Fragment() {
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
-            viewModel.updatePetsList(animal_type_spinner.selectedItem.toString(), null)
+            viewModel.reloadPetsList(animal_type_spinner.selectedItem.toString(), null)
         }
     }
 
@@ -119,7 +119,7 @@ class MainFragment : Fragment() {
                 id: Long
             ) {
                 if (!(first and viewModel.listNotEmpty))
-                    viewModel.updatePetsList(animal_type_spinner.selectedItem.toString(), null)
+                    viewModel.reloadPetsList(animal_type_spinner.selectedItem.toString(), null)
                 first = false
             }
         }

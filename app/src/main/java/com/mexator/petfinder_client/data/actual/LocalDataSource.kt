@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.toBitmap
 import com.mexator.petfinder_client.data.DataSource
 import com.mexator.petfinder_client.data.pojo.PetResponse
+import com.mexator.petfinder_client.data.pojo.SearchParameters
 import com.mexator.petfinder_client.storage.*
 import io.reactivex.Single
 import org.koin.core.KoinComponent
@@ -17,24 +18,21 @@ object LocalDataSource : DataSource<PetEntity>, KoinComponent {
     private val db = PetDB.getDatabaseInstance(appContext)
 
     override fun getPets(
-        animalType: String?,
-        animalBreed: String?,
-        page: Int?
-    ): Single<List<PetEntity>> =
-        with(db.petDao()) {
+        parameters: SearchParameters,
+        page: Int
+    ): Single<List<PetEntity>> {
+        val type = parameters.animalType
+        val breed = parameters.animalBreed
+
+        return with(db.petDao()) {
             when {
-                animalType == null && animalBreed == null -> getAllPets(toOffset(page))
-                animalType == null && animalBreed != null -> getPetsByBreed(
-                    animalBreed,
-                    toOffset(page)
-                )
-                animalType != null && animalBreed == null -> getPetsByType(
-                    animalType,
-                    toOffset(page)
-                )
-                else -> getPets(animalType!!, animalBreed!!, toOffset(page))
+                type == null && breed == null -> getAllPets(toOffset(page))
+                type == null && breed != null -> getPetsByBreed(breed, toOffset(page))
+                type != null && breed == null -> getPetsByType(type, toOffset(page))
+                else -> getPets(type!!, breed!!, toOffset(page))
             }
         }
+    }
 
     private var count = 0
     fun savePets(content: List<PetResponse>, clear: Boolean) {

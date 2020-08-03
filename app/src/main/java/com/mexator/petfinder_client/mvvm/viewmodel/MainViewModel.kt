@@ -3,6 +3,7 @@ package com.mexator.petfinder_client.mvvm.viewmodel
 import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.model.PetModel
+import com.mexator.petfinder_client.data.pojo.SearchParameters
 import com.mexator.petfinder_client.mvvm.viewstate.MainViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -32,12 +33,14 @@ class MainViewModel : ViewModel(), KoinComponent {
         )
     }
 
-    fun updatePetsList(type: String?, breed: String?) {
+    fun reloadPetsList(type: String?, breed: String?) {
         _viewState.value?.let { state ->
             if (!state.updating) {
                 _viewState.onNext(state.copy(updating = true))
+                currentPage = 1
+                petRepository.setupPageSource(SearchParameters(type, breed))
 
-                val job = petRepository.getPets(type, breed)
+                val job = petRepository.getPage(currentPage)
                     .subscribe { value ->
                         receiveUpdate(value, type, breed)
                     }
@@ -50,7 +53,7 @@ class MainViewModel : ViewModel(), KoinComponent {
         _viewState.value?.let { state ->
             if (!state.updating) {
                 _viewState.onNext(state.copy(updating = true))
-                val job = petRepository.getPets(state.requestType, state.requestBreed, ++currentPage)
+                val job = petRepository.getPage(++currentPage)
                     .subscribe { value ->
                         receivePage(state, value)
                     }
@@ -61,7 +64,6 @@ class MainViewModel : ViewModel(), KoinComponent {
 
     private fun receiveUpdate(value: List<PetModel>, type: String?, breed: String?) {
         listNotEmpty = value.isNotEmpty()
-        currentPage = 1
         _viewState.onNext(
             MainViewState(
                 updating = false,
