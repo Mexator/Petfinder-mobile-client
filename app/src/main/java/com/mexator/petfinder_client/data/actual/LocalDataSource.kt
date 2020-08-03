@@ -17,10 +17,7 @@ object LocalDataSource : DataSource<PetEntity>, KoinComponent {
     private val appContext: Context by inject()
     private val db = PetDB.getDatabaseInstance(appContext)
 
-    override fun getPets(
-        parameters: SearchParameters,
-        page: Int
-    ): Single<List<PetEntity>> {
+    override fun getPets(parameters: SearchParameters, page: Int): Single<List<PetEntity>> {
         val type = parameters.animalType
         val breed = parameters.animalBreed
 
@@ -35,9 +32,13 @@ object LocalDataSource : DataSource<PetEntity>, KoinComponent {
     }
 
     private var count = 0
+
+    /**
+     * Save pets to DB
+     */
     fun savePets(content: List<PetResponse>, clear: Boolean) {
-        if (clear) {
-            deletePets()
+        if (clear and content.isNotEmpty()) {
+            deletePets(content[0].type)
             count = 0
         }
         val entities = content.map {
@@ -70,6 +71,15 @@ object LocalDataSource : DataSource<PetEntity>, KoinComponent {
         }
     }
 
+    override fun getPetPhotos(
+        pet: PetEntity,
+        size: DataSource.PhotoSize
+    ): Single<List<Drawable>> {
+        return db.photoDao()
+            .getPhotos(pet.id)
+            .map { list -> list.map { element -> Drawable.createFromPath(element.fileName)!! } }
+    }
+
     private fun randomName(nameLen: Int = 32): String {
         var name = BigInteger(nameLen, Random())
             .toString()
@@ -80,17 +90,8 @@ object LocalDataSource : DataSource<PetEntity>, KoinComponent {
         return name
     }
 
-    override fun getPetPhotos(
-        pet: PetEntity,
-        size: DataSource.PhotoSize
-    ): Single<List<Drawable>> {
-        return db.photoDao()
-            .getPhotos(pet.id)
-            .map { list -> list.map { element -> Drawable.createFromPath(element.fileName)!! } }
-    }
-
-    private fun deletePets() {
-        db.petDao().clearPetsTable()
+    private fun deletePets(type: String) {
+        db.petDao().clearPetsTable(type)
     }
 
     private fun toOffset(page: Int?, itemsOnPage: Int = PAGINATION_OFFSET): Int =

@@ -20,7 +20,6 @@ object RemoteDataSource : DataSource<PetResponse>, KoinComponent {
     private val glideRM: RequestManager by inject()
 
     override fun getPets(parameters: SearchParameters, page: Int): Single<List<PetResponse>> {
-
         return keyholder
             .getAccessToken()
             .flatMap {
