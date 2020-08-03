@@ -23,7 +23,11 @@ class ActualPetRepository(
     private val networkService: NetworkService by inject()
     private val petfinderUserAPI: PetfinderUserAPI by inject()
 
-    override fun getPets(animalType: String?, animalBreed: String?, page: Int?): Single<List<PetModel>> {
+    override fun getPets(
+        animalType: String?, animalBreed: String?,
+        page: Int?
+    ): Single<List<PetModel>> {
+
         return networkService
             .isConnectedToInternet()
             .flatMap {
@@ -42,6 +46,7 @@ class ActualPetRepository(
     override fun getPetPhotos(pet: PetModel, size: DataSource.PhotoSize): Single<List<Drawable>> =
         if (pet.source == PetModel.StorageLocation.REMOTE) {
             remoteDataSource.getPetPhotos(pet as PetResponse, size)
+                .doOnSuccess { localDataSource.savePetPhotos(it, pet.id) }
         } else
             localDataSource.getPetPhotos(pet as PetEntity, size)
 
@@ -61,6 +66,4 @@ class ActualPetRepository(
         return petfinderUserAPI.getMe("PFSESSION=${CookieHolder.userCookie}")
             .map { it.user }
     }
-
-
 }

@@ -8,6 +8,7 @@ import androidx.room.RoomDatabase
 @Database(entities = [PetEntity::class, PhotoEntity::class], version = DB_VERSION)
 abstract class PetDB : RoomDatabase() {
     abstract fun petDao(): PetDao
+    abstract fun photoDao(): PhotoDao
 
     companion object {
         @Volatile

@@ -2,9 +2,11 @@ package com.mexator.petfinder_client.storage
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Bitmap
 import com.mexator.petfinder_client.R
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -59,5 +61,17 @@ object StorageManager : KoinComponent {
             val password = getString("password", "")!!
             return login to password
         }
+    }
+
+    fun writeBitmapTo(filename: String, bitmap: Bitmap): String {
+        val file = File(appContext.cacheDir.absolutePath + filename)
+
+        with(file.outputStream()) {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, this)
+            flush()
+            close()
+        }
+
+        return file.absolutePath
     }
 }
