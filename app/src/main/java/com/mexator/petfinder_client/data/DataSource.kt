@@ -6,9 +6,9 @@ import io.reactivex.Single
 
 interface DataSource<PM : PetModel> {
     fun getPets(
-        animalType: String? = null,
-        animalBreed: String? = null,
-        page: Int = 1
+        animalType: String?,
+        animalBreed: String?,
+        page: Int?
     ): Single<List<PM>>
 
     fun getPetPhotos(pet: PM, size: PhotoSize): Single<List<Drawable>>

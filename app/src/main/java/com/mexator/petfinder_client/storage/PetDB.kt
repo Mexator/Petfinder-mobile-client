@@ -29,6 +29,6 @@ abstract class PetDB : RoomDatabase() {
 }
 
 
-const val DB_VERSION = 3
+const val DB_VERSION = 4
 
 const val DB_NAME = "Pets.db"

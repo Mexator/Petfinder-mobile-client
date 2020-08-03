@@ -32,9 +32,9 @@ class ActualPetRepository(
                         animalType,
                         animalBreed,
                         page ?: 1
-                    ).doOnSuccess { list -> localDataSource.savePets(list) }
+                    ).doOnSuccess { list -> localDataSource.savePets(list, page == 1) }
                 } else {
-                    localDataSource.getPets(animalType, animalBreed)
+                    localDataSource.getPets(animalType, animalBreed, page)
                 }
             }
     }

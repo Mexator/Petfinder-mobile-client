@@ -18,7 +18,7 @@ object RemoteDataSource : DataSource<PetResponse>, KoinComponent {
     private val petfinderAPI: PetfinderJSONAPI by inject()
     private val glideRM: RequestManager by inject()
 
-    override fun getPets(animalType: String?, animalBreed: String?, page: Int): Single<List<PetResponse>> {
+    override fun getPets(animalType: String?, animalBreed: String?, page: Int?): Single<List<PetResponse>> {
 
         return keyholder
             .getAccessToken()

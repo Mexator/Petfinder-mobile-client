@@ -20,7 +20,8 @@ data class PetEntity(
     override val name: String,
     override val description: String?,
     override val type: String,
-    override val breeds: Breed
+    override val breeds: Breed,
+    val orderArrived: Int
 ) : PetModel() {
     override val source: StorageLocation
         get() = StorageLocation.LOCAL
