@@ -4,7 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.DataSource
-import com.mexator.petfinder_client.data.Repository
+import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -16,7 +16,7 @@ import org.koin.core.inject
 
 class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer, KoinComponent {
-    private val repository: Repository by inject()
+    private val petRepository: PetRepository by inject()
     private val LOADING_POSITION = 0
     private val PHOTO_POSITION = 1
     private val compositeDisposable = CompositeDisposable()
@@ -34,7 +34,7 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
         petPreview.setImageResource(R.drawable.photo_placeholder)
         no_img.visibility = View.VISIBLE
 
-        val job = repository.getPetPhotos(pet, DataSource.PhotoSize.SMALL)
+        val job = petRepository.getPetPhotos(pet, DataSource.PhotoSize.SMALL)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { list, error ->

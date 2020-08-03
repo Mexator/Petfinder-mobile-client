@@ -2,7 +2,8 @@ package com.mexator.petfinder_client.data.actual
 
 import android.graphics.drawable.Drawable
 import com.mexator.petfinder_client.data.DataSource
-import com.mexator.petfinder_client.data.Repository
+import com.mexator.petfinder_client.data.PetRepository
+import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.pojo.PetResponse
 import com.mexator.petfinder_client.data.pojo.User
@@ -15,11 +16,12 @@ import okhttp3.MultipartBody
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class ActualPetRepository(
+class ActualRepository(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource
-) : Repository, KoinComponent {
+) : PetRepository, UserDataRepository, KoinComponent {
 
+    // To check network status
     private val networkService: NetworkService by inject()
     private val petfinderUserAPI: PetfinderUserAPI by inject()
 

@@ -1,7 +1,7 @@
 package com.mexator.petfinder_client.mvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.mexator.petfinder_client.data.Repository
+import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.mvvm.viewstate.MainViewState
 import io.reactivex.Observable
@@ -12,7 +12,7 @@ import org.koin.core.inject
 
 class MainViewModel : ViewModel(), KoinComponent {
     var listNotEmpty = false
-    private val repository: Repository by inject()
+    private val petRepository: PetRepository by inject()
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -37,7 +37,7 @@ class MainViewModel : ViewModel(), KoinComponent {
             if (!state.updating) {
                 _viewState.onNext(state.copy(updating = true))
 
-                val job = repository.getPets(type, breed)
+                val job = petRepository.getPets(type, breed)
                     .subscribe { value ->
                         receiveUpdate(value, type, breed)
                     }
@@ -50,7 +50,7 @@ class MainViewModel : ViewModel(), KoinComponent {
         _viewState.value?.let { state ->
             if (!state.updating) {
                 _viewState.onNext(state.copy(updating = true))
-                val job = repository.getPets(state.requestType, state.requestBreed, ++currentPage)
+                val job = petRepository.getPets(state.requestType, state.requestBreed, ++currentPage)
                     .subscribe { value ->
                         receivePage(state, value)
                     }

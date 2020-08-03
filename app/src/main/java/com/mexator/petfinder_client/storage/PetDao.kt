@@ -11,16 +11,17 @@ private const val fromPetTableQueryStr = "select * from ${PetEntity.TABLE_NAME} 
 private const val orderbyQueryStr = "order by orderArrived "
 private const val limitQueryStr = "limit :offset, $PAGINATION_OFFSET"
 
-private const val whereBothQueryStr = "where breeds like '%' || :breed || '%' and type = :type "
-private const val whereTypeQueryStr = "where type = :type "
-private const val whereBreedQueryStr = "where breeds like '%' || :breed || '%' "
+private const val whereTypeQueryStr = "type = :type "
+private const val whereBreedQueryStr = "breeds like '%' || :breed || '%' "
 
 @Dao
 interface PetDao {
 
     @Query(
         fromPetTableQueryStr +
-                whereBothQueryStr +
+                "where " +
+                whereBreedQueryStr + "and " +
+                whereTypeQueryStr +
                 orderbyQueryStr +
                 limitQueryStr
     )
@@ -28,6 +29,7 @@ interface PetDao {
 
     @Query(
         fromPetTableQueryStr +
+                "where " +
                 whereTypeQueryStr +
                 orderbyQueryStr +
                 limitQueryStr
@@ -36,6 +38,7 @@ interface PetDao {
 
     @Query(
         fromPetTableQueryStr +
+                "where " +
                 whereBreedQueryStr +
                 orderbyQueryStr +
                 limitQueryStr
