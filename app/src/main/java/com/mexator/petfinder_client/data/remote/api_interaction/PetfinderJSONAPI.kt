@@ -1,7 +1,7 @@
-package com.mexator.petfinder_client.network.api_interaction
+package com.mexator.petfinder_client.data.remote.api_interaction
 
-import com.mexator.petfinder_client.data.pojo.AnimalsResponse
-import com.mexator.petfinder_client.data.pojo.TokenResponse
+import com.mexator.petfinder_client.data.remote.pojo.AnimalsResponse
+import com.mexator.petfinder_client.data.remote.pojo.TokenResponse
 import io.reactivex.Single
 import retrofit2.http.*
 

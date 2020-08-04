@@ -1,4 +1,4 @@
-package com.mexator.petfinder_client.data.pojo
+package com.mexator.petfinder_client.data.remote.pojo
 
 data class AnimalsResponse(
     val animals: ArrayList<PetResponse>,

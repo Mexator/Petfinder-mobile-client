@@ -1,6 +1,6 @@
 package com.mexator.petfinder_client.network.interceptor
 
-import com.mexator.petfinder_client.network.api_interaction.CookieHolder
+import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import okhttp3.Interceptor
 import okhttp3.Response
 

@@ -3,7 +3,7 @@ package com.mexator.petfinder_client.mvvm.viewmodel
 import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.model.PetModel
-import com.mexator.petfinder_client.data.pojo.SearchParameters
+import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
 import com.mexator.petfinder_client.mvvm.viewstate.MainViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable

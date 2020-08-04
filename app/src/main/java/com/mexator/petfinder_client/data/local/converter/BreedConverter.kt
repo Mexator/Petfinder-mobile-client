@@ -1,7 +1,7 @@
-package com.mexator.petfinder_client.storage.converter
+package com.mexator.petfinder_client.data.local.converter
 
 import androidx.room.TypeConverter
-import com.mexator.petfinder_client.data.pojo.Breed
+import com.mexator.petfinder_client.data.remote.pojo.Breed
 
 class BreedConverter {
     @TypeConverter

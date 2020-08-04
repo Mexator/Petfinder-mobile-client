@@ -1,7 +1,7 @@
 package com.mexator.petfinder_client.data.model
 
 import android.os.Parcelable
-import com.mexator.petfinder_client.data.pojo.Breed
+import com.mexator.petfinder_client.data.remote.pojo.Breed
 
 abstract class PetModel: Parcelable {
     abstract val id: Long

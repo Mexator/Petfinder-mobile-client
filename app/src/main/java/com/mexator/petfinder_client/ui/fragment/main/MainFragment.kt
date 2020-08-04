@@ -17,10 +17,10 @@ import com.afollestad.recyclical.setup
 import com.afollestad.recyclical.withItem
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.model.PetModel
-import com.mexator.petfinder_client.data.pojo.PetResponse
+import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.mvvm.viewmodel.MainViewModel
-import com.mexator.petfinder_client.storage.PetEntity
+import com.mexator.petfinder_client.data.local.PetEntity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main.*

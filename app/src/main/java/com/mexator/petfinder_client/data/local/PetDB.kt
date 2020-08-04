@@ -1,4 +1,4 @@
-package com.mexator.petfinder_client.storage
+package com.mexator.petfinder_client.data.local
 
 import android.content.Context
 import androidx.room.Database
@@ -15,14 +15,20 @@ abstract class PetDB : RoomDatabase() {
         private var databaseInstance: PetDB? = null
 
         fun getDatabaseInstance(mContext: Context): PetDB =
-            databaseInstance ?: synchronized(this) {
-                databaseInstance ?: buildDatabaseInstance(mContext).also {
+            databaseInstance
+                ?: synchronized(this) {
+                databaseInstance
+                    ?: buildDatabaseInstance(
+                        mContext
+                    ).also {
                     databaseInstance = it
                 }
             }
 
         private fun buildDatabaseInstance(mContext: Context) =
-            Room.databaseBuilder(mContext, PetDB::class.java, DB_NAME)
+            Room.databaseBuilder(mContext, PetDB::class.java,
+                DB_NAME
+            )
                 .fallbackToDestructiveMigration()
                 .build()
 

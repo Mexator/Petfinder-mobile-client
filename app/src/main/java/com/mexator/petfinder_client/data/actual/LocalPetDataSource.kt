@@ -5,8 +5,12 @@ import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.toBitmap
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.mexator.petfinder_client.data.PetDataSource
-import com.mexator.petfinder_client.data.pojo.PetResponse
-import com.mexator.petfinder_client.data.pojo.SearchParameters
+import com.mexator.petfinder_client.data.local.PAGINATION_OFFSET
+import com.mexator.petfinder_client.data.local.PetDB
+import com.mexator.petfinder_client.data.local.PetEntity
+import com.mexator.petfinder_client.data.local.PhotoEntity
+import com.mexator.petfinder_client.data.remote.pojo.PetResponse
+import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
 import com.mexator.petfinder_client.storage.*
 import com.mexator.petfinder_client.utils.WhereBuilder
 import io.reactivex.Single
@@ -71,7 +75,12 @@ object LocalPetDataSource : PetDataSource<PetEntity>, KoinComponent {
 
         for (photo in photos) {
             val path = StorageManager.writeBitmapTo(randomName(), photo.toBitmap())
-            db.photoDao().savePhoto(PhotoEntity(path, petId))
+            db.photoDao().savePhoto(
+                PhotoEntity(
+                    path,
+                    petId
+                )
+            )
         }
     }
 

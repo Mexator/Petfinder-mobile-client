@@ -1,4 +1,4 @@
-package com.mexator.petfinder_client.storage
+package com.mexator.petfinder_client.data.local
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

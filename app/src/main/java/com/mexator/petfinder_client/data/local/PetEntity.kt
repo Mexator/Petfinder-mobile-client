@@ -1,11 +1,11 @@
-package com.mexator.petfinder_client.storage
+package com.mexator.petfinder_client.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.mexator.petfinder_client.data.model.PetModel
-import com.mexator.petfinder_client.data.pojo.Breed
-import com.mexator.petfinder_client.storage.converter.BreedConverter
+import com.mexator.petfinder_client.data.remote.pojo.Breed
+import com.mexator.petfinder_client.data.local.converter.BreedConverter
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize

@@ -2,7 +2,7 @@ package com.mexator.petfinder_client.data
 
 import android.graphics.drawable.Drawable
 import com.mexator.petfinder_client.data.model.PetModel
-import com.mexator.petfinder_client.data.pojo.SearchParameters
+import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
 import io.reactivex.Single
 
 /**

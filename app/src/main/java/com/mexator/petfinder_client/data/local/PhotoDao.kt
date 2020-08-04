@@ -1,4 +1,4 @@
-package com.mexator.petfinder_client.storage
+package com.mexator.petfinder_client.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert

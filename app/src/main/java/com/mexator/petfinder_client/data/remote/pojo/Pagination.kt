@@ -1,4 +1,4 @@
-package com.mexator.petfinder_client.data.pojo
+package com.mexator.petfinder_client.data.remote.pojo
 
 import com.google.gson.annotations.SerializedName
 

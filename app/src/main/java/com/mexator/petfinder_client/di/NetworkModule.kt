@@ -11,9 +11,9 @@ import com.mexator.petfinder_client.data.actual.ActualRepository
 import com.mexator.petfinder_client.data.actual.LocalPetDataSource
 import com.mexator.petfinder_client.data.actual.RemotePetDataSource
 import com.mexator.petfinder_client.network.NetworkService
-import com.mexator.petfinder_client.network.api_interaction.APIKeysHolder
-import com.mexator.petfinder_client.network.api_interaction.PetfinderJSONAPI
-import com.mexator.petfinder_client.network.api_interaction.PetfinderUserAPI
+import com.mexator.petfinder_client.data.remote.api_interaction.APIKeysHolder
+import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderJSONAPI
+import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderUserAPI
 import com.mexator.petfinder_client.network.interceptor.CookieInterceptor
 import com.mexator.petfinder_client.utils.HtmlDeserializer
 import okhttp3.Interceptor

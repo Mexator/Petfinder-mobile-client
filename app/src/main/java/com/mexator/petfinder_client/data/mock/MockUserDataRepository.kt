@@ -1,7 +1,7 @@
 package com.mexator.petfinder_client.data.mock
 
 import com.mexator.petfinder_client.data.UserDataRepository
-import com.mexator.petfinder_client.data.pojo.User
+import com.mexator.petfinder_client.data.remote.pojo.User
 import io.reactivex.Single
 
 class MockUserDataRepository : UserDataRepository {

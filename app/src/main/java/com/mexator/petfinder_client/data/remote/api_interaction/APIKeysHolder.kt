@@ -1,7 +1,7 @@
-package com.mexator.petfinder_client.network.api_interaction
+package com.mexator.petfinder_client.data.remote.api_interaction
 
 import android.util.Log
-import com.mexator.petfinder_client.data.pojo.TokenResponse
+import com.mexator.petfinder_client.data.remote.pojo.TokenResponse
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.storage.StorageManager
 import io.reactivex.Single

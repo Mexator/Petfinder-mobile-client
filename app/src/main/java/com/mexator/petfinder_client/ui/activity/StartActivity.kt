@@ -3,12 +3,10 @@ package com.mexator.petfinder_client.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.animation.AnimationUtils
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.mvvm.viewmodel.StartViewModel
-import com.mexator.petfinder_client.network.api_interaction.CookieHolder
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
