@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,18 +16,17 @@ import com.afollestad.recyclical.datasource.emptyDataSourceTyped
 import com.afollestad.recyclical.setup
 import com.afollestad.recyclical.withItem
 import com.mexator.petfinder_client.R
+import com.mexator.petfinder_client.data.local.PetEntity
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.mvvm.viewmodel.PetSearchViewModel
-import com.mexator.petfinder_client.data.local.PetEntity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main.*
 
 class PetSearchFragment : Fragment() {
-    private lateinit var viewModel: PetSearchViewModel
-
+    private val viewModel: PetSearchViewModel by viewModels()
     private var compositeDisposable = CompositeDisposable()
 
     private val PRELOAD_MARGIN = 10
@@ -45,9 +44,6 @@ class PetSearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d((this as Any).getTag(), "onViewCreated()")
-
-        // Setup ViewModel
-        viewModel = ViewModelProvider(this).get(PetSearchViewModel::class.java)
 
         // Setup Subscriptions
         subscribeToViewState()
