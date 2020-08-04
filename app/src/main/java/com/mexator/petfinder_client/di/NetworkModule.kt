@@ -5,14 +5,15 @@ import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.Repository
-import com.mexator.petfinder_client.data.actual.ActualPetRepository
-import com.mexator.petfinder_client.data.actual.LocalDataSource
-import com.mexator.petfinder_client.data.actual.RemoteDataSource
+import com.mexator.petfinder_client.data.PetRepository
+import com.mexator.petfinder_client.data.UserDataRepository
+import com.mexator.petfinder_client.data.actual.ActualRepository
+import com.mexator.petfinder_client.data.actual.LocalPetDataSource
+import com.mexator.petfinder_client.data.actual.RemotePetDataSource
 import com.mexator.petfinder_client.network.NetworkService
-import com.mexator.petfinder_client.network.api_interaction.APIKeysHolder
-import com.mexator.petfinder_client.network.api_interaction.PetfinderJSONAPI
-import com.mexator.petfinder_client.network.api_interaction.PetfinderUserAPI
+import com.mexator.petfinder_client.data.remote.api_interaction.APIKeysHolder
+import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderJSONAPI
+import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderUserAPI
 import com.mexator.petfinder_client.network.interceptor.CookieInterceptor
 import com.mexator.petfinder_client.utils.HtmlDeserializer
 import okhttp3.Interceptor
@@ -51,14 +52,18 @@ val networkModule = module {
     single { get<Retrofit>(named("JSON")).create(PetfinderJSONAPI::class.java) }
     single { get<Retrofit>(named("User")).create(PetfinderUserAPI::class.java) }
 
-    single<Repository> {
-        ActualPetRepository(
-            RemoteDataSource,
-            LocalDataSource
+    single {
+        ActualRepository(
+            RemotePetDataSource,
+            LocalPetDataSource
         )
     }
 
-    single { Glide.with(get<Context>())}
+    single<PetRepository> { get<ActualRepository>() }
+    single<UserDataRepository> { get<ActualRepository>() }
+
+
+    single { Glide.with(get<Context>()) }
 }
 
 fun createLoggingInterceptor() = HttpLoggingInterceptor()

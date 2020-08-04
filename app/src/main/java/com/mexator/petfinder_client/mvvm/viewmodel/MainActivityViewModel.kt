@@ -1,7 +1,7 @@
 package com.mexator.petfinder_client.mvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.mexator.petfinder_client.data.Repository
+import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.mvvm.viewstate.MainActivityViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -14,7 +14,7 @@ class MainActivityViewModel : ViewModel(), KoinComponent {
     private val _viewState: BehaviorSubject<MainActivityViewState> = BehaviorSubject.create()
     val viewState: Observable<MainActivityViewState> get() = _viewState
 
-    private val repository: Repository by inject()
+    private val repository: UserDataRepository by inject()
 
     private var compositeDisposable = CompositeDisposable()
 

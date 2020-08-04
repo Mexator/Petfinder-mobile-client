@@ -8,25 +8,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.DataSource
-import com.mexator.petfinder_client.data.Repository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.extensions.getText
+import com.mexator.petfinder_client.mvvm.viewmodel.PetDetailViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.fragment_details.*
-import org.koin.android.ext.android.inject
 
 class DetailsFragment : Fragment() {
-    private lateinit var pet: PetModel
-    private val repository: Repository by inject()
+    private val viewModel: PetDetailViewModel by viewModels()
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
-            pet = it["content"] as PetModel
+            viewModel.setPet(it["content"] as PetModel)
         }
     }
 
@@ -40,26 +41,33 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupPhotos()
-        setPetFields()
-        setupButton()
+        subscribeToViewState()
+        viewModel.loadPhotos()
     }
 
-    private fun setupPhotos() {
-        val adapter = PetPhotoAdapter()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        compositeDisposable.clear()
+    }
 
-        repository.getPetPhotos(pet, DataSource.PhotoSize.MEDIUM)
+    private fun subscribeToViewState() {
+        val job = viewModel.viewState
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { value ->
-                adapter.submitList(value)
+            .subscribe {
+                setPetFields(it.petData)
+                setupButton(it.petData.url)
+                // TODO: Говнокод
+                val adapter = PetPhotoAdapter()
+                adapter.submitList(it.photos)
+                pager.adapter = adapter
+                TabLayoutMediator(tabs, pager, true) { _, _ -> }.attach()
             }
 
-        pager.adapter = adapter
-        TabLayoutMediator(tabs, pager, true) { _, _ -> }.attach()
+        compositeDisposable.add(job)
     }
 
-    private fun setPetFields() {
+    private fun setPetFields(pet: PetModel) {
         detail_age.text = pet.age
         detail_type.text = pet.type
         detail_name.text = pet.name
@@ -82,10 +90,10 @@ class DetailsFragment : Fragment() {
         detail_gender.text = pet.gender
     }
 
-    private fun setupButton() {
+    private fun setupButton(petUrl: String) {
         button_ask_about.setOnClickListener {
             val browserIntent = Intent(Intent.ACTION_VIEW)
-            browserIntent.data = Uri.parse(pet.url)
+            browserIntent.data = Uri.parse(petUrl)
             startActivity(browserIntent)
         }
     }

@@ -1,14 +1,14 @@
 package com.mexator.petfinder_client.mvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.mexator.petfinder_client.data.Repository
+import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.storage.StorageManager
 import io.reactivex.Single
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class StartViewModel : ViewModel(), KoinComponent {
-    private val repository: Repository by inject()
+    private val repository: UserDataRepository by inject()
     private val storageManager: StorageManager by inject()
 
     fun checkAccountExistence(): Single<Boolean> {
