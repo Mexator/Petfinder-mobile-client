@@ -12,7 +12,7 @@ import io.reactivex.subjects.BehaviorSubject
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class MainViewModel : ViewModel(), KoinComponent {
+class PetSearchViewModel : ViewModel(), KoinComponent {
     var listNotEmpty = false
     private val petRepository: PetRepository by inject()
 

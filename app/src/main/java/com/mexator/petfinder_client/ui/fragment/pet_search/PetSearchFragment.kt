@@ -1,4 +1,4 @@
-package com.mexator.petfinder_client.ui.fragment.main
+package com.mexator.petfinder_client.ui.fragment.pet_search
 
 import android.os.Bundle
 import android.util.Log
@@ -19,14 +19,14 @@ import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.extensions.getTag
-import com.mexator.petfinder_client.mvvm.viewmodel.MainViewModel
+import com.mexator.petfinder_client.mvvm.viewmodel.PetSearchViewModel
 import com.mexator.petfinder_client.data.local.PetEntity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main.*
 
-class MainFragment : Fragment() {
-    private lateinit var viewModel: MainViewModel
+class PetSearchFragment : Fragment() {
+    private lateinit var viewModel: PetSearchViewModel
 
     private var compositeDisposable = CompositeDisposable()
 
@@ -47,7 +47,7 @@ class MainFragment : Fragment() {
         Log.d((this as Any).getTag(), "onViewCreated()")
 
         // Setup ViewModel
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(PetSearchViewModel::class.java)
 
         // Setup Subscriptions
         subscribeToViewState()
