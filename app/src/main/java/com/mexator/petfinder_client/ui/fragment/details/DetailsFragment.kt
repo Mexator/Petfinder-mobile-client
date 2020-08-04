@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.DataSource
+import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.extensions.getText
@@ -48,7 +48,7 @@ class DetailsFragment : Fragment() {
     private fun setupPhotos() {
         val adapter = PetPhotoAdapter()
 
-        petRepository.getPetPhotos(pet, DataSource.PhotoSize.MEDIUM)
+        petRepository.getPetPhotos(pet, PetDataSource.PhotoSize.MEDIUM)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { value ->

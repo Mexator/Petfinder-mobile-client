@@ -2,7 +2,7 @@ package com.mexator.petfinder_client.data.actual
 
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.RequestManager
-import com.mexator.petfinder_client.data.DataSource
+import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.pojo.AnimalsResponse
 import com.mexator.petfinder_client.data.pojo.PetPhotoResponse
 import com.mexator.petfinder_client.data.pojo.PetResponse
@@ -14,7 +14,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 
-object RemoteDataSource : DataSource<PetResponse>, KoinComponent {
+object RemotePetDataSource : PetDataSource<PetResponse>, KoinComponent {
     private val keyholder: APIKeysHolder by inject()
     private val petfinderAPI: PetfinderJSONAPI by inject()
     private val glideRM: RequestManager by inject()
@@ -35,20 +35,20 @@ object RemoteDataSource : DataSource<PetResponse>, KoinComponent {
 
     override fun getPetPhotos(
         pet: PetResponse,
-        size: DataSource.PhotoSize
+        size: PetDataSource.PhotoSize
     ): Single<List<Drawable>> {
         return Single.just(pet)
             .map { it.photos }
             .map { it.map { photoResponse -> loadSinglePhoto(photoResponse, size) } }
     }
 
-    private fun loadSinglePhoto(photoResponse: PetPhotoResponse, size: DataSource.PhotoSize)
+    private fun loadSinglePhoto(photoResponse: PetPhotoResponse, size: PetDataSource.PhotoSize)
             : Drawable {
         return glideRM.load(
             when (size) {
-                DataSource.PhotoSize.SMALL -> photoResponse.small
-                DataSource.PhotoSize.MEDIUM -> photoResponse.medium
-                DataSource.PhotoSize.LARGE -> photoResponse.large
+                PetDataSource.PhotoSize.SMALL -> photoResponse.small
+                PetDataSource.PhotoSize.MEDIUM -> photoResponse.medium
+                PetDataSource.PhotoSize.LARGE -> photoResponse.large
                 else -> photoResponse.full
             }
         ).submit().get()

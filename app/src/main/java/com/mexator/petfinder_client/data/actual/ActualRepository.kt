@@ -1,13 +1,15 @@
 package com.mexator.petfinder_client.data.actual
 
 import android.graphics.drawable.Drawable
-import com.mexator.petfinder_client.data.DataSource
+import android.util.Log
+import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.pojo.PetResponse
 import com.mexator.petfinder_client.data.pojo.SearchParameters
 import com.mexator.petfinder_client.data.pojo.User
+import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.network.api_interaction.CookieHolder
 import com.mexator.petfinder_client.network.api_interaction.PetfinderUserAPI
@@ -18,17 +20,18 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class ActualRepository(
-    private val remoteDataSource: RemoteDataSource,
-    private val localDataSource: LocalDataSource
+    private val remoteDataSource: RemotePetDataSource,
+    private val localDataSource: LocalPetDataSource
 ) : PetRepository, UserDataRepository, KoinComponent {
     // Dependencies
     private val networkService: NetworkService by inject()
     private val petfinderUserAPI: PetfinderUserAPI by inject()
+
     // State variables
     private var parameters: SearchParameters = SearchParameters(null, null)
     private var useRemoteSource: Boolean? = null
 
-    override fun setupPageSource(params: SearchParameters) {
+    override fun submitQuery(params: SearchParameters) {
         parameters = params.copy()
         useRemoteSource = null
     }
@@ -41,7 +44,7 @@ class ActualRepository(
         }.map { it as List<PetModel> }
     }
 
-    override fun getPetPhotos(pet: PetModel, size: DataSource.PhotoSize): Single<List<Drawable>> =
+    override fun getPetPhotos(pet: PetModel, size: PetDataSource.PhotoSize): Single<List<Drawable>> =
         if (pet.source == PetModel.StorageLocation.REMOTE) {
             remoteDataSource.getPetPhotos(pet as PetResponse, size)
                 .doOnSuccess { localDataSource.savePetPhotos(it, pet.id) }
@@ -65,10 +68,19 @@ class ActualRepository(
             .map { it.user }
     }
 
+    /**
+     * Load first page and determine source for next ones
+     */
     private fun loadFirstPage(): Single<List<PetModel>> {
         return networkService
             .isConnectedToInternet()
-            .doOnSuccess { useRemoteSource = it }
+            .doOnSuccess {
+                useRemoteSource = it
+                Log.d(
+                    getTag(),
+                    "Using " + if (useRemoteSource!!) "remote" else "local" + " source of pets"
+                )
+            }
             .flatMap {
                 if (it) {
                     remoteDataSource.getPets(parameters, 1)

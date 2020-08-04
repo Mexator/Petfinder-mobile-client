@@ -9,7 +9,7 @@ interface PetRepository {
     /**
      * Set passed arguments as searched now
      */
-    fun setupPageSource(params: SearchParameters)
+    fun submitQuery(params: SearchParameters)
 
     /**
      * Return next page of current pet search
@@ -19,5 +19,5 @@ interface PetRepository {
     /**
      * Return observable list of photos for given pet.
      */
-    fun getPetPhotos(pet: PetModel, size: DataSource.PhotoSize): Single<List<Drawable>>
+    fun getPetPhotos(pet: PetModel, size: PetDataSource.PhotoSize): Single<List<Drawable>>
 }

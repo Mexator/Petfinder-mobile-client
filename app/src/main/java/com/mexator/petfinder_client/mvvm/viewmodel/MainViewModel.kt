@@ -7,6 +7,7 @@ import com.mexator.petfinder_client.data.pojo.SearchParameters
 import com.mexator.petfinder_client.mvvm.viewstate.MainViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -38,9 +39,10 @@ class MainViewModel : ViewModel(), KoinComponent {
             if (!state.updating) {
                 _viewState.onNext(state.copy(updating = true))
                 currentPage = 1
-                petRepository.setupPageSource(SearchParameters(type, breed))
+                petRepository.submitQuery(SearchParameters(type, breed))
 
                 val job = petRepository.getPage(currentPage)
+                    .subscribeOn(Schedulers.io())
                     .subscribe { value ->
                         receiveUpdate(value, type, breed)
                     }
@@ -54,6 +56,7 @@ class MainViewModel : ViewModel(), KoinComponent {
             if (!state.updating) {
                 _viewState.onNext(state.copy(updating = true))
                 val job = petRepository.getPage(++currentPage)
+                    .subscribeOn(Schedulers.io())
                     .subscribe { value ->
                         receivePage(state, value)
                     }

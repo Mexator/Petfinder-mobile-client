@@ -3,7 +3,7 @@ package com.mexator.petfinder_client.ui.fragment.main
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.DataSource
+import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -34,7 +34,7 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
         petPreview.setImageResource(R.drawable.photo_placeholder)
         no_img.visibility = View.VISIBLE
 
-        val job = petRepository.getPetPhotos(pet, DataSource.PhotoSize.SMALL)
+        val job = petRepository.getPetPhotos(pet, PetDataSource.PhotoSize.SMALL)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { list, error ->
