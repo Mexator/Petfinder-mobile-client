@@ -3,6 +3,7 @@ package com.mexator.petfinder_client.data
 import android.graphics.drawable.Drawable
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
+import io.reactivex.Maybe
 import io.reactivex.Single
 
 interface PetRepository {
@@ -20,4 +21,5 @@ interface PetRepository {
      * Return observable list of photos for given pet.
      */
     fun getPetPhotos(pet: PetModel, size: PetDataSource.PhotoSize): Single<List<Drawable>>
+    fun getPetPreview(pet: PetModel): Maybe<Drawable>
 }

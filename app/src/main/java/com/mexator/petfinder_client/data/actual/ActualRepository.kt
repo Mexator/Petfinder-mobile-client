@@ -14,6 +14,7 @@ import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderUserAPI
 import com.mexator.petfinder_client.data.local.PetEntity
+import io.reactivex.Maybe
 import io.reactivex.Single
 import okhttp3.MultipartBody
 import org.koin.core.KoinComponent
@@ -50,6 +51,13 @@ class ActualRepository(
                 .doOnSuccess { localDataSource.savePetPhotos(it, pet.id) }
         } else
             localDataSource.getPetPhotos(pet as PetEntity, size)
+
+    override fun getPetPreview(pet: PetModel): Maybe<Drawable> =
+        if (pet.source == PetModel.StorageLocation.REMOTE) {
+            remoteDataSource.getPetPreview(pet as PetResponse)
+        } else
+            localDataSource.getPetPreview(pet as PetEntity)
+
 
     override fun areUserCredentialsValid(username: String, password: String): Single<Boolean> {
         val body = MultipartBody.Builder()

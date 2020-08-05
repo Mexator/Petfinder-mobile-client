@@ -1,11 +1,13 @@
 package com.mexator.petfinder_client.ui.fragment.pet_search
 
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.model.PetModel
+import com.mexator.petfinder_client.extensions.getTag
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -31,18 +33,21 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
         no_img.visibility = View.INVISIBLE
         photoWrapper.displayedChild = LOADING_POSITION
 
-        petPreview.setImageResource(R.drawable.photo_placeholder)
-        no_img.visibility = View.VISIBLE
-
-        val job = petRepository.getPetPhotos(pet, PetDataSource.PhotoSize.SMALL)
+        val job = petRepository.getPetPreview(pet)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { list, error ->
-                if (error == null && !list.isNullOrEmpty()) {
-                    petPreview.setImageDrawable(list[0])
-                }
-                photoWrapper.displayedChild = PHOTO_POSITION
-            }
+            .doOnEvent { _, _ -> photoWrapper.displayedChild = PHOTO_POSITION }
+            .subscribe(
+                { value -> petPreview.setImageDrawable(value) },
+                {
+                    Log.d(getTag(), "Failed to load preview for pet with id=${pet.id}")
+                    petPreview.setImageResource(R.drawable.photo_placeholder)
+                },
+                {
+                    petPreview.setImageResource(R.drawable.photo_placeholder)
+                    no_img.visibility = View.VISIBLE
+                })
+
         compositeDisposable.add(job)
     }
 

@@ -3,12 +3,13 @@ package com.mexator.petfinder_client.data.actual
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.RequestManager
 import com.mexator.petfinder_client.data.PetDataSource
+import com.mexator.petfinder_client.data.remote.api_interaction.APIKeysHolder
+import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderJSONAPI
 import com.mexator.petfinder_client.data.remote.pojo.AnimalsResponse
 import com.mexator.petfinder_client.data.remote.pojo.PetPhotoResponse
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
-import com.mexator.petfinder_client.data.remote.api_interaction.APIKeysHolder
-import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderJSONAPI
+import io.reactivex.Maybe
 import io.reactivex.Single
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -38,9 +39,17 @@ object RemotePetDataSource : PetDataSource<PetResponse>, KoinComponent {
         size: PetDataSource.PhotoSize
     ): Single<List<Drawable>> {
         return Single.just(pet)
-            .map { it.photos }
+            .map { it.photos ?: emptyList() }
             .map { it.map { photoResponse -> loadSinglePhoto(photoResponse, size) } }
     }
+
+    override fun getPetPreview(pet: PetResponse): Maybe<Drawable> =
+        if (pet.photos.isNullOrEmpty())
+            Maybe.empty()
+        else
+            Maybe.just(pet.photos[0])
+                .map { loadSinglePhoto(it, PetDataSource.PhotoSize.SMALL) }
+
 
     private fun loadSinglePhoto(photoResponse: PetPhotoResponse, size: PetDataSource.PhotoSize)
             : Drawable {
