@@ -12,7 +12,7 @@ interface PhotoDao {
     fun savePhoto(photoEntity: PhotoEntity)
 
     @Query("select * from ${PhotoEntity.TABLE_NAME} where petId = :petId")
-    fun getPhotos(petId: Long): Single<List<PhotoEntity>>
+    fun getPhotos(petId: Long): List<PhotoEntity>
 
     @Query("select * from ${PhotoEntity.TABLE_NAME} where petId = :petId limit 1")
     fun getPreview(petId: Long): Maybe<PhotoEntity>

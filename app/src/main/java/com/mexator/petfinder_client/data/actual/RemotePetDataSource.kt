@@ -37,10 +37,9 @@ object RemotePetDataSource : PetDataSource<PetResponse>, KoinComponent {
     override fun getPetPhotos(
         pet: PetResponse,
         size: PetDataSource.PhotoSize
-    ): Single<List<Drawable>> {
-        return Single.just(pet)
-            .map { it.photos ?: emptyList() }
-            .map { it.map { photoResponse -> loadSinglePhoto(photoResponse, size) } }
+    ): List<Single<Drawable>> {
+        val list = pet.photos ?: emptyList()
+        return list.map { Single.defer { Single.just(loadSinglePhoto(it, size)) } }
     }
 
     override fun getPetPreview(pet: PetResponse): Maybe<Drawable> =

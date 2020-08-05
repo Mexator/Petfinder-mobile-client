@@ -13,7 +13,7 @@ import io.reactivex.Single
 interface PetDataSource<PM : PetModel> {
     fun getPets(parameters: SearchParameters, page: Int): Single<List<PM>>
 
-    fun getPetPhotos(pet: PM, size: PhotoSize): Single<List<Drawable>>
+    fun getPetPhotos(pet: PM, size: PhotoSize): List<Single<Drawable>>
     fun getPetPreview(pet: PM): Maybe<Drawable>
 
     enum class PhotoSize { SMALL, MEDIUM, LARGE, FULL }

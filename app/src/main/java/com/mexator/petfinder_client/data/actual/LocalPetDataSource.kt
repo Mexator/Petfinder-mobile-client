@@ -43,10 +43,10 @@ object LocalPetDataSource : PetDataSource<PetEntity>, KoinComponent {
     override fun getPetPhotos(
         pet: PetEntity,
         size: PetDataSource.PhotoSize
-    ): Single<List<Drawable>> {
+    ): List<Single<Drawable>> {
         return db.photoDao()
             .getPhotos(pet.id)
-            .map { list -> list.map { element -> Drawable.createFromPath(element.fileName)!! } }
+            .map { Single.just(Drawable.createFromPath(it.fileName)!!) }
     }
 
     override fun getPetPreview(pet: PetEntity): Maybe<Drawable> =
@@ -88,14 +88,18 @@ object LocalPetDataSource : PetDataSource<PetEntity>, KoinComponent {
     fun savePetPhotos(photos: List<Drawable>, petId: Long) {
 
         for (photo in photos) {
-            val path = StorageManager.writeBitmapTo(randomName(), photo.toBitmap())
-            db.photoDao().savePhoto(
-                PhotoEntity(
-                    path,
-                    petId
-                )
-            )
+            savePetPhoto(photo, petId)
         }
+    }
+
+    fun savePetPhoto(photo: Drawable, petId: Long) {
+        val path = StorageManager.writeBitmapTo(randomName(), photo.toBitmap())
+        db.photoDao().savePhoto(
+            PhotoEntity(
+                path,
+                petId
+            )
+        )
     }
 
 

@@ -20,6 +20,6 @@ interface PetRepository {
     /**
      * Return observable list of photos for given pet.
      */
-    fun getPetPhotos(pet: PetModel, size: PetDataSource.PhotoSize): Single<List<Drawable>>
+    fun getPetPhotos(pet: PetModel, size: PetDataSource.PhotoSize): List<Single<Drawable>>
     fun getPetPreview(pet: PetModel): Maybe<Drawable>
 }

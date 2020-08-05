@@ -45,10 +45,10 @@ class ActualRepository(
         }.map { it as List<PetModel> }
     }
 
-    override fun getPetPhotos(pet: PetModel, size: PetDataSource.PhotoSize): Single<List<Drawable>> =
+    override fun getPetPhotos(pet: PetModel, size: PetDataSource.PhotoSize): List<Single<Drawable>> =
         if (pet.source == PetModel.StorageLocation.REMOTE) {
             remoteDataSource.getPetPhotos(pet as PetResponse, size)
-                .doOnSuccess { localDataSource.savePetPhotos(it, pet.id) }
+                .onEach { it.doOnSuccess { photo -> localDataSource.savePetPhoto(photo, pet.id) } }
         } else
             localDataSource.getPetPhotos(pet as PetEntity, size)
 
