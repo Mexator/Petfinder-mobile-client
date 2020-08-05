@@ -11,8 +11,9 @@ import com.mexator.petfinder_client.data.local.PetEntity
 import com.mexator.petfinder_client.data.local.PhotoEntity
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
-import com.mexator.petfinder_client.storage.*
+import com.mexator.petfinder_client.storage.StorageManager
 import com.mexator.petfinder_client.utils.WhereBuilder
+import io.reactivex.Maybe
 import io.reactivex.Single
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -38,6 +39,19 @@ object LocalPetDataSource : PetDataSource<PetEntity>, KoinComponent {
         )
         return db.petDao().getPetsRawQuery(query)
     }
+
+    override fun getPetPhotos(
+        pet: PetEntity,
+        size: PetDataSource.PhotoSize
+    ): List<Single<Drawable>> {
+        return db.photoDao()
+            .getPhotos(pet.id)
+            .map { Single.just(Drawable.createFromPath(it.fileName)!!) }
+    }
+
+    override fun getPetPreview(pet: PetEntity): Maybe<Drawable> =
+        db.photoDao().getPreview(pet.id)
+            .map { Drawable.createFromPath(it.fileName) }
 
     private var count = 0
 
@@ -74,24 +88,20 @@ object LocalPetDataSource : PetDataSource<PetEntity>, KoinComponent {
     fun savePetPhotos(photos: List<Drawable>, petId: Long) {
 
         for (photo in photos) {
-            val path = StorageManager.writeBitmapTo(randomName(), photo.toBitmap())
-            db.photoDao().savePhoto(
-                PhotoEntity(
-                    path,
-                    petId
-                )
-            )
+            savePetPhoto(photo, petId)
         }
     }
 
-    override fun getPetPhotos(
-        pet: PetEntity,
-        size: PetDataSource.PhotoSize
-    ): Single<List<Drawable>> {
-        return db.photoDao()
-            .getPhotos(pet.id)
-            .map { list -> list.map { element -> Drawable.createFromPath(element.fileName)!! } }
+    fun savePetPhoto(photo: Drawable, petId: Long) {
+        val path = StorageManager.writeBitmapTo(randomName(), photo.toBitmap())
+        db.photoDao().savePhoto(
+            PhotoEntity(
+                path,
+                petId
+            )
+        )
     }
+
 
     private fun randomName(nameLen: Int = 32): String {
         var name = BigInteger(nameLen, Random())
