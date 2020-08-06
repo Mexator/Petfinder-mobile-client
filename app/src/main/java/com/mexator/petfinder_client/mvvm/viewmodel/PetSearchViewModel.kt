@@ -43,7 +43,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
     fun reloadPetsList(type: String?, breed: String?) {
         _viewState.value?.let { state ->
             if (!state.updating) {
-                _viewState.onNext(state.copy(updating = true))
+                _viewState.onNext(state.copy(updating = true, petList = emptyList()))
                 currentPage = 1
                 petRepository.submitQuery(SearchParameters(type, breed))
 

@@ -77,12 +77,14 @@ class PetSearchFragment : Fragment() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
 
-                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-                val lastPosition = layoutManager.findLastVisibleItemPosition()
-                val totalItems = layoutManager.itemCount
-                if (totalItems - lastPosition <= PRELOAD_MARGIN) {
-                    viewModel.loadNextPage()
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastPosition = layoutManager.findLastVisibleItemPosition()
+                    val totalItems = layoutManager.itemCount
+                    if (totalItems - lastPosition <= PRELOAD_MARGIN) {
+                        viewModel.loadNextPage()
+                    }
                 }
             }
         })
@@ -119,6 +121,7 @@ class PetSearchFragment : Fragment() {
             .subscribe { state ->
                 Log.d((this as Any).getTag(), "State update: updating = ${state.updating}")
                 dataAdapter.submitList(state.petList)
+                dataAdapter.notifyDataSetChanged()
 
                 loadingAdapter.showed = state.updating
                 errorAdapter.error = state.error
