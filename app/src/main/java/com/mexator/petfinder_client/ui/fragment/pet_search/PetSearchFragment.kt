@@ -39,7 +39,7 @@ class PetSearchFragment : Fragment() {
         PetLoadingAdapter()
     private val errorAdapter =
         PetErrorAdapter {
-            refresh()
+            viewModel.loadNextPage()
         }
 
     override fun onCreateView(

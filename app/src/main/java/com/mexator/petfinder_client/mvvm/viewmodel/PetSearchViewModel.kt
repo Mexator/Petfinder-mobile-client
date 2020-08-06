@@ -47,12 +47,10 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
                 currentPage = 1
                 petRepository.submitQuery(SearchParameters(type, breed))
 
-                val job = petRepository.getPage(currentPage)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe({ value ->
-                        receiveUpdate(value, type, breed)
-                    }) { error -> receivePageError(state, error.message ?: "Unknown error") }
-                compositeDisposable.add(job)
+                requestPage(
+                    { value -> receiveUpdate(value, type, breed) },
+                    { error -> receivePageError(state, error.message ?: "Unknown error") }
+                )
             }
         }
     }
@@ -61,14 +59,19 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
         _viewState.value?.let { state ->
             if (!state.updating && !noMorePages) {
                 _viewState.onNext(state.copy(updating = true))
-                val job = petRepository.getPage(++currentPage)
-                    .subscribeOn(Schedulers.io())
-                    .subscribe({ value ->
-                        receivePage(state, value)
-                    }) { error -> receivePageError(state, error.message ?: "Unknown error") }
-                compositeDisposable.add(job)
+                requestPage(
+                    { value -> receivePage(state, value) },
+                    { error -> receivePageError(state, error.message ?: "Unknown error") })
             }
         }
+    }
+
+    private fun requestPage(onSuccess: (List<PetModel>) -> Unit, onError: (Throwable) -> Unit) {
+        val job = petRepository.getPage(currentPage + 1)
+            .subscribeOn(Schedulers.io())
+            .doOnSuccess { currentPage++ }
+            .subscribe(onSuccess, onError)
+        compositeDisposable.add(job)
     }
 
     private fun receiveUpdate(value: List<PetModel>, type: String?, breed: String?) {
