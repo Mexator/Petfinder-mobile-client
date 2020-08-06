@@ -13,7 +13,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.extensions.getText
-import com.mexator.petfinder_client.mvvm.viewmodel.PetDetailViewModel
+import com.mexator.petfinder_client.mvvm.viewmodel.pet_detail.PetDetailViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_details.*
 class DetailsFragment : Fragment() {
     private val viewModel: PetDetailViewModel by viewModels()
     private val compositeDisposable = CompositeDisposable()
+    private val adapter = PetPhotoAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +43,7 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         subscribeToViewState()
+        setupPhotoPager()
         viewModel.loadPhotos()
     }
 
@@ -57,14 +59,17 @@ class DetailsFragment : Fragment() {
             .subscribe {
                 setPetFields(it.petData)
                 setupButton(it.petData.url)
-                // TODO: Говнокод
-                val adapter = PetPhotoAdapter()
+
                 adapter.submitList(it.photos)
-                pager.adapter = adapter
-                TabLayoutMediator(tabs, pager, true) { _, _ -> }.attach()
             }
 
         compositeDisposable.add(job)
+    }
+
+    private fun setupPhotoPager() {
+        adapter.setHasStableIds(true)
+        pager.adapter = adapter
+        TabLayoutMediator(tabs, pager, true) { _, _ -> }.attach()
     }
 
     private fun setPetFields(pet: PetModel) {

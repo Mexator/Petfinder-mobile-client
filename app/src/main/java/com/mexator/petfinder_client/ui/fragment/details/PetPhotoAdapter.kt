@@ -1,6 +1,7 @@
 package com.mexator.petfinder_client.ui.fragment.details
 
-import android.graphics.drawable.Drawable
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,23 +9,26 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mexator.petfinder_client.R
+import com.mexator.petfinder_client.extensions.getTag
+import com.mexator.petfinder_client.mvvm.viewmodel.pet_detail.PhotoWrapper
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_detail_photo_page.*
 
 class PetPhotoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer
 
-private object PetPhotoDiff: DiffUtil.ItemCallback<Drawable>() {
-    override fun areItemsTheSame(oldItem: Drawable, newItem: Drawable): Boolean {
-        return false
+private object PetPhotoDiff: DiffUtil.ItemCallback<PhotoWrapper>() {
+    override fun areItemsTheSame(oldItem: PhotoWrapper, newItem: PhotoWrapper): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: Drawable, newItem: Drawable): Boolean {
-        return false
+    @SuppressLint("DiffUtilEquals")
+    override fun areContentsTheSame(oldItem: PhotoWrapper, newItem: PhotoWrapper): Boolean {
+        return (oldItem.photo == null) xor (newItem.photo == null)
     }
 }
 
-class PetPhotoAdapter : ListAdapter<Drawable, PetPhotoViewHolder>(PetPhotoDiff) {
+class PetPhotoAdapter : ListAdapter<PhotoWrapper, PetPhotoViewHolder>(PetPhotoDiff) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetPhotoViewHolder =
         PetPhotoViewHolder(
             LayoutInflater.from(parent.context)
@@ -36,6 +40,11 @@ class PetPhotoAdapter : ListAdapter<Drawable, PetPhotoViewHolder>(PetPhotoDiff) 
     }
 
     override fun onBindViewHolder(holder: PetPhotoViewHolder, position: Int) {
-        holder.photo.setImageDrawable(currentList[position])
+        holder.photo.setImageDrawable(currentList[position].photo)
+        Log.d(getTag(), currentList[position].id.toString())
+    }
+
+    override fun getItemId(position: Int): Long {
+        return currentList[position].id
     }
 }

@@ -1,4 +1,4 @@
-package com.mexator.petfinder_client.mvvm.viewmodel
+package com.mexator.petfinder_client.mvvm.viewmodel.pet_detail
 
 import android.graphics.drawable.Drawable
 import android.util.Log
@@ -35,7 +35,10 @@ class PetDetailViewModel : ViewModel(), KoinComponent {
                 compositeDisposable.add(job)
             }
 
-            val nullList = List<Drawable?>(list.size) { null }
+            val nullList = mutableListOf<PhotoWrapper>()
+            for (i in list.indices) {
+                nullList.add(PhotoWrapper(null, i.toLong()))
+            }
             _viewState.onNext(state.copy(photos = nullList, photoCount = list.size))
         }
     }
@@ -51,8 +54,7 @@ class PetDetailViewModel : ViewModel(), KoinComponent {
     private fun receivePhoto(photo: Drawable, index: Int) {
         _viewState.value?.let {
             val newPhotoList = it.photos.toMutableList()
-            newPhotoList[index] = photo
-
+            newPhotoList[index] = newPhotoList[index].copy(photo = photo)
             _viewState.onNext(it.copy(photos = newPhotoList))
         }
     }
