@@ -45,6 +45,9 @@
     <string name="text_sign_up">Sign up</string>
     <string name="text_error_login">Error during login. Check you login and password are entered correctly</string>
 
+    <!-- Pet search view   -->
+    <string name="text_loading">Loading…</string>
+
     <!-- Pet detail view   -->
     <string name="text_button_ask_about">Ask about pet</string>
     <string name="link_read_more"><![CDATA[%2$s <a href="%1$s">Read more on Petfinder</a>]]></string>

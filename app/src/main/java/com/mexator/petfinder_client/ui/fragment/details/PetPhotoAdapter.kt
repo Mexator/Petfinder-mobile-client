@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.item_detail_photo_page.*
 class PetPhotoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer
 
-val PetPhotoDiff = object : DiffUtil.ItemCallback<Drawable>() {
+private object PetPhotoDiff: DiffUtil.ItemCallback<Drawable>() {
     override fun areItemsTheSame(oldItem: Drawable, newItem: Drawable): Boolean {
         return false
     }

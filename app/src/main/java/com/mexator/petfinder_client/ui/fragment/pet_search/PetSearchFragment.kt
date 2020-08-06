@@ -10,17 +10,14 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.recyclical.datasource.emptyDataSourceTyped
-import com.afollestad.recyclical.setup
-import com.afollestad.recyclical.withItem
 import com.mexator.petfinder_client.R
-import com.mexator.petfinder_client.data.local.PetEntity
-import com.mexator.petfinder_client.data.model.PetModel
-import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.mvvm.viewmodel.PetSearchViewModel
+import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetAdapter
+import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetLoadingAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -30,7 +27,15 @@ class PetSearchFragment : Fragment() {
     private var compositeDisposable = CompositeDisposable()
 
     private val PRELOAD_MARGIN = 10
-    private val petDataSource = emptyDataSourceTyped<PetModel>()
+
+    private val dataAdapter =
+        PetAdapter { item ->
+            val bundle = Bundle()
+            bundle.putParcelable("content", item)
+            findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundle)
+        }
+    private val loadingAdapter =
+        PetLoadingAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,11 +50,11 @@ class PetSearchFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d((this as Any).getTag(), "onViewCreated()")
 
-        // Setup Subscriptions
-        subscribeToViewState()
-        setupRecyclerView()
         setupSpinner()
+        setupRecyclerView()
         setupSwipeRefresh()
+
+        subscribeToViewState()
     }
 
     override fun onDestroyView() {
@@ -59,28 +64,10 @@ class PetSearchFragment : Fragment() {
 
     private fun setupRecyclerView() {
         recyclerView.setHasFixedSize(false)
+        recyclerView.layoutManager = LinearLayoutManager(context)
 
-        recyclerView.setup {
-            withDataSource(petDataSource)
-            withLayoutManager(LinearLayoutManager(context))
-            withItem<PetResponse, PetHolder>(R.layout.result_item) {
-                onBind(::PetHolder) { _, item ->
-                    bind(item)
-                }
-                onRecycled { it.dispose() }
-            }
-            withItem<PetEntity, PetHolder>(R.layout.result_item) {
-                onBind(::PetHolder) { _, item ->
-                    bind(item)
-                }
-                onRecycled { it.dispose() }
-            }
-            withClickListener { pos ->
-                val bundle = Bundle()
-                bundle.putParcelable("content", petDataSource[pos])
-                findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundle)
-            }
-        }
+        val concatAdapter = ConcatAdapter(dataAdapter, loadingAdapter)
+        recyclerView.adapter = concatAdapter
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -114,7 +101,7 @@ class PetSearchFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                if (!(first and viewModel.listNotEmpty))
+                if (!first or viewModel.refreshNeeded)
                     viewModel.reloadPetsList(animal_type_spinner.selectedItem.toString(), null)
                 first = false
             }
@@ -126,12 +113,9 @@ class PetSearchFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { state ->
                 Log.d((this as Any).getTag(), "State update: updating = ${state.updating}")
-                petDataSource.set(state.petList, { old, new -> old.id == new.id }) { _, _ -> true }
-                pets_loading.visibility =
-                    if (state.updating) {
-                        View.VISIBLE
-                    } else
-                        View.INVISIBLE
+                dataAdapter.submitList(state.petList)
+
+                loadingAdapter.showed = state.updating
                 if (!state.updating) swipeRefresh.isRefreshing = false
             }
         compositeDisposable.add(job)

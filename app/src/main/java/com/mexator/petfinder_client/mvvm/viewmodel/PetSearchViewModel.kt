@@ -13,14 +13,19 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class PetSearchViewModel : ViewModel(), KoinComponent {
-    var listNotEmpty = false
+    val viewState: Observable<MainViewState> get() = _viewState
+
+    var refreshNeeded: Boolean = true
+        private set
+
+    private var _viewState: BehaviorSubject<MainViewState> = BehaviorSubject.create()
+
     private val petRepository: PetRepository by inject()
 
     private val compositeDisposable = CompositeDisposable()
 
-    private var _viewState: BehaviorSubject<MainViewState> = BehaviorSubject.create()
-    val viewState: Observable<MainViewState> get() = _viewState
-
+    // State variables. noMorePages: Last loaded page was empty. currentPage: Last non-empty page number
+    private var noMorePages: Boolean = false
     private var currentPage: Int = 1
 
     init {
@@ -53,7 +58,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
 
     fun loadNextPage() {
         _viewState.value?.let { state ->
-            if (!state.updating) {
+            if (!state.updating && !noMorePages) {
                 _viewState.onNext(state.copy(updating = true))
                 val job = petRepository.getPage(++currentPage)
                     .subscribeOn(Schedulers.io())
@@ -66,7 +71,6 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
     }
 
     private fun receiveUpdate(value: List<PetModel>, type: String?, breed: String?) {
-        listNotEmpty = value.isNotEmpty()
         _viewState.onNext(
             MainViewState(
                 updating = false,
@@ -75,6 +79,8 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
                 requestBreed = breed
             )
         )
+        refreshNeeded = value.isEmpty()
+        noMorePages = value.isEmpty()
     }
 
     private fun receivePage(state: MainViewState, page: List<PetModel>) {
@@ -84,6 +90,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
                 petList = state.petList + page
             )
         )
+        noMorePages = page.isEmpty()
     }
 
     override fun onCleared() {
