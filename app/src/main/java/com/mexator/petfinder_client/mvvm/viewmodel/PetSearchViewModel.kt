@@ -34,6 +34,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
                 false,
                 emptyList(),
                 null,
+                null,
                 null
             )
         )
@@ -48,9 +49,9 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
 
                 val job = petRepository.getPage(currentPage)
                     .subscribeOn(Schedulers.io())
-                    .subscribe { value ->
+                    .subscribe({ value ->
                         receiveUpdate(value, type, breed)
-                    }
+                    }) { error -> receivePageError(state, error.message ?: "Unknown error") }
                 compositeDisposable.add(job)
             }
         }
@@ -62,9 +63,9 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
                 _viewState.onNext(state.copy(updating = true))
                 val job = petRepository.getPage(++currentPage)
                     .subscribeOn(Schedulers.io())
-                    .subscribe { value ->
+                    .subscribe({ value ->
                         receivePage(state, value)
-                    }
+                    }) { error -> receivePageError(state, error.message ?: "Unknown error") }
                 compositeDisposable.add(job)
             }
         }
@@ -76,7 +77,8 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
                 updating = false,
                 petList = value,
                 requestType = type,
-                requestBreed = breed
+                requestBreed = breed,
+                error = null
             )
         )
         refreshNeeded = value.isEmpty()
@@ -87,10 +89,20 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
         _viewState.onNext(
             state.copy(
                 updating = false,
-                petList = state.petList + page
+                petList = state.petList + page,
+                error = null
             )
         )
         noMorePages = page.isEmpty()
+    }
+
+    private fun receivePageError(state: MainViewState, error: String) {
+        _viewState.onNext(
+            state.copy(
+                updating = false,
+                error = error
+            )
+        )
     }
 
     override fun onCleared() {

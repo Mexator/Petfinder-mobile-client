@@ -6,5 +6,6 @@ data class MainViewState(
     val updating: Boolean,
     val petList: List<PetModel>,
     val requestType: String?,
-    val requestBreed: String?
+    val requestBreed: String?,
+    val error: String?
 )

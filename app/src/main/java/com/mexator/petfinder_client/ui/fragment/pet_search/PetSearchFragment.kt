@@ -17,6 +17,7 @@ import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.mvvm.viewmodel.PetSearchViewModel
 import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetAdapter
+import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetErrorAdapter
 import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetLoadingAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -36,6 +37,10 @@ class PetSearchFragment : Fragment() {
         }
     private val loadingAdapter =
         PetLoadingAdapter()
+    private val errorAdapter =
+        PetErrorAdapter {
+            refresh()
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,7 +71,7 @@ class PetSearchFragment : Fragment() {
         recyclerView.setHasFixedSize(false)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val concatAdapter = ConcatAdapter(dataAdapter, loadingAdapter)
+        val concatAdapter = ConcatAdapter(dataAdapter, loadingAdapter, errorAdapter)
         recyclerView.adapter = concatAdapter
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -85,7 +90,7 @@ class PetSearchFragment : Fragment() {
 
     private fun setupSwipeRefresh() {
         swipeRefresh.setOnRefreshListener {
-            viewModel.reloadPetsList(animal_type_spinner.selectedItem.toString(), null)
+            refresh()
         }
     }
 
@@ -102,7 +107,7 @@ class PetSearchFragment : Fragment() {
                 id: Long
             ) {
                 if (!first or viewModel.refreshNeeded)
-                    viewModel.reloadPetsList(animal_type_spinner.selectedItem.toString(), null)
+                    refresh()
                 first = false
             }
         }
@@ -116,8 +121,13 @@ class PetSearchFragment : Fragment() {
                 dataAdapter.submitList(state.petList)
 
                 loadingAdapter.showed = state.updating
+                errorAdapter.error = state.error
                 if (!state.updating) swipeRefresh.isRefreshing = false
             }
         compositeDisposable.add(job)
+    }
+
+    private fun refresh() {
+        viewModel.reloadPetsList(animal_type_spinner.selectedItem.toString(), null)
     }
 }

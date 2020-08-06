@@ -47,6 +47,7 @@
 
     <!-- Pet search view   -->
     <string name="text_loading">Loading…</string>
+    <string name="text_button_retry">Retry</string>
 
     <!-- Pet detail view   -->
     <string name="text_button_ask_about">Ask about pet</string>
