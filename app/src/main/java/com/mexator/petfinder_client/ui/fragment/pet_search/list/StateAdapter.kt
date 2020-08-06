@@ -13,8 +13,13 @@ class PetLoadingHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 class PetLoadingAdapter : RecyclerView.Adapter<PetLoadingHolder>() {
     var showed: Boolean = false
         set(value) {
+            if (field == value)
+                return
+
             field = value
-            notifyDataSetChanged()
+            if (value) {
+                notifyItemInserted(0)
+            } else notifyItemRemoved(0)
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetLoadingHolder =
@@ -46,8 +51,14 @@ class PetErrorAdapter(private val retryCallback: () -> Unit) :
     RecyclerView.Adapter<PetErrorHolder>() {
     var error: String? = null
         set(value) {
+            if (field == value)
+                return
+
             field = value
-            notifyDataSetChanged()
+            if (value != null)
+                notifyItemInserted(0)
+            else
+                notifyItemRemoved(0)
         }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetErrorHolder =
@@ -65,5 +76,4 @@ class PetErrorAdapter(private val retryCallback: () -> Unit) :
             holder.bind(retryCallback, it)
         }
     }
-
 }

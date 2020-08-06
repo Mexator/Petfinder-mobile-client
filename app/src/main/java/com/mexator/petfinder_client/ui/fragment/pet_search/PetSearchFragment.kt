@@ -42,6 +42,12 @@ class PetSearchFragment : Fragment() {
             viewModel.loadNextPage()
         }
 
+    init {
+        dataAdapter.setHasStableIds(true)
+        loadingAdapter.setHasStableIds(true)
+        errorAdapter.setHasStableIds(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,7 +77,11 @@ class PetSearchFragment : Fragment() {
         recyclerView.setHasFixedSize(false)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val concatAdapter = ConcatAdapter(dataAdapter, loadingAdapter, errorAdapter)
+        val config = ConcatAdapter.Config.Builder()
+            .setStableIdMode(ConcatAdapter.Config.StableIdMode.ISOLATED_STABLE_IDS)
+            .setIsolateViewTypes(true)
+            .build()
+        val concatAdapter = ConcatAdapter(config, dataAdapter, loadingAdapter, errorAdapter)
         recyclerView.adapter = concatAdapter
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -119,9 +129,13 @@ class PetSearchFragment : Fragment() {
         val job = viewModel.viewState
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { state ->
-                Log.d((this as Any).getTag(), "State update: updating = ${state.updating}")
+                Log.d(
+                    (this as Any).getTag(), "State update: updating = ${state.updating}\n" +
+                            "error = ${state.error}\n" +
+                            "${state.petList.size}"
+                )
+
                 dataAdapter.submitList(state.petList)
-                dataAdapter.notifyDataSetChanged()
 
                 loadingAdapter.showed = state.updating
                 errorAdapter.error = state.error

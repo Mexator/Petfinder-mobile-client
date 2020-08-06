@@ -71,9 +71,8 @@ private object PetDiffCallback : DiffUtil.ItemCallback<PetModel>() {
 }
 
 class PetAdapter(private val onClickCallback: (PetModel) -> Unit) :
-    ListAdapter<PetModel, PetHolder>(
-        PetDiffCallback
-    ) {
+    ListAdapter<PetModel, PetHolder>(PetDiffCallback) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetHolder =
         PetHolder(
             LayoutInflater
@@ -93,5 +92,9 @@ class PetAdapter(private val onClickCallback: (PetModel) -> Unit) :
     override fun onViewRecycled(holder: PetHolder) {
         super.onViewRecycled(holder)
         holder.dispose()
+    }
+
+    override fun getItemId(position: Int): Long {
+        return currentList[position].id
     }
 }
