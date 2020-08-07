@@ -48,6 +48,15 @@ class PetSearchFragment : Fragment() {
         errorAdapter.setHasStableIds(true)
     }
 
+    private val typeMap: Map<String, Int> = mapOf(
+        "Dog" to 0,
+        "Cat" to 1,
+        "Bird" to 2,
+        "Barnyard" to 3,
+        "Rabbit" to 4,
+        "Horse" to 5
+    )
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -108,7 +117,7 @@ class PetSearchFragment : Fragment() {
 
     private fun setupSpinner() {
         animal_type_spinner?.onItemSelectedListener = object : OnItemSelectedListener {
-            var first: Boolean = true
+            private var lastSelected: Long? = null
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
 
@@ -118,9 +127,12 @@ class PetSearchFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
-                if (!first or viewModel.refreshNeeded)
+                // Workaround some design "features" of ItemSelectedListener
+                if (view == null) return
+                if (viewModel.refreshNeeded or ((lastSelected != null)) and (lastSelected != id)) {
                     refresh()
-                first = false
+                }
+                lastSelected = id
             }
         }
     }

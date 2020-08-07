@@ -17,14 +17,14 @@ import kotlinx.android.synthetic.main.item_detail_photo_page.*
 class PetPhotoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer
 
-private object PetPhotoDiff: DiffUtil.ItemCallback<PhotoWrapper>() {
+private object PetPhotoDiff : DiffUtil.ItemCallback<PhotoWrapper>() {
     override fun areItemsTheSame(oldItem: PhotoWrapper, newItem: PhotoWrapper): Boolean {
         return oldItem.id == newItem.id
     }
 
     @SuppressLint("DiffUtilEquals")
     override fun areContentsTheSame(oldItem: PhotoWrapper, newItem: PhotoWrapper): Boolean {
-        return (oldItem.photo == null) xor (newItem.photo == null)
+        return newItem.photo == null
     }
 }
 
@@ -41,7 +41,6 @@ class PetPhotoAdapter : ListAdapter<PhotoWrapper, PetPhotoViewHolder>(PetPhotoDi
 
     override fun onBindViewHolder(holder: PetPhotoViewHolder, position: Int) {
         holder.photo.setImageDrawable(currentList[position].photo)
-        Log.d(getTag(), currentList[position].id.toString())
     }
 
     override fun getItemId(position: Int): Long {
