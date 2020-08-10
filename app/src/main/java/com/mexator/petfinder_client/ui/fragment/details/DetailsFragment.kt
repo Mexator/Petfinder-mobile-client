@@ -7,6 +7,7 @@ import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.tabs.TabLayoutMediator
@@ -68,6 +69,8 @@ class DetailsFragment : Fragment() {
 
     private fun setupPhotoPager() {
         adapter.setHasStableIds(true)
+        adapter.placeholderPhoto =
+            ResourcesCompat.getDrawable(resources, R.drawable.photo_placeholder, null)
         pager.adapter = adapter
         TabLayoutMediator(tabs, pager, true) { _, _ -> }.attach()
     }

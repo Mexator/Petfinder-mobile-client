@@ -37,7 +37,7 @@ class PetDetailViewModel : ViewModel(), KoinComponent {
 
             val nullList = mutableListOf<PhotoWrapper>()
             for (i in list.indices) {
-                nullList.add(PhotoWrapper(null, i.toLong()))
+                nullList.add(PhotoWrapper(null, i.toLong(), false))
             }
             _viewState.onNext(state.copy(photos = nullList, photoCount = list.size))
         }
