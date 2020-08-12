@@ -46,20 +46,17 @@ object StorageManager : KoinComponent {
         return Triple(accessToken, date, expirationTime)
     }
 
-    fun saveCredentials(username: String, password: String) {
+    fun saveCredentials(userCookie: String) {
         with(authPreferences.edit()) {
             clear()
-            putString("login", username)
-            putString("password", password)
+            putString("userCookie", userCookie)
             apply()
         }
     }
 
-    fun loadCredentials(): Pair<String, String> {
+    fun loadCredentials(): String {
         with(authPreferences) {
-            val login = getString("login", "")!!
-            val password = getString("password", "")!!
-            return login to password
+            return getString("userCookie", "")!!
         }
     }
 

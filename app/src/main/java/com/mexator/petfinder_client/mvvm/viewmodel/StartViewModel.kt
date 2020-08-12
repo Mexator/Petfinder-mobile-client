@@ -2,6 +2,7 @@ package com.mexator.petfinder_client.mvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.UserDataRepository
+import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import com.mexator.petfinder_client.storage.StorageManager
 import io.reactivex.Single
 import org.koin.core.KoinComponent
@@ -12,14 +13,18 @@ class StartViewModel : ViewModel(), KoinComponent {
     private val storageManager: StorageManager by inject()
 
     fun checkAccountExistence(): Single<Boolean> {
-        val loginNotEmpty = storageManager.loadCredentials().first.isNotEmpty()
-        val passNotEmpty = storageManager.loadCredentials().second.isNotEmpty()
-        return Single.just(loginNotEmpty and passNotEmpty)
+        return Single.just(storageManager.loadCredentials())
+            .doOnSuccess { CookieHolder.userCookie = it }
+            .map { it.isNotEmpty() }
+            .flatMap { value ->
+                if (value) tryGetUser()
+                else Single.just(false)
+            }
     }
 
-    fun checkAccountValidity(): Single<Boolean> {
-        val (username, password) = storageManager.loadCredentials()
-        return repository.areUserCredentialsValid(username, password)
-            .onErrorReturnItem(false)
+    private fun tryGetUser(): Single<Boolean> {
+        return repository.getUser()
+            .map { true }
+            .onErrorReturn { false }
     }
 }

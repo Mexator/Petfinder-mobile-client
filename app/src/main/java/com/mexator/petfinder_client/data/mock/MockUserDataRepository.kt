@@ -5,7 +5,7 @@ import com.mexator.petfinder_client.data.model.User
 import io.reactivex.Single
 
 class MockUserDataRepository : UserDataRepository {
-    override fun areUserCredentialsValid(username: String, password: String): Single<Boolean> {
+    override fun login(username: String, password: String): Single<Boolean> {
         return Single.just(true)
     }
 

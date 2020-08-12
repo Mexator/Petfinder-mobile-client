@@ -6,9 +6,10 @@ import io.reactivex.Single
 interface UserDataRepository {
 
     /**
-     * Check user login and password for validity
+     * Check user login and password for validity. Save user cookie to preferences in case of success.
+     * First lookup at local data source then at remote
      */
-    fun areUserCredentialsValid(username: String, password: String): Single<Boolean>
+    fun login(username: String, password: String): Single<Boolean>
 
     /**
      * Get user model

@@ -41,7 +41,6 @@ class StartActivity : AppCompatActivity(), KoinComponent {
             viewModel.checkAccountExistence()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap { if (it) viewModel.checkAccountValidity() else Single.just(it) }
                 .subscribe { value ->
                     onAccountCheckFinished(value)
                 }

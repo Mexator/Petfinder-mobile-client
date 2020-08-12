@@ -7,13 +7,14 @@ import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.local.PetEntity
 import com.mexator.petfinder_client.data.model.PetModel
+import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderUserAPI
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
-import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.network.NetworkService
+import com.mexator.petfinder_client.storage.StorageManager
 import io.reactivex.Maybe
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -27,6 +28,7 @@ class ActualRepository(
     // Dependencies
     private val networkService: NetworkService by inject()
     private val petfinderUserAPI: PetfinderUserAPI by inject()
+    private val storageManager: StorageManager by inject()
 
     // State variables
     private var parameters: SearchParameters = SearchParameters(null, null)
@@ -61,8 +63,7 @@ class ActualRepository(
         } else
             localDataSource.getPetPreview(pet as PetEntity)
 
-
-    override fun areUserCredentialsValid(username: String, password: String): Single<Boolean> {
+    override fun login(username: String, password: String): Single<Boolean> {
         val body = MultipartBody.Builder()
             .setType(MultipartBody.FORM)
             .addFormDataPart("username", username)
@@ -71,12 +72,14 @@ class ActualRepository(
 
         return petfinderUserAPI.checkLogin(body)
             .map { it.success }
+            .doOnSuccess { storageManager.saveCredentials(userCookie = CookieHolder.userCookie) }
     }
 
     override fun getUser(): Single<User> {
         return localDataSource.getUser()
-            .doOnSuccess { localDataSource.saveUser(it) }
-            .onErrorResumeNext { remoteDataSource.getUser() }
+            .onErrorResumeNext {
+                remoteDataSource.getUser().doOnSuccess { localDataSource.saveUser(it) }
+            }
     }
 
     /**
