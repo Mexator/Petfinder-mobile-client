@@ -5,15 +5,15 @@ import android.util.Log
 import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
+import com.mexator.petfinder_client.data.local.PetEntity
 import com.mexator.petfinder_client.data.model.PetModel
-import com.mexator.petfinder_client.data.remote.pojo.PetResponse
-import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
-import com.mexator.petfinder_client.data.remote.pojo.User
-import com.mexator.petfinder_client.extensions.getTag
-import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderUserAPI
-import com.mexator.petfinder_client.data.local.PetEntity
+import com.mexator.petfinder_client.data.remote.pojo.PetResponse
+import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
+import com.mexator.petfinder_client.data.model.User
+import com.mexator.petfinder_client.extensions.getTag
+import com.mexator.petfinder_client.network.NetworkService
 import io.reactivex.Maybe
 import io.reactivex.Single
 import okhttp3.MultipartBody
@@ -21,8 +21,8 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 class ActualRepository(
-    private val remoteDataSource: RemotePetDataSource,
-    private val localDataSource: LocalPetDataSource
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource
 ) : PetRepository, UserDataRepository, KoinComponent {
     // Dependencies
     private val networkService: NetworkService by inject()
@@ -45,7 +45,10 @@ class ActualRepository(
         }.map { it as List<PetModel> }
     }
 
-    override fun getPetPhotos(pet: PetModel, size: PetDataSource.PhotoSize): List<Single<Drawable>> =
+    override fun getPetPhotos(
+        pet: PetModel,
+        size: PetDataSource.PhotoSize
+    ): List<Single<Drawable>> =
         if (pet.source == PetModel.StorageLocation.REMOTE) {
             remoteDataSource.getPetPhotos(pet as PetResponse, size)
                 .onEach { it.doOnSuccess { photo -> localDataSource.savePetPhoto(photo, pet.id) } }
@@ -71,9 +74,9 @@ class ActualRepository(
     }
 
     override fun getUser(): Single<User> {
-        return petfinderUserAPI
-            .getMe("PFSESSION=${CookieHolder.userCookie}")
-            .map { it.user }
+        return localDataSource.getUser()
+            .doOnSuccess { localDataSource.saveUser(it) }
+            .onErrorResumeNext { remoteDataSource.getUser() }
     }
 
     /**

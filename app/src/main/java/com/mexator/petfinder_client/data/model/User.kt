@@ -1,8 +1,12 @@
-package com.mexator.petfinder_client.data.remote.pojo
+package com.mexator.petfinder_client.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-data class User (
+@Entity
+data class User(
+    @PrimaryKey
     val email: String,
     @SerializedName("first_name")
     val firstName: String,

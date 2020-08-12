@@ -3,8 +3,12 @@ package com.mexator.petfinder_client.data.actual
 import android.graphics.drawable.Drawable
 import com.bumptech.glide.RequestManager
 import com.mexator.petfinder_client.data.PetDataSource
+import com.mexator.petfinder_client.data.UserDataSource
+import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.data.remote.api_interaction.APIKeysHolder
+import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderJSONAPI
+import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderUserAPI
 import com.mexator.petfinder_client.data.remote.pojo.AnimalsResponse
 import com.mexator.petfinder_client.data.remote.pojo.PetPhotoResponse
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
@@ -15,9 +19,10 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 
-object RemotePetDataSource : PetDataSource<PetResponse>, KoinComponent {
+object RemoteDataSource : PetDataSource<PetResponse>, UserDataSource, KoinComponent {
     private val keyholder: APIKeysHolder by inject()
     private val petfinderAPI: PetfinderJSONAPI by inject()
+    private val petfinderUserAPI: PetfinderUserAPI by inject()
     private val glideRM: RequestManager by inject()
 
     override fun getPets(parameters: SearchParameters, page: Int): Single<List<PetResponse>> {
@@ -49,6 +54,11 @@ object RemotePetDataSource : PetDataSource<PetResponse>, KoinComponent {
             Maybe.just(pet.photos[0])
                 .map { loadSinglePhoto(it, PetDataSource.PhotoSize.SMALL) }
 
+    override fun getUser(): Single<User> =
+        petfinderUserAPI
+            .getMe("PFSESSION=${CookieHolder.userCookie}")
+            .map { it.user }
+
 
     private fun loadSinglePhoto(photoResponse: PetPhotoResponse, size: PetDataSource.PhotoSize)
             : Drawable {
@@ -61,4 +71,5 @@ object RemotePetDataSource : PetDataSource<PetResponse>, KoinComponent {
             }
         ).submit().get()
     }
+
 }

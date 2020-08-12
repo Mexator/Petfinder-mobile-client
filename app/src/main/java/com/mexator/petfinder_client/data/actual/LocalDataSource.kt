@@ -5,12 +5,14 @@ import android.graphics.drawable.Drawable
 import androidx.core.graphics.drawable.toBitmap
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.mexator.petfinder_client.data.PetDataSource
+import com.mexator.petfinder_client.data.UserDataSource
 import com.mexator.petfinder_client.data.local.PAGINATION_OFFSET
 import com.mexator.petfinder_client.data.local.PetDB
 import com.mexator.petfinder_client.data.local.PetEntity
 import com.mexator.petfinder_client.data.local.PhotoEntity
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
+import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.storage.StorageManager
 import com.mexator.petfinder_client.utils.WhereBuilder
 import io.reactivex.Maybe
@@ -20,7 +22,7 @@ import org.koin.core.inject
 import java.math.BigInteger
 import java.util.*
 
-object LocalPetDataSource : PetDataSource<PetEntity>, KoinComponent {
+object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent {
     private val appContext: Context by inject()
     private val db = PetDB.getDatabaseInstance(appContext)
 
@@ -52,6 +54,15 @@ object LocalPetDataSource : PetDataSource<PetEntity>, KoinComponent {
     override fun getPetPreview(pet: PetEntity): Maybe<Drawable> =
         db.photoDao().getPreview(pet.id)
             .map { Drawable.createFromPath(it.fileName) }
+
+    override fun getUser(): Single<User> = db.userDao().getUser()
+
+    fun saveUser(user: User) {
+        with(db.userDao()) {
+            deleteCurrentUser()
+            saveUser(user)
+        }
+    }
 
     private var count = 0
 

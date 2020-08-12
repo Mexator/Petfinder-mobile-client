@@ -1,6 +1,6 @@
 package com.mexator.petfinder_client.data
 
-import com.mexator.petfinder_client.data.remote.pojo.User
+import com.mexator.petfinder_client.data.model.User
 import io.reactivex.Single
 
 interface UserDataRepository {

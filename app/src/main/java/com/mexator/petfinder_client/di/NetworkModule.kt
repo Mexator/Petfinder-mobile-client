@@ -8,8 +8,8 @@ import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.actual.ActualRepository
-import com.mexator.petfinder_client.data.actual.LocalPetDataSource
-import com.mexator.petfinder_client.data.actual.RemotePetDataSource
+import com.mexator.petfinder_client.data.actual.LocalDataSource
+import com.mexator.petfinder_client.data.actual.RemoteDataSource
 import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.data.remote.api_interaction.APIKeysHolder
 import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderJSONAPI
@@ -54,8 +54,8 @@ val networkModule = module {
 
     single {
         ActualRepository(
-            RemotePetDataSource,
-            LocalPetDataSource
+            RemoteDataSource,
+            LocalDataSource
         )
     }
 

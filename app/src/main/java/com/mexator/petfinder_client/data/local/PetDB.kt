@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.mexator.petfinder_client.data.model.User
 
-@Database(entities = [PetEntity::class, PhotoEntity::class], version = DB_VERSION)
+@Database(entities = [PetEntity::class, PhotoEntity::class, User::class], version = DB_VERSION)
 abstract class PetDB : RoomDatabase() {
     abstract fun petDao(): PetDao
     abstract fun photoDao(): PhotoDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile
@@ -36,6 +38,6 @@ abstract class PetDB : RoomDatabase() {
 }
 
 
-const val DB_VERSION = 4
+const val DB_VERSION = 5
 
 const val DB_NAME = "Pets.db"

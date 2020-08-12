@@ -1,7 +1,7 @@
 package com.mexator.petfinder_client.data.mock
 
 import com.mexator.petfinder_client.data.UserDataRepository
-import com.mexator.petfinder_client.data.remote.pojo.User
+import com.mexator.petfinder_client.data.model.User
 import io.reactivex.Single
 
 class MockUserDataRepository : UserDataRepository {
@@ -10,6 +10,12 @@ class MockUserDataRepository : UserDataRepository {
     }
 
     override fun getUser(): Single<User> {
-        return Single.just(User("local@user.com", "Local user", "for testing only"))
+        return Single.just(
+            User(
+                "local@user.com",
+                "Local user",
+                "for testing only"
+            )
+        )
     }
 }
