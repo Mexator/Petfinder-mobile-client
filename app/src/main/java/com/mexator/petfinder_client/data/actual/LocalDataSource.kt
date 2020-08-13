@@ -10,9 +10,9 @@ import com.mexator.petfinder_client.data.local.PAGINATION_OFFSET
 import com.mexator.petfinder_client.data.local.PetDB
 import com.mexator.petfinder_client.data.local.PetEntity
 import com.mexator.petfinder_client.data.local.PhotoEntity
+import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
-import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.storage.StorageManager
 import com.mexator.petfinder_client.utils.WhereBuilder
 import io.reactivex.Maybe

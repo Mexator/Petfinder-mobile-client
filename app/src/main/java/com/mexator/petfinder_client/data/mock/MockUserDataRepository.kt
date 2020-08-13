@@ -9,6 +9,9 @@ class MockUserDataRepository : UserDataRepository {
         return Single.just(true)
     }
 
+    override fun logout() {
+    }
+
     override fun getUser(): Single<User> {
         return Single.just(
             User(

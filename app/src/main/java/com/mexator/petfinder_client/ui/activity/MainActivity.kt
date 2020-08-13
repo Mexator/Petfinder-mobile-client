@@ -24,12 +24,20 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         setupStateSubscription()
+
+        drawer.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.action_logout -> logout()
+                else -> {}
+            }
+            true
+        }
         viewModel.fetchUser()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         compositeDisposable.clear()
+        super.onDestroy()
     }
 
     override fun onBackPressed() {
@@ -38,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         } else
             super.onBackPressed()
     }
-    
+
     private fun logout() {
         viewModel.logout()
         val loginIntent = Intent(this, LoginActivity::class.java)

@@ -15,8 +15,10 @@ import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.storage.StorageManager
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -78,7 +80,10 @@ class ActualRepository(
 
     override fun logout() {
         cookieHolder.userCookie = ""
-        localDataSource.deleteUser()
+        storageManager.saveCredentials("")
+        Completable.fromAction {localDataSource.deleteUser() }
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
     override fun getUser(): Single<User> {
