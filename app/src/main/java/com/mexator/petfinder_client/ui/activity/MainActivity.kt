@@ -1,5 +1,6 @@
 package com.mexator.petfinder_client.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -31,6 +32,21 @@ class MainActivity : AppCompatActivity() {
         compositeDisposable.clear()
     }
 
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(drawer)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else
+            super.onBackPressed()
+    }
+    
+    private fun logout() {
+        viewModel.logout()
+        val loginIntent = Intent(this, LoginActivity::class.java)
+        loginIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(loginIntent)
+        finish()
+    }
+
     private fun setupStateSubscription() {
         val job = viewModel.viewState
             .observeOn(AndroidSchedulers.mainThread())
@@ -46,12 +62,5 @@ class MainActivity : AppCompatActivity() {
                 getString(R.string.username_placeholder, user.firstName, user.lastName)
             drawer_header_email.text = user.email
         }
-    }
-
-    override fun onBackPressed() {
-        if (drawerLayout.isDrawerOpen(drawer)) {
-            drawerLayout.closeDrawer(GravityCompat.START)
-        } else
-            super.onBackPressed()
     }
 }

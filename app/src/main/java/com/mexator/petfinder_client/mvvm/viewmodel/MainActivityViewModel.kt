@@ -22,6 +22,11 @@ class MainActivityViewModel : ViewModel(), KoinComponent {
         _viewState.onNext(MainActivityViewState(null))
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        compositeDisposable.clear()
+    }
+
     fun fetchUser() {
         val job = repository
             .getUser()
@@ -33,8 +38,7 @@ class MainActivityViewModel : ViewModel(), KoinComponent {
         compositeDisposable.add(job)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
+    fun logout() {
+        repository.logout()
     }
 }

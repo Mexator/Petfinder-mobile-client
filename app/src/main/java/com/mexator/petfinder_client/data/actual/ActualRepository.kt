@@ -76,6 +76,11 @@ class ActualRepository(
             .doOnSuccess { storageManager.saveCredentials(userCookie = CookieHolder.userCookie) }
     }
 
+    override fun logout() {
+        cookieHolder.userCookie = ""
+        localDataSource.deleteUser()
+    }
+
     override fun getUser(): Single<User> {
         return localDataSource.getUser(cookieHolder.userCookie)
             .onErrorResumeNext {

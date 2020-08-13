@@ -18,4 +18,7 @@ class MockUserDataRepository : UserDataRepository {
             )
         )
     }
+
+    override fun setCookie(userCookie: String) {
+    }
 }

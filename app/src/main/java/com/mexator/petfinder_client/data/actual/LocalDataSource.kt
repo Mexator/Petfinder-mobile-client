@@ -64,6 +64,10 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
         }
     }
 
+    fun deleteUser() {
+        db.userDao().deleteCurrentUser()
+    }
+
     private var count = 0
 
     /**

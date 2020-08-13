@@ -12,6 +12,11 @@ interface UserDataRepository {
     fun login(username: String, password: String): Single<Boolean>
 
     /**
+     * Delete all user data from device
+     */
+    fun logout()
+
+    /**
      * Get user model
      */
     fun getUser(): Single<User>
