@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.mvvm.viewmodel.LoginViewModel
-import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -54,7 +53,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun onSuccessfulLogin() {
-        Toast.makeText(this, CookieHolder.userCookie, Toast.LENGTH_SHORT).show()
         val mainIntent = Intent(this, MainActivity::class.java)
         mainIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(mainIntent)

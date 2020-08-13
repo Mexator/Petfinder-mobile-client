@@ -29,6 +29,7 @@ class ActualRepository(
     private val networkService: NetworkService by inject()
     private val petfinderUserAPI: PetfinderUserAPI by inject()
     private val storageManager: StorageManager by inject()
+    private val cookieHolder: CookieHolder by inject()
 
     // State variables
     private var parameters: SearchParameters = SearchParameters(null, null)
@@ -76,10 +77,15 @@ class ActualRepository(
     }
 
     override fun getUser(): Single<User> {
-        return localDataSource.getUser()
+        return localDataSource.getUser(cookieHolder.userCookie)
             .onErrorResumeNext {
-                remoteDataSource.getUser().doOnSuccess { localDataSource.saveUser(it) }
+                remoteDataSource.getUser(cookieHolder.userCookie)
+                    .doOnSuccess { localDataSource.saveUser(it) }
             }
+    }
+
+    override fun setCookie(userCookie: String) {
+        cookieHolder.userCookie = userCookie
     }
 
     /**

@@ -15,4 +15,9 @@ interface UserDataRepository {
      * Get user model
      */
     fun getUser(): Single<User>
+
+    /**
+     * Set user cookie
+     */
+    fun setCookie(userCookie: String)
 }

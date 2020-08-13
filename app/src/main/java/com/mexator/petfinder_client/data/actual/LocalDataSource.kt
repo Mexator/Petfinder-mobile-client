@@ -55,7 +55,7 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
         db.photoDao().getPreview(pet.id)
             .map { Drawable.createFromPath(it.fileName) }
 
-    override fun getUser(): Single<User> = db.userDao().getUser()
+    override fun getUser(userCookie: String): Single<User> = db.userDao().getUser()
 
     fun saveUser(user: User) {
         with(db.userDao()) {
