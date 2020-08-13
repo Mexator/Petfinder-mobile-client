@@ -9,6 +9,9 @@ class MockUserDataRepository : UserDataRepository {
         return Single.just(true)
     }
 
+    override fun logout() {
+    }
+
     override fun getUser(): Single<User> {
         return Single.just(
             User(
@@ -17,5 +20,8 @@ class MockUserDataRepository : UserDataRepository {
                 "for testing only"
             )
         )
+    }
+
+    override fun setCookie(userCookie: String) {
     }
 }

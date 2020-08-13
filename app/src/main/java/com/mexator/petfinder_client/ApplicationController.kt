@@ -1,6 +1,7 @@
 package com.mexator.petfinder_client
 
 import androidx.multidex.MultiDexApplication
+import com.mexator.petfinder_client.di.dataModule
 import com.mexator.petfinder_client.di.networkModule
 import com.mexator.petfinder_client.di.storageModule
 import org.koin.android.ext.koin.androidContext
@@ -13,7 +14,7 @@ class ApplicationController : MultiDexApplication() {
 
         startKoin {
             androidContext(this@ApplicationController)
-            modules(listOf(networkModule, storageModule))
+            modules(listOf(networkModule, storageModule, dataModule))
         }
     }
 }

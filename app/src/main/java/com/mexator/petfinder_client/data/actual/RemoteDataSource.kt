@@ -6,7 +6,6 @@ import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.UserDataSource
 import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.data.remote.api_interaction.APIKeysHolder
-import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderJSONAPI
 import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderUserAPI
 import com.mexator.petfinder_client.data.remote.pojo.AnimalsResponse
@@ -54,9 +53,9 @@ object RemoteDataSource : PetDataSource<PetResponse>, UserDataSource, KoinCompon
             Maybe.just(pet.photos[0])
                 .map { loadSinglePhoto(it, PetDataSource.PhotoSize.SMALL) }
 
-    override fun getUser(): Single<User> =
+    override fun getUser(userCookie: String): Single<User> =
         petfinderUserAPI
-            .getMe("PFSESSION=${CookieHolder.userCookie}")
+            .getMe("PFSESSION=${userCookie}")
             .map { it.user }
 
 

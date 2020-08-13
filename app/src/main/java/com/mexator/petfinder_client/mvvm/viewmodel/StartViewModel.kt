@@ -2,7 +2,6 @@ package com.mexator.petfinder_client.mvvm.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.UserDataRepository
-import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import com.mexator.petfinder_client.storage.StorageManager
 import io.reactivex.Single
 import org.koin.core.KoinComponent
@@ -14,7 +13,7 @@ class StartViewModel : ViewModel(), KoinComponent {
 
     fun checkAccountExistence(): Single<Boolean> {
         return Single.just(storageManager.loadCredentials())
-            .doOnSuccess { CookieHolder.userCookie = it }
+            .doOnSuccess { repository.setCookie(it) }
             .map { it.isNotEmpty() }
             .flatMap { value ->
                 if (value) tryGetUser()

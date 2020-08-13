@@ -15,8 +15,10 @@ import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.storage.StorageManager
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 import org.koin.core.KoinComponent
 import org.koin.core.inject
@@ -29,6 +31,7 @@ class ActualRepository(
     private val networkService: NetworkService by inject()
     private val petfinderUserAPI: PetfinderUserAPI by inject()
     private val storageManager: StorageManager by inject()
+    private val cookieHolder: CookieHolder by inject()
 
     // State variables
     private var parameters: SearchParameters = SearchParameters(null, null)
@@ -75,11 +78,24 @@ class ActualRepository(
             .doOnSuccess { storageManager.saveCredentials(userCookie = CookieHolder.userCookie) }
     }
 
+    override fun logout() {
+        cookieHolder.userCookie = ""
+        storageManager.saveCredentials("")
+        Completable.fromAction {localDataSource.deleteUser() }
+            .subscribeOn(Schedulers.io())
+            .subscribe()
+    }
+
     override fun getUser(): Single<User> {
-        return localDataSource.getUser()
+        return localDataSource.getUser(cookieHolder.userCookie)
             .onErrorResumeNext {
-                remoteDataSource.getUser().doOnSuccess { localDataSource.saveUser(it) }
+                remoteDataSource.getUser(cookieHolder.userCookie)
+                    .doOnSuccess { localDataSource.saveUser(it) }
             }
+    }
+
+    override fun setCookie(userCookie: String) {
+        cookieHolder.userCookie = userCookie
     }
 
     /**

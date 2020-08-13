@@ -10,9 +10,9 @@ import com.mexator.petfinder_client.data.local.PAGINATION_OFFSET
 import com.mexator.petfinder_client.data.local.PetDB
 import com.mexator.petfinder_client.data.local.PetEntity
 import com.mexator.petfinder_client.data.local.PhotoEntity
+import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
-import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.storage.StorageManager
 import com.mexator.petfinder_client.utils.WhereBuilder
 import io.reactivex.Maybe
@@ -55,13 +55,17 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
         db.photoDao().getPreview(pet.id)
             .map { Drawable.createFromPath(it.fileName) }
 
-    override fun getUser(): Single<User> = db.userDao().getUser()
+    override fun getUser(userCookie: String): Single<User> = db.userDao().getUser()
 
     fun saveUser(user: User) {
         with(db.userDao()) {
             deleteCurrentUser()
             saveUser(user)
         }
+    }
+
+    fun deleteUser() {
+        db.userDao().deleteCurrentUser()
     }
 
     private var count = 0

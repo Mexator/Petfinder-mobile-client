@@ -57,5 +57,6 @@
     <string name="no_images">no images</string>
     <!-- Navigation drawer    -->
     <string name="username_placeholder">%1s %2s</string>
+    <string name="menu_title_logout">Logout</string>
     <!--    Error messages -->
 </resources>
