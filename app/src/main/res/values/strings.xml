@@ -58,5 +58,7 @@
     <!-- Navigation drawer    -->
     <string name="username_placeholder">%1s %2s</string>
     <string name="menu_title_logout">Logout</string>
+    <string name="menu_title_favorite">Liked pets</string>
+    <string name="menu_title_search">Search pets</string>
     <!--    Error messages -->
 </resources>
