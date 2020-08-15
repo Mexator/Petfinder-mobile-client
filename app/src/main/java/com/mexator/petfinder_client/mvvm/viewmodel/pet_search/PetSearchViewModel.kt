@@ -1,5 +1,6 @@
 package com.mexator.petfinder_client.mvvm.viewmodel.pet_search
 
+import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
@@ -11,10 +12,10 @@ import io.reactivex.subjects.BehaviorSubject
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class PetSearchViewModel : PetListViewModel(), KoinComponent {
-    override val viewState: Observable<MainViewState> get() = _viewState
+class PetSearchViewModel : ViewModel(), KoinComponent {
+    val viewState: Observable<MainViewState> get() = _viewState
 
-    override var refreshNeeded: Boolean = true
+    var refreshNeeded: Boolean = true
         private set
 
     private var _viewState: BehaviorSubject<MainViewState> = BehaviorSubject.create()
@@ -39,7 +40,7 @@ class PetSearchViewModel : PetListViewModel(), KoinComponent {
         )
     }
 
-    override fun reloadPetsList(type: String?, breed: String?) {
+    fun reloadPetsList(type: String?, breed: String?) {
         _viewState.value?.let { state ->
             if (!state.updating) {
                 _viewState.onNext(state.copy(updating = true, petList = emptyList()))
@@ -54,7 +55,7 @@ class PetSearchViewModel : PetListViewModel(), KoinComponent {
         }
     }
 
-    override fun loadNextPage() {
+    fun loadNextPage() {
         _viewState.value?.let { state ->
             if (!state.updating && !noMorePages) {
                 _viewState.onNext(state.copy(updating = true))
