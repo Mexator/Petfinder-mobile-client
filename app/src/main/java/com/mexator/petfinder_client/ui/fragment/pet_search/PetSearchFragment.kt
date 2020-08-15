@@ -9,15 +9,12 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.extensions.getTag
-import com.mexator.petfinder_client.mvvm.viewmodel.pet_search.LikedPetViewModel
-import com.mexator.petfinder_client.mvvm.viewmodel.pet_search.PetListViewModel
 import com.mexator.petfinder_client.mvvm.viewmodel.pet_search.PetSearchViewModel
 import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetAdapter
 import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetErrorAdapter
@@ -26,48 +23,39 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main.*
 
-enum class ContentType {
-    ALL, LIKED
-}
-
 class PetSearchFragment : Fragment() {
-    private lateinit var viewModel: PetListViewModel
+    private val viewModel: PetSearchViewModel by viewModels()
     private var compositeDisposable = CompositeDisposable()
 
     private val PRELOAD_MARGIN = 10
 
-    private lateinit var dataAdapter: PetAdapter
-    private lateinit var loadingAdapter: PetLoadingAdapter
-    private lateinit var errorAdapter: PetErrorAdapter
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            val modelClass = when (it["type"]) {
-                ContentType.ALL -> PetSearchViewModel::class.java
-                ContentType.LIKED -> LikedPetViewModel::class.java
-                else -> PetSearchViewModel::class.java
-            } as Class<PetListViewModel>
-
-            viewModel = ViewModelProvider(this).get(modelClass)
-
-            dataAdapter = PetAdapter { item ->
-                val bundle = Bundle()
-                bundle.putParcelable("content", item)
-                findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundle)
-            }
-            loadingAdapter =
-                PetLoadingAdapter()
-            errorAdapter =
-                PetErrorAdapter {
-                    viewModel.loadNextPage()
-                }
-
-            dataAdapter.setHasStableIds(true)
-            loadingAdapter.setHasStableIds(true)
-            errorAdapter.setHasStableIds(true)
+    private val dataAdapter =
+        PetAdapter { item ->
+            val bundle = Bundle()
+            bundle.putParcelable("content", item)
+            findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundle)
         }
+    private val loadingAdapter =
+        PetLoadingAdapter()
+    private val errorAdapter =
+        PetErrorAdapter {
+            viewModel.loadNextPage()
+        }
+
+    init {
+        dataAdapter.setHasStableIds(true)
+        loadingAdapter.setHasStableIds(true)
+        errorAdapter.setHasStableIds(true)
     }
+
+    private val typeMap: Map<String, Int> = mapOf(
+        "Dog" to 0,
+        "Cat" to 1,
+        "Bird" to 2,
+        "Barnyard" to 3,
+        "Rabbit" to 4,
+        "Horse" to 5
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,

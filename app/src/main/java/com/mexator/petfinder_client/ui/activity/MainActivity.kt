@@ -9,7 +9,6 @@ import androidx.navigation.findNavController
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.mvvm.viewmodel.MainActivityViewModel
 import com.mexator.petfinder_client.mvvm.viewstate.MainActivityViewState
-import com.mexator.petfinder_client.ui.fragment.pet_search.ContentType
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_main.*
@@ -32,7 +31,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.action_logout -> logout()
                 R.id.action_to_liked_pets -> goToLiked()
                 R.id.action_search -> goToSearch()
-                else -> {}
+                else -> {
+                }
             }
             true
         }
@@ -52,15 +52,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun goToSearch() {
-        val bundle = Bundle()
-        bundle.putSerializable("type", ContentType.ALL)
-        findNavController(R.id.nav_host_fragment).navigate(R.id.action_mainFragment_self, bundle)
+        findNavController(R.id.nav_host_fragment).navigate(R.id.action_main)
     }
 
     private fun goToLiked() {
-        val bundle = Bundle()
-        bundle.putSerializable("type", ContentType.LIKED)
-        findNavController(R.id.nav_host_fragment).navigate(R.id.action_mainFragment_self, bundle)
+        findNavController(R.id.nav_host_fragment).navigate(R.id.action_liked)
     }
 
     private fun logout() {
