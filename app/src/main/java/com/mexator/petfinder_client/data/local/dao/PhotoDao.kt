@@ -1,10 +1,10 @@
-package com.mexator.petfinder_client.data.local
+package com.mexator.petfinder_client.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.mexator.petfinder_client.data.local.entity.PhotoEntity
 import io.reactivex.Maybe
-import io.reactivex.Single
 
 @Dao
 interface PhotoDao {

@@ -12,10 +12,12 @@ import io.reactivex.Single
  */
 interface PetDataSource<PM : PetModel> {
     fun getPets(parameters: SearchParameters, page: Int): Single<List<PM>>
-    fun getPet(id: Int): Single<PM>
+    fun getPet(id: Int): Maybe<PM>
 
     fun getPetPhotos(pet: PM, size: PhotoSize): List<Single<Drawable>>
     fun getPetPreview(pet: PM): Maybe<Drawable>
+
+    fun getFavorites(userCookie: String): Single<List<PM>>
 
     enum class PhotoSize { SMALL, MEDIUM, LARGE, FULL }
 }

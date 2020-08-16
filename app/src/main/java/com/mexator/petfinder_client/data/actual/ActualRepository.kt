@@ -5,11 +5,12 @@ import android.util.Log
 import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
-import com.mexator.petfinder_client.data.local.PetEntity
+import com.mexator.petfinder_client.data.local.entity.PetEntity
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.data.remote.api_interaction.CookieHolder
 import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderUserAPI
+import com.mexator.petfinder_client.data.remote.pojo.Favorite
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
 import com.mexator.petfinder_client.extensions.getTag
@@ -100,6 +101,15 @@ class ActualRepository(
 
     override fun getFavorites(): Single<List<PetModel>> =
         remoteDataSource.getFavorites(cookieHolder.userCookie)
+            .doOnSuccess { list ->
+                localDataSource.savePets(list, false)
+                localDataSource.clearFavorites()
+                localDataSource.saveFavorites(list.map { Favorite(it.id.toInt()) })
+            }
+            .map { it as List<PetModel> }
+            .onErrorResumeNext {
+                localDataSource.getFavorites(cookieHolder.userCookie)
+            }
 
     /**
      * Load first page and determine source for next ones

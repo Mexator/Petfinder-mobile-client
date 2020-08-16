@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable
 import com.bumptech.glide.RequestManager
 import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.UserDataSource
-import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.data.remote.api_interaction.APIKeysHolder
 import com.mexator.petfinder_client.data.remote.api_interaction.PetfinderJSONAPI
@@ -59,19 +58,21 @@ object RemoteDataSource : PetDataSource<PetResponse>, UserDataSource, KoinCompon
             .getMe("PFSESSION=${userCookie}")
             .map { it.user }
 
-    override fun getPet(id: Int): Single<PetResponse> =
+    override fun getPet(id: Int): Maybe<PetResponse> =
         keyholder
             .getAccessToken()
             .flatMap {
                 petfinderAPI.getPet("Bearer $it", id)
             }
             .map { it.animal }
+            .toMaybe()
+            .onErrorComplete()
 
-    override fun getFavorites(userCookie: String): Single<List<PetModel>> =
+    override fun getFavorites(userCookie: String): Single<List<PetResponse>> =
         petfinderUserAPI
             .getFavorites("PFSESSION=${userCookie}")
             .map { it.favorites }
-            .map { list -> list.map { getPet(it.id).blockingGet() } }
+            .map { list -> list.mapNotNull { getPet(it.id).blockingGet() } }
 
     private fun loadSinglePhoto(photoResponse: PetPhotoResponse, size: PetDataSource.PhotoSize)
             : Drawable {

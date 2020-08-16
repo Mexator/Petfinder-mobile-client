@@ -6,11 +6,11 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.UserDataSource
-import com.mexator.petfinder_client.data.local.PAGINATION_OFFSET
 import com.mexator.petfinder_client.data.local.PetDB
-import com.mexator.petfinder_client.data.local.PetEntity
-import com.mexator.petfinder_client.data.local.PhotoEntity
-import com.mexator.petfinder_client.data.model.PetModel
+import com.mexator.petfinder_client.data.local.dao.PAGINATION_OFFSET
+import com.mexator.petfinder_client.data.local.entity.FavoriteEntity
+import com.mexator.petfinder_client.data.local.entity.PetEntity
+import com.mexator.petfinder_client.data.local.entity.PhotoEntity
 import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.data.remote.pojo.Favorite
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
@@ -59,12 +59,24 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
 
     override fun getUser(userCookie: String): Single<User> = db.userDao().getUser()
 
-    override fun getPet(id: Int): Single<PetEntity> {
-        TODO("Not yet implemented")
+    override fun getPet(id: Int): Maybe<PetEntity> =
+        db.petDao()
+            .getPet(id)
+            .toMaybe()
+            .onErrorComplete()
+
+    override fun getFavorites(userCookie: String): Single<List<PetEntity>> =
+        db.userDao()
+            .getFavorites()
+
+    fun saveFavorites(favorites: List<Favorite>) {
+        db.userDao()
+            .saveFavorites(favorites.map { FavoriteEntity(it.id) })
     }
 
-    override fun getFavorites(userCookie: String): Single<List<PetModel>> {
-        TODO()
+    fun clearFavorites() {
+        db.userDao()
+            .clearFavorites()
     }
 
     fun saveUser(user: User) {
