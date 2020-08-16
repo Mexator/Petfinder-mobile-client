@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.mvvm.viewmodel.liked_pets.LikedPetViewModel
 import com.mexator.petfinder_client.mvvm.viewstate.LikedPetsViewState
 import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.fragment_main.*
 
 class LikedPetsFragment : Fragment() {
     private val viewModel: LikedPetViewModel by viewModels()
@@ -32,7 +34,10 @@ class LikedPetsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
         subscribeToViewState()
+        viewModel.loadNextPage()
     }
 
     override fun onDestroy() {
@@ -48,6 +53,6 @@ class LikedPetsFragment : Fragment() {
     }
 
     private fun applyStateChange(state: LikedPetsViewState) {
-
+        adapter.submitList(state.petList)
     }
 }

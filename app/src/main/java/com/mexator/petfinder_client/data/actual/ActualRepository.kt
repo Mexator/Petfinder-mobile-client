@@ -81,7 +81,7 @@ class ActualRepository(
     override fun logout() {
         cookieHolder.userCookie = ""
         storageManager.saveCredentials("")
-        Completable.fromAction {localDataSource.deleteUser() }
+        Completable.fromAction { localDataSource.deleteUser() }
             .subscribeOn(Schedulers.io())
             .subscribe()
     }
@@ -97,6 +97,9 @@ class ActualRepository(
     override fun setCookie(userCookie: String) {
         cookieHolder.userCookie = userCookie
     }
+
+    override fun getFavorites(): Single<List<PetModel>> =
+        remoteDataSource.getFavorites(cookieHolder.userCookie)
 
     /**
      * Load first page and determine source for next ones

@@ -8,10 +8,10 @@ class CookieInterceptor: Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val response = chain.proceed(chain.request())
 
-        response.headers["Set-cookie"]?.let {
+        response.headers["Set-cookie"]?.let { it ->
             if(it.isNotEmpty()) {
                 val regex = "(?:PFSESSION=)(\\w+)(?:;)".toRegex()
-                CookieHolder.userCookie = regex.find(it)!!.groupValues[1]
+                regex.find(it)?.groupValues?.get(1)?.let { t -> CookieHolder.userCookie = t }
             }
         }
         return response

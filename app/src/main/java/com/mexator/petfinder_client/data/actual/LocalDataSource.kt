@@ -10,7 +10,9 @@ import com.mexator.petfinder_client.data.local.PAGINATION_OFFSET
 import com.mexator.petfinder_client.data.local.PetDB
 import com.mexator.petfinder_client.data.local.PetEntity
 import com.mexator.petfinder_client.data.local.PhotoEntity
+import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.model.User
+import com.mexator.petfinder_client.data.remote.pojo.Favorite
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
 import com.mexator.petfinder_client.storage.StorageManager
@@ -56,6 +58,14 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
             .map { Drawable.createFromPath(it.fileName) }
 
     override fun getUser(userCookie: String): Single<User> = db.userDao().getUser()
+
+    override fun getPet(id: Int): Single<PetEntity> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getFavorites(userCookie: String): Single<List<PetModel>> {
+        TODO()
+    }
 
     fun saveUser(user: User) {
         with(db.userDao()) {
@@ -134,4 +144,5 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
 
     private fun toOffset(page: Int?, itemsOnPage: Int = PAGINATION_OFFSET): Int =
         ((page ?: 1) - 1) * itemsOnPage
+
 }

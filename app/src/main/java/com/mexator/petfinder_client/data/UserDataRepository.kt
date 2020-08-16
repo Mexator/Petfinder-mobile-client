@@ -1,5 +1,6 @@
 package com.mexator.petfinder_client.data
 
+import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.model.User
 import io.reactivex.Single
 
@@ -25,4 +26,9 @@ interface UserDataRepository {
      * Set user cookie
      */
     fun setCookie(userCookie: String)
+
+    /**
+     * Get list of favorite pets
+     */
+    fun getFavorites(): Single<List<PetModel>>
 }

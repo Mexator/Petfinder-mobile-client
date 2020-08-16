@@ -1,5 +1,6 @@
 package com.mexator.petfinder_client.data.remote.api_interaction
 
+import com.mexator.petfinder_client.data.remote.pojo.AnimalResponse
 import com.mexator.petfinder_client.data.remote.pojo.AnimalsResponse
 import com.mexator.petfinder_client.data.remote.pojo.TokenResponse
 import io.reactivex.Single
@@ -22,4 +23,8 @@ interface PetfinderJSONAPI {
         @Query("breed") breed: String?,
         @Query("page") page: Int?
     ): Single<AnimalsResponse>
+
+    @GET("animals/{id}")
+    fun getPet(@Header("Authorization") token: String,
+               @Path("id") id: Int): Single<AnimalResponse>
 }
