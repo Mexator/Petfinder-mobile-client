@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.mexator.petfinder_client.data.local.entity.PhotoEntity
 import io.reactivex.Maybe
+import io.reactivex.Single
 
 @Dao
 interface PhotoDao {
@@ -12,7 +13,7 @@ interface PhotoDao {
     fun savePhoto(photoEntity: PhotoEntity)
 
     @Query("select * from ${PhotoEntity.TABLE_NAME} where petId = :petId")
-    fun getPhotos(petId: Long): List<PhotoEntity>
+    fun getPhotos(petId: Long): Single<List<PhotoEntity>>
 
     @Query("select * from ${PhotoEntity.TABLE_NAME} where petId = :petId limit 1")
     fun getPreview(petId: Long): Maybe<PhotoEntity>

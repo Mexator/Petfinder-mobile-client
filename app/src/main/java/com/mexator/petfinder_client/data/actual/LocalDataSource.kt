@@ -19,6 +19,7 @@ import com.mexator.petfinder_client.storage.StorageManager
 import com.mexator.petfinder_client.utils.WhereBuilder
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.math.BigInteger
@@ -50,7 +51,13 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
     ): List<Single<Drawable>> {
         return db.photoDao()
             .getPhotos(pet.id)
-            .map { Single.just(Drawable.createFromPath(it.fileName)!!) }
+            .subscribeOn(Schedulers.io())
+            .blockingGet()
+            .map {
+                Single.defer {
+                    Single.just(Drawable.createFromPath(it.fileName)!!)
+                }
+            }
     }
 
     override fun getPetPreview(pet: PetEntity): Maybe<Drawable> =
