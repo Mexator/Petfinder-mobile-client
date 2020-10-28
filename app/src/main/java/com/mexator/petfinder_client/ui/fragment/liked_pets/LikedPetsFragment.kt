@@ -38,6 +38,7 @@ class LikedPetsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         subscribeToViewState()
         viewModel.loadNextPage()
+        setupSwipeRefresh()
     }
 
     override fun onDestroy() {
@@ -54,5 +55,13 @@ class LikedPetsFragment : Fragment() {
 
     private fun applyStateChange(state: LikedPetsViewState) {
         adapter.submitList(state.petList)
+        if (!state.updating)
+            swipeRefresh.isRefreshing = false
+    }
+
+    private fun setupSwipeRefresh() {
+        swipeRefresh.setOnRefreshListener {
+            viewModel.loadNextPage()
+        }
     }
 }

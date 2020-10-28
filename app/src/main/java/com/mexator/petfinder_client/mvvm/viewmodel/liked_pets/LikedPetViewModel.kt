@@ -21,15 +21,18 @@ class LikedPetViewModel : ViewModel(), KoinComponent {
     init {
         _viewState.onNext(
             LikedPetsViewState(
-                emptyList()
+                emptyList(),
+                true
             )
         )
     }
 
     fun loadNextPage() {
+        _viewState.onNext(_viewState.value!!.copy(updating = true))
+
         val job = repository.getFavorites()
             .subscribeOn(Schedulers.io())
-            .subscribe { value -> _viewState.onNext(LikedPetsViewState(value)) }
+            .subscribe { value -> _viewState.onNext(LikedPetsViewState(value, false)) }
         compositeDisposable.add(job)
     }
 }
