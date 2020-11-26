@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 class LikedPetsFragment : Fragment() {
     private val viewModel: LikedPetViewModel by viewModels()
     private val compositeDisposable = CompositeDisposable()
-    private val adapter: PetAdapter = PetAdapter { }
+    private val adapter: PetAdapter = PetAdapter ({ },{ _,_ -> })
 
     init {
         adapter.setHasStableIds(true)

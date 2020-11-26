@@ -5,6 +5,7 @@ import android.util.Log
 import com.mexator.petfinder_client.data.PetDataSource
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
+import com.mexator.petfinder_client.data.UserDataSource
 import com.mexator.petfinder_client.data.local.entity.PetEntity
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.model.User
@@ -19,6 +20,8 @@ import com.mexator.petfinder_client.storage.StorageManager
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 import org.koin.core.KoinComponent
@@ -37,6 +40,9 @@ class ActualRepository(
     // State variables
     private var parameters: SearchParameters = SearchParameters(null, null)
     private var useRemoteSource: Boolean? = null
+
+    // Disposable for background jobs
+    private var compositeDisposable = CompositeDisposable()
 
     override fun submitQuery(params: SearchParameters) {
         parameters = params.copy()
@@ -99,17 +105,47 @@ class ActualRepository(
         cookieHolder.userCookie = userCookie
     }
 
+    override fun getFavoritesIDs(): Single<List<Long>> {
+        // Get new favorites in background and show locally saved ones
+        val job = remoteDataSource.getFavoritesIDs(cookieHolder.userCookie)
+            .doOnSuccess { list ->
+                localDataSource.saveFavorites(list.map { Favorite(it) })
+            }.subscribe({},{})
+        compositeDisposable.add(job)
+        return localDataSource.getFavoritesIDs("")
+            .subscribeOn(Schedulers.io())
+    }
+
     override fun getFavorites(): Single<List<PetModel>> =
         remoteDataSource.getFavorites(cookieHolder.userCookie)
             .doOnSuccess { list ->
                 localDataSource.savePets(list, false)
                 localDataSource.clearFavorites()
-                localDataSource.saveFavorites(list.map { Favorite(it.id.toInt()) })
+                localDataSource.saveFavorites(list.map { Favorite(it.id) })
             }
-            .map { it as List<PetModel> }
             .onErrorResumeNext {
                 localDataSource.getFavorites(cookieHolder.userCookie)
             }
+
+    override fun Like(pet: PetModel) {
+        val sources = listOf<UserDataSource>(localDataSource, remoteDataSource)
+        for (source in sources) {
+            source
+                .addFavorite(cookieHolder.userCookie, pet = pet)
+                .subscribeOn(Schedulers.io())
+                .subscribe()
+        }
+    }
+
+    override fun UnLike(pet: PetModel) {
+        val sources = listOf<UserDataSource>(localDataSource, remoteDataSource)
+        for (source in sources) {
+            source
+                .removeFavorite(cookieHolder.userCookie, pet = pet)
+                .subscribeOn(Schedulers.io())
+                .subscribe()
+        }
+    }
 
     /**
      * Load first page and determine source for next ones

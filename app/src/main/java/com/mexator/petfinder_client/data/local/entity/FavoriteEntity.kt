@@ -6,14 +6,14 @@ import androidx.room.ForeignKey.CASCADE
 import androidx.room.PrimaryKey
 
 @Entity(
-    foreignKeys = [ForeignKey(
-        onDelete = CASCADE,
-        entity = PetEntity::class,
-        parentColumns = ["id"],
-        childColumns = ["id"]
-    )]
+//    foreignKeys = [ForeignKey(
+//        onDelete = CASCADE,
+//        entity = PetEntity::class,
+//        parentColumns = ["id"],
+//        childColumns = ["id"]
+//    )]
 )
 data class FavoriteEntity(
     @PrimaryKey
-    val id: Int
+    val id: Long
 )

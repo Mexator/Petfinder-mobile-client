@@ -2,6 +2,7 @@ package com.mexator.petfinder_client.data.actual
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.core.graphics.drawable.toBitmap
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.mexator.petfinder_client.data.PetDataSource
@@ -11,12 +12,15 @@ import com.mexator.petfinder_client.data.local.dao.PAGINATION_OFFSET
 import com.mexator.petfinder_client.data.local.entity.FavoriteEntity
 import com.mexator.petfinder_client.data.local.entity.PetEntity
 import com.mexator.petfinder_client.data.local.entity.PhotoEntity
+import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.model.User
 import com.mexator.petfinder_client.data.remote.pojo.Favorite
 import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
+import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.storage.StorageManager
 import com.mexator.petfinder_client.utils.WhereBuilder
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -66,19 +70,35 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
 
     override fun getUser(userCookie: String): Single<User> = db.userDao().getUser()
 
-    override fun getPet(id: Int): Maybe<PetEntity> =
+    override fun getPet(id: Long): Maybe<PetEntity> =
         db.petDao()
             .getPet(id)
             .toMaybe()
             .onErrorComplete()
 
-    override fun getFavorites(userCookie: String): Single<List<PetEntity>> =
+    override fun getFavorites(userCookie: String): Single<List<PetModel>> =
         db.userDao()
             .getFavorites()
+            .map { list -> list.map { it as PetModel } }
+
+    override fun getFavoritesIDs(userCookie: String): Single<List<Long>> {
+        return db.userDao()
+            .getFavoriteIDs()
+            .doOnSuccess { Log.d(getTag(), it.toString()) }
+    }
+
+    override fun addFavorite(userCookie: String, pet: PetModel) =
+        db.userDao()
+            .saveFavorites(listOf(FavoriteEntity(pet.id)))
+
+    override fun removeFavorite(userCookie: String, pet: PetModel): Completable =
+        db.userDao()
+            .removeFavorite(FavoriteEntity(pet.id))
 
     fun saveFavorites(favorites: List<Favorite>) {
         db.userDao()
             .saveFavorites(favorites.map { FavoriteEntity(it.id) })
+            .subscribe()
     }
 
     fun clearFavorites() {
@@ -102,7 +122,7 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
     /**
      * Save pets to DB
      */
-    fun savePets(content: List<PetResponse>, clear: Boolean) {
+    fun savePets(content: List<PetModel>, clear: Boolean) {
         if (clear and content.isNotEmpty()) {
             deletePets(content[0].type)
             count = 0

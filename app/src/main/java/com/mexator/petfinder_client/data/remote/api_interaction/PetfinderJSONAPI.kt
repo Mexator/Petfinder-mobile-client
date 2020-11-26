@@ -26,5 +26,5 @@ interface PetfinderJSONAPI {
 
     @GET("animals/{id}")
     fun getPet(@Header("Authorization") token: String,
-               @Path("id") id: Int): Single<AnimalResponse>
+               @Path("id") id: Long): Single<AnimalResponse>
 }

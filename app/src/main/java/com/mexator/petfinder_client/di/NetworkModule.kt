@@ -67,7 +67,7 @@ val networkModule = module {
 }
 
 fun createLoggingInterceptor() = HttpLoggingInterceptor()
-    .setLevel(HttpLoggingInterceptor.Level.HEADERS)
+    .setLevel(HttpLoggingInterceptor.Level.BODY)
 
 fun createClient(interceptors: List<Interceptor>): OkHttpClient {
     val clientBuilder = OkHttpClient.Builder()

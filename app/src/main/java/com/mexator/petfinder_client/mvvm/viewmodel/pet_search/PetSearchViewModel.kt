@@ -1,9 +1,12 @@
 package com.mexator.petfinder_client.mvvm.viewmodel.pet_search
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.PetRepository
+import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
+import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.mvvm.viewstate.MainViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -21,6 +24,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
     private var _viewState: BehaviorSubject<MainViewState> = BehaviorSubject.create()
 
     private val petRepository: PetRepository by inject()
+    private val userDataRepository: UserDataRepository by inject()
 
     private val compositeDisposable = CompositeDisposable()
 
@@ -38,6 +42,11 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
                 null
             )
         )
+    }
+
+    override fun onCleared() {
+        compositeDisposable.clear()
+        super.onCleared()
     }
 
     fun reloadPetsList(type: String?, breed: String?) {
@@ -64,6 +73,14 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
                     { error -> receivePageError(state, error.message ?: "Unknown error") })
             }
         }
+    }
+
+    fun addToFavorites(pet: PetModel) {
+        userDataRepository.Like(pet)
+    }
+
+    fun removeFromFavorites(pet: PetModel) {
+        userDataRepository.UnLike(pet)
     }
 
     private fun requestPage(onSuccess: (List<PetModel>) -> Unit, onError: (Throwable) -> Unit) {
@@ -106,10 +123,5 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
                 error = error
             )
         )
-    }
-
-    override fun onCleared() {
-        compositeDisposable.clear()
-        super.onCleared()
     }
 }

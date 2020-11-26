@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mexator.petfinder_client.R
+import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.mvvm.viewmodel.pet_search.PetSearchViewModel
 import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetAdapter
@@ -30,10 +31,16 @@ class PetSearchFragment : Fragment() {
     private val PRELOAD_MARGIN = 10
 
     private val dataAdapter =
-        PetAdapter { item ->
+        PetAdapter({ item ->
             val bundle = Bundle()
             bundle.putParcelable("content", item)
             findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundle)
+        }) { pet: PetModel, isChecked: Boolean ->
+            if (isChecked) {
+                viewModel.addToFavorites(pet)
+            } else {
+                viewModel.removeFromFavorites(pet)
+            }
         }
     private val loadingAdapter =
         PetLoadingAdapter()

@@ -30,5 +30,5 @@ interface PetDao {
     fun clearPetsTable(type: String)
 
     @Query("select * from pets where id == :id")
-    fun getPet(id:Int): Single<PetEntity>
+    fun getPet(id:Long): Single<PetEntity>
 }
