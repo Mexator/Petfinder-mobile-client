@@ -27,7 +27,11 @@
     <fragment
         android:id="@+id/likedPetsFragment"
         android:name="com.mexator.petfinder_client.ui.fragment.liked_pets.LikedPetsFragment"
-        android:label="LikedPetsFragment" />
+        android:label="LikedPetsFragment" >
+        <action
+            android:id="@+id/action_likedPetsFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
     <action
         android:id="@+id/action_main"
         app:destination="@+id/mainFragment"
