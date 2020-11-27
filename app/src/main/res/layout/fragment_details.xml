@@ -1,183 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@color/colorPrimaryDark"
 
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/imagesViewPager"
-                android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:layout_height="0dp" >
-            </androidx.viewpager.widget.ViewPager>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout style="@style/OuterLinearLayout">
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#00000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pager"
 
-                <LinearLayout style="@style/InnerLinearLayout">
+        app:tabBackground="@drawable/tab_dot_selector"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp" />
 
-                    <TextView
-                        style="@style/DetailsLabelView"
-                        android:text="@string/details_breed"/>
+    <TextView
+        android:id="@+id/detail_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textColor="@color/white"
 
-                    <TextView style="@style/DetailsValueView"
-                        android:id="@+id/breed"/>
-                </LinearLayout>
+        android:textSize="36sp"
 
-                <LinearLayout style="@style/InnerLinearLayout">
+        app:layout_constraintBottom_toBottomOf="@id/pager"
+        app:layout_constraintStart_toStartOf="parent"
 
-                    <TextView
-                        style="@style/DetailsLabelView"
-                        android:text="@string/details_age" />
+        tools:text="Name" />
 
-                    <TextView style="@style/DetailsValueView"
-                        android:id="@+id/age"/>
-                </LinearLayout>
+    <TextView
+        android:id="@+id/detail_age"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="24sp"
 
-            </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabs"
 
-            <LinearLayout style="@style/OuterLinearLayout">
+        tools:text="Adult" />
 
-                <LinearLayout style="@style/InnerLinearLayout">
+    <Button
+        android:id="@+id/button_ask_about"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_button_ask_about"
 
-                    <TextView
-                        style="@style/DetailsLabelView"
-                        android:text="@string/details_organization" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabs" />
 
-                    <TextView style="@style/DetailsValueView"
-                        android:id="@+id/organization"/>
-                </LinearLayout>
+    <TextView
+        android:id="@+id/detail_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="24sp"
 
-                <LinearLayout style="@style/InnerLinearLayout">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabs"
 
-                    <TextView
-                        style="@style/DetailsLabelView"
-                        android:text="@string/details_color" />
+        tools:text="Dog" />
 
-                    <TextView style="@style/DetailsValueView"
-                        android:id="@+id/color"/>
-                </LinearLayout>
+    <TextView
+        android:id="@+id/detail_breed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="18sp"
 
-            </LinearLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detail_type"
 
-            <LinearLayout style="@style/OuterLinearLayout">
+        tools:text="12345678910" />
 
-                <LinearLayout style="@style/InnerLinearLayout">
+    <TextView
+        android:id="@+id/detail_gender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="18sp"
 
-                    <TextView
-                        style="@style/DetailsLabelView"
-                        android:text="@string/details_type" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detail_type"
 
-                    <TextView style="@style/DetailsValueView"
-                        android:id="@+id/type"/>
-                </LinearLayout>
+        tools:text="12345678910" />
 
-                <LinearLayout style="@style/InnerLinearLayout">
+    <TextView
+        android:id="@+id/detail_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="16dp"
 
-                    <TextView
-                        style="@style/DetailsLabelView"
-                        android:text="@string/details_name" />
+        app:layout_constraintTop_toBottomOf="@id/detail_breed" />
 
-                    <TextView style="@style/DetailsValueView"
-                        android:id="@+id/name"/>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout style="@style/OuterLinearLayout">
-
-                <LinearLayout style="@style/InnerLinearLayout">
-
-                    <TextView
-                        style="@style/DetailsLabelView"
-                        android:text="@string/details_gender" />
-
-                    <TextView style="@style/DetailsValueView"
-                        android:id="@+id/gender"/>
-                </LinearLayout>
-
-                <LinearLayout style="@style/InnerLinearLayout">
-
-                    <TextView
-                        style="@style/DetailsLabelView"
-                        android:text="@string/details_size" />
-
-                    <TextView style="@style/DetailsValueView"
-                        android:id="@+id/size"/>
-                </LinearLayout>
-
-            </LinearLayout>
-            <LinearLayout style="@style/OuterLinearLayout">
-
-                <LinearLayout style="@style/InnerLinearLayout">
-                    <CheckBox
-                        android:id="@+id/childrenCheckBox"
-                        style="@style/DetailsCheckboxView"
-                        android:text="@string/details_children"/>
-
-                </LinearLayout>
-
-                <LinearLayout style="@style/InnerLinearLayout">
-                    <CheckBox
-                        android:id="@+id/catsCheckBox"
-                        style="@style/DetailsCheckboxView"
-                        android:text="@string/details_cats"/>
-                </LinearLayout>
-
-                <LinearLayout style="@style/InnerLinearLayout">
-                    <CheckBox
-                        android:id="@+id/dogsCheckBox"
-                        style="@style/DetailsCheckboxView"
-                        android:text="@string/details_dogs"/>
-                </LinearLayout>
-
-            </LinearLayout>
-            <LinearLayout style="@style/OuterLinearLayout">
-
-                <LinearLayout style="@style/InnerLinearLayout">
-                    <CheckBox
-                        android:id="@+id/neuteredCheckBox"
-                        style="@style/DetailsCheckboxView"
-                        android:text="@string/details_spayed_neutered"/>
-
-                </LinearLayout>
-
-                <LinearLayout style="@style/InnerLinearLayout">
-                    <CheckBox
-                        android:id="@+id/trainedCheckBox"
-                        style="@style/DetailsCheckboxView"
-                        android:text="@string/details_house_trained"/>
-                </LinearLayout>
-
-                <LinearLayout style="@style/InnerLinearLayout">
-                    <CheckBox
-                        android:id="@+id/specialNeedsCheckBox"
-                        style="@style/DetailsCheckboxView"
-                        android:text="@string/details_special_needs"/>
-                </LinearLayout>
-
-            </LinearLayout>
-            <LinearLayout style="@style/OuterLinearLayout">
-
-                <LinearLayout style="@style/InnerLinearLayout">
-                    <CheckBox
-                        android:id="@+id/declawedCheckBox"
-                        style="@style/DetailsCheckboxView"
-                        android:text="@string/details_declawed"/>
-
-                </LinearLayout>
-
-                <LinearLayout style="@style/InnerLinearLayout">
-                    <CheckBox
-                        android:id="@+id/shotsCheckBox"
-                        style="@style/DetailsCheckboxView"
-                        android:text="@string/details_shots_current"/>
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

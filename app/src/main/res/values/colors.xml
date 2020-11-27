@@ -8,4 +8,8 @@
     <color name="textGray">#4d4751</color>
 
     <color name="colorDelimiter">#777777</color>
+
+    <color name="transparent">#00FFFFFF</color>
+
+    <color name="white">#FFFFFF</color>
 </resources>

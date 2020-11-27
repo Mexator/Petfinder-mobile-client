@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">RxHomework</string>
-
+    <!--SharedPreferences filenames-->
     <string name="tokens_file_name">TOKENS</string>
+    <string name="auth_file_name">AUTH</string>
 
     <string name="details_name">Name</string>
     <string name="details_breed">Breed</string>
@@ -37,5 +38,27 @@
         <item>Horse</item>
     </string-array>
 
-<!--    Error messages -->
+    <!-- Login    -->
+    <string name="hint_login">Login (email)</string>
+    <string name="hint_password">Password</string>
+    <string name="text_log_in">Log in</string>
+    <string name="text_sign_up">Sign up</string>
+    <string name="text_error_login">Error during login. Check you login and password are entered correctly</string>
+
+    <!-- Pet search view   -->
+    <string name="text_loading">Loading…</string>
+    <string name="text_button_retry">Retry</string>
+
+    <!-- Pet detail view   -->
+    <string name="text_button_ask_about">Ask about pet</string>
+    <string name="link_read_more"><![CDATA[%2$s <a href="%1$s">Read more on Petfinder</a>]]></string>
+    <string name="breed_placeholder">Half %1s, \nhalf %2s</string>
+    <string name="breed_unknown">Unknown breed</string>
+    <string name="no_images">no images</string>
+    <!-- Navigation drawer    -->
+    <string name="username_placeholder">%1s %2s</string>
+    <string name="menu_title_logout">Logout</string>
+    <string name="menu_title_favorite">Liked pets</string>
+    <string name="menu_title_search">Search pets</string>
+    <!--    Error messages -->
 </resources>

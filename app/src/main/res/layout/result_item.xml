@@ -64,6 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_image"
+            tools:visibility="visible"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="@id/photoWrapper"
             app:layout_constraintStart_toStartOf="@id/photoWrapper"
@@ -84,6 +85,18 @@
             app:layout_constraintEnd_toStartOf="@id/petAge"
             app:layout_constraintStart_toEndOf="@+id/photoWrapper"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/checkbox_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@null"
+            android:background="@drawable/selector_like"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toBottomOf="@id/no_img"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guideline2"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
             android:id="@+id/petAge"
