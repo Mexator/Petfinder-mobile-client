@@ -35,10 +35,10 @@ class MockUserDataRepository : UserDataRepository {
         return Single.just(emptyList())
     }
 
-    override fun Like(pet: PetModel) {
+    override fun like(pet: PetModel) {
     }
 
-    override fun UnLike(pet: PetModel) {
+    override fun unLike(pet: PetModel) {
 
     }
 }

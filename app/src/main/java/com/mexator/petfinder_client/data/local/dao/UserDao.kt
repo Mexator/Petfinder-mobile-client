@@ -4,7 +4,6 @@ import androidx.room.*
 import com.mexator.petfinder_client.data.local.entity.FavoriteEntity
 import com.mexator.petfinder_client.data.local.entity.PetEntity
 import com.mexator.petfinder_client.data.model.User
-import com.mexator.petfinder_client.data.remote.pojo.Favorite
 import io.reactivex.Completable
 import io.reactivex.Single
 
@@ -22,16 +21,21 @@ interface UserDao {
     @Query("select * from pets p join FavoriteEntity fav on p.id == fav.id")
     fun getFavorites(): Single<List<PetEntity>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert
     fun saveFavorites(list: List<FavoriteEntity>) : Completable
 
     @Delete
     fun removeFavorite(pet: FavoriteEntity): Completable
 
     @Query("delete from FavoriteEntity")
-    fun clearFavorites()
+    fun clearFavorites(): Completable
 
+    @Transaction
+    fun updateFavorites(list: List<FavoriteEntity>) {
+        clearFavorites().blockingAwait()
+        saveFavorites(list).blockingAwait()
+    }
 
     @Query("delete from User")
-    fun deleteCurrentUser()
+    fun deleteCurrentUser(): Completable
 }

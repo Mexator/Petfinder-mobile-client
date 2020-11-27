@@ -9,6 +9,7 @@ private const val TIMEOUT = 5L
 class NetworkService {
     fun isConnectedToInternet(): Single<Boolean> {
         // Just check whether we can ping google (our API endpoint does not respond to ping requests)
+        // TODO: change way of checking internet
         val command = "ping -c 1 -W $TIMEOUT $INTERNET_CHECK_URL";
         return Single
             .defer { Single.just(Runtime.getRuntime().exec(command).waitFor()) }

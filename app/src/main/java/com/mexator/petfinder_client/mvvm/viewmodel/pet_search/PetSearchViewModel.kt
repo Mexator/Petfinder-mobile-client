@@ -1,12 +1,10 @@
 package com.mexator.petfinder_client.mvvm.viewmodel.pet_search
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
-import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.mvvm.viewstate.MainViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -76,11 +74,11 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
     }
 
     fun addToFavorites(pet: PetModel) {
-        userDataRepository.Like(pet)
+        userDataRepository.like(pet)
     }
 
     fun removeFromFavorites(pet: PetModel) {
-        userDataRepository.UnLike(pet)
+        userDataRepository.unLike(pet)
     }
 
     private fun requestPage(onSuccess: (List<PetModel>) -> Unit, onError: (Throwable) -> Unit) {

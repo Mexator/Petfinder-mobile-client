@@ -28,7 +28,7 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
     private val PHOTO_POSITION = 1
     private val compositeDisposable = CompositeDisposable()
 
-    fun bind(pet: PetModel) {
+    fun bind(pet: PetModel, likeCallback: (PetModel, Boolean) -> Unit) {
         compositeDisposable.clear()
 
         petDescription.text = pet.description
@@ -53,8 +53,15 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
                     no_img.visibility = View.VISIBLE
                 })
         compositeDisposable.add(job)
+
+        checkbox_like.setOnCheckedChangeListener(null)
         val job2 = userDataRepository
             .getFavoritesIDs()
+            .doAfterTerminate {
+                checkbox_like.setOnCheckedChangeListener { _, isChecked ->
+                    likeCallback(pet, isChecked)
+                }
+            }
             .subscribe(
                 { checkbox_like.isChecked = pet.id in it },
                 { checkbox_like.isChecked = false })
@@ -74,7 +81,6 @@ private object PetDiffCallback : DiffUtil.ItemCallback<PetModel>() {
     override fun areContentsTheSame(oldItem: PetModel, newItem: PetModel): Boolean {
         return true
     }
-
 }
 
 class PetAdapter(
@@ -96,11 +102,8 @@ class PetAdapter(
 
     override fun onBindViewHolder(holder: PetHolder, position: Int) {
         val pet: PetModel = currentList[position]
-        holder.bind(pet)
+        holder.bind(pet, likeCallback)
         holder.containerView.setOnClickListener { onClickCallback(pet) }
-        holder.checkbox_like.setOnCheckedChangeListener { _, isChecked ->
-            likeCallback(pet, isChecked)
-        }
     }
 
     override fun onViewRecycled(holder: PetHolder) {

@@ -14,8 +14,6 @@ import com.mexator.petfinder_client.data.local.entity.PetEntity
 import com.mexator.petfinder_client.data.local.entity.PhotoEntity
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.model.User
-import com.mexator.petfinder_client.data.remote.pojo.Favorite
-import com.mexator.petfinder_client.data.remote.pojo.PetResponse
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.storage.StorageManager
@@ -29,16 +27,33 @@ import org.koin.core.inject
 import java.math.BigInteger
 import java.util.*
 
+/**
+ * [LocalDataSource] is an object that wraps local database to make it more
+ * convenient to use. Implements [UserDataSource] and [PetDataSource].
+ */
 object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent {
     private val appContext: Context by inject()
     private val db = PetDB.getDatabaseInstance(appContext)
 
-    override fun getPets(parameters: SearchParameters, page: Int): Single<List<PetEntity>> {
-        val builder = WhereBuilder("select * from ${PetEntity.TABLE_NAME} ")
+    override fun getPets(
+        parameters: SearchParameters,
+        page: Int
+    ): Single<List<PetEntity>> {
+        val builder = WhereBuilder(
+            "select * from ${PetEntity.TABLE_NAME} "
+        )
 
         parameters.apply {
-            animalType?.let { builder.addAndCondition("type = \"$it\" ") }
-            animalBreed?.let { builder.addAndCondition("breeds like '%' || \"$it\" || '%' ") }
+            animalType?.let {
+                builder.addAndCondition(
+                    "type = \"$it\" "
+                )
+            }
+            animalBreed?.let {
+                builder.addAndCondition(
+                    "breeds like '%' || \"$it\" || '%' "
+                )
+            }
         }
 
         val query = SimpleSQLiteQuery(
@@ -50,10 +65,9 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
     }
 
     override fun getPetPhotos(
-        pet: PetEntity,
-        size: PetDataSource.PhotoSize
-    ): List<Single<Drawable>> {
-        return db.photoDao()
+        pet: PetEntity, size: PetDataSource.PhotoSize
+    ): List<Single<Drawable>> =
+        db.photoDao()
             .getPhotos(pet.id)
             .subscribeOn(Schedulers.io())
             .blockingGet()
@@ -62,13 +76,14 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
                     Single.just(Drawable.createFromPath(it.fileName)!!)
                 }
             }
-    }
+
 
     override fun getPetPreview(pet: PetEntity): Maybe<Drawable> =
         db.photoDao().getPreview(pet.id)
             .map { Drawable.createFromPath(it.fileName) }
 
-    override fun getUser(userCookie: String): Single<User> = db.userDao().getUser()
+    override fun getUser(userCookie: String): Single<User> =
+        db.userDao().getUser()
 
     override fun getPet(id: Long): Maybe<PetEntity> =
         db.petDao()
@@ -84,7 +99,6 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
     override fun getFavoritesIDs(userCookie: String): Single<List<Long>> {
         return db.userDao()
             .getFavoriteIDs()
-            .doOnSuccess { Log.d(getTag(), it.toString()) }
     }
 
     override fun addFavorite(userCookie: String, pet: PetModel) =
@@ -95,15 +109,9 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
         db.userDao()
             .removeFavorite(FavoriteEntity(pet.id))
 
-    fun saveFavorites(favorites: List<Favorite>) {
+    fun updateFavorites(favorites: List<Long>) {
         db.userDao()
-            .saveFavorites(favorites.map { FavoriteEntity(it.id) })
-            .subscribe()
-    }
-
-    fun clearFavorites() {
-        db.userDao()
-            .clearFavorites()
+            .updateFavorites(favorites.map { FavoriteEntity(it) })
     }
 
     fun saveUser(user: User) {
@@ -113,10 +121,19 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
         }
     }
 
+    /**
+     * Delete all user-related data from database
+     */
     fun deleteUser() {
         db.userDao().deleteCurrentUser()
+            .subscribeOn(Schedulers.io())
+            .subscribe()
+        db.userDao().clearFavorites()
+            .subscribeOn(Schedulers.io())
+            .subscribe()
     }
 
+    // Used to index pets by order they arrived
     private var count = 0
 
     /**
@@ -146,27 +163,17 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
     }
 
     /**
-     * Save a list of photos to filesystem, create photoEntity for each of them,
+     * Save a photo to filesystem, create photoEntity for each of them,
      * link them to the corresponding pet.
      */
-    fun savePetPhotos(photos: List<Drawable>, petId: Long) {
-
-        for (photo in photos) {
-            savePetPhoto(photo, petId)
-        }
-    }
-
     fun savePetPhoto(photo: Drawable, petId: Long) {
         val path = StorageManager.writeBitmapTo(randomName(), photo.toBitmap())
-        db.photoDao().savePhoto(
-            PhotoEntity(
-                path,
-                petId
-            )
-        )
+        db.photoDao().savePhoto(PhotoEntity(path, petId))
     }
 
-
+    /**
+     * Generate random filename for am image to be stored on disk
+     */
     private fun randomName(nameLen: Int = 32): String {
         var name = BigInteger(nameLen, Random())
             .toString()
@@ -181,6 +188,9 @@ object LocalDataSource : PetDataSource<PetEntity>, UserDataSource, KoinComponent
         db.petDao().clearPetsTable(type)
     }
 
+    /**
+     * Convert page number to offset for SQL query
+     */
     private fun toOffset(page: Int?, itemsOnPage: Int = PAGINATION_OFFSET): Int =
         ((page ?: 1) - 1) * itemsOnPage
 
