@@ -37,4 +37,9 @@ interface PetRepository {
      * @return preview photo of [pet] or `null` if it has no photos.
      */
     fun getPetPreview(pet: PetModel): Maybe<Drawable>
+
+    /**
+     * @return pet model with id [id], or null if it not exist
+     */
+    fun getPet(id: Long): Maybe<PetModel>
 }

@@ -22,12 +22,13 @@ import kotlinx.android.synthetic.main.fragment_liked.*
 class LikedPetsFragment : Fragment() {
     private val viewModel: LikedPetViewModel by viewModels()
     private val compositeDisposable = CompositeDisposable()
-    private val adapter: PetAdapter = PetAdapter({ item ->
-        val bundle = Bundle()
-        bundle.putParcelable("content", item)
-        findNavController()
-            .navigate(R.id.action_likedPetsFragment_to_detailsFragment, bundle)
-    },
+    private val adapter: PetAdapter = PetAdapter(
+        { item ->
+            val bundle = Bundle()
+            bundle.putParcelable("content", item)
+            findNavController()
+                .navigate(R.id.action_likedPetsFragment_to_detailsFragment, bundle)
+        },
         { pet: PetModel, isChecked: Boolean ->
             if (isChecked) {
                 viewModel.addToFavorites(pet)

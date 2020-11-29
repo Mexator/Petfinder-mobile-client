@@ -41,14 +41,13 @@ class LikedPetViewModel : ViewModel(), KoinComponent {
     fun loadNextPage() {
         _viewState.onNext(_viewState.value!!.copy(updating = true))
 
-        // TODO: think about if we can load and show pets one by one.
-        // Loading takes too long!
-        
-        val job = userDataRepository.getFavorites()
-            .subscribeOn(Schedulers.io())
-            .subscribe { value ->
-                _viewState.onNext(LikedPetsViewState(value, false))
-            }
+        val job =
+            userDataRepository
+                .getFavorites()
+                .subscribeOn(Schedulers.io())
+                .subscribe { value ->
+                    _viewState.onNext(LikedPetsViewState(value, false))
+                }
         compositeDisposable.add(job)
     }
 }

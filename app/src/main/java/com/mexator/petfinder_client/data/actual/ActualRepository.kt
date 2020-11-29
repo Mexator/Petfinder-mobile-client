@@ -16,9 +16,7 @@ import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.storage.StorageManager
-import io.reactivex.Completable
-import io.reactivex.Maybe
-import io.reactivex.Single
+import io.reactivex.*
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
@@ -104,6 +102,21 @@ class ActualRepository(
             localDataSource.getPetPreview(pet as PetEntity)
 
     /**
+     * @return pet model with id [id], or null if it not exist.
+     *
+     * Prefer local source, fallback to remote
+     */
+    override fun getPet(id: Long): Maybe<PetModel> {
+        val fallback = remoteDataSource.getPet(id)
+            .subscribeOn(Schedulers.io()) as Maybe<PetModel>
+
+        return (localDataSource.getPet(id) as Maybe<PetModel>)
+            .subscribeOn(Schedulers.io())
+            .switchIfEmpty(fallback)
+            .onErrorComplete()
+    }
+
+    /**
      * Check user login and password for validity via remote backend API.
      * Save user cookie to preferences in case if login response is success.
      */
@@ -163,6 +176,8 @@ class ActualRepository(
         // TODO: rework this, because it is not ok to request list of favorites for every pet
         val job = remoteDataSource
             .getFavoritesIDs(cookieHolder.userCookie)
+            .subscribeOn(Schedulers.io())
+            .observeOn(Schedulers.io())
             .subscribe({ localDataSource.updateFavorites(it) }) {}
         compositeDisposable.add(job)
         // Show locally saved ones
@@ -172,18 +187,40 @@ class ActualRepository(
 
     /**
      * Get list of favorite pets.
-     * Remote data is preferred, and in case of fail - fallback data is taken
-     * from local database
+     *
+     * See [getPet] and [getFavoritesIDs] to know how data sources are chosen
+     *
+     * @see [getPet] and
+     * @see [getFavoritesIDs]
      */
-    override fun getFavorites(): Single<List<PetModel>> =
-        remoteDataSource.getFavorites(cookieHolder.userCookie)
+    override fun getFavorites(): Single<List<PetModel>> {
+        // Map ID to [Single<Notification<PetModel>>]
+        val mapper = { id: Long ->
+            getPet(id)
+                // Could use [Maybe.materialize()] here, but it is @Experimental
+                .toObservable().materialize()
+                // take(1) to ignore all extra OnComplete notifications that appeared
+                // because of the cast to Observable
+                .take(1)
+        }
+
+        return getFavoritesIDs()
+            .flatMap { list ->
+                val maybes = list.map(mapper)
+                // Combine all notifications to list, get values, ignore nulls
+                Observable.zip(maybes) { notifications ->
+                    (notifications.toList() as List<Notification<PetModel>>)
+                        .mapNotNull { it.value }
+                }
+                    // Assert that zip results in only one value - otherwise we
+                    // doing something wrong
+                    .singleOrError()
+            }
             .doOnSuccess { list ->
                 localDataSource.savePets(list, false)
                 localDataSource.updateFavorites(list.map { it.id })
             }
-            .onErrorResumeNext {
-                localDataSource.getFavorites(cookieHolder.userCookie)
-            }
+    }
 
     /**
      * Mark pet as favorite.
