@@ -1,5 +1,5 @@
 # API secret keys
-*secrets.xml
+secrets.properties
 # Built application files
 *.apk
 *.aar

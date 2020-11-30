@@ -4,6 +4,7 @@ import android.content.Context
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.mexator.petfinder_client.BuildConfig
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
@@ -32,7 +33,7 @@ private const val USER_API_BASE_URL = "https://www.petfinder.com/"
 
 val networkModule = module {
 
-    single { createAPIKeysHolder(get()) }
+    single { createAPIKeysHolder() }
 
     single { NetworkService() }
 
@@ -98,8 +99,8 @@ fun createRetrofit(
         .addConverterFactory(converterFactory)
         .build()
 
-fun createAPIKeysHolder(context: Context): APIKeysHolder {
-    val key = context.getString(R.string.API_KEY)
-    val secret = context.getString(R.string.API_SECRET)
+fun createAPIKeysHolder(): APIKeysHolder {
+    val key = BuildConfig.API_KEY
+    val secret = BuildConfig.API_SECRET
     return APIKeysHolder(key, secret)
 }

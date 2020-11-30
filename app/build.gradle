@@ -3,6 +3,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+// Load secrets from file
+
+def secretsPropertiesFile = rootProject.file("secrets.properties")
+def secretsProperties = new Properties()
+secretsProperties.load(new FileInputStream(secretsPropertiesFile))
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -26,6 +32,10 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true // This line here
+
+        // Secret API keys
+        buildConfigField("String", "API_KEY", "\"${secretsProperties["API_KEY"]}\"")
+        buildConfigField("String", "API_SECRET", "\"${secretsProperties["API_SECRET"]}\"")
     }
 
     buildTypes {
