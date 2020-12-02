@@ -110,11 +110,10 @@ class ActualRepository(
      */
     override fun getPet(id: Long): Maybe<PetModel> {
         val fallback = remoteDataSource.getPet(id)
-            .subscribeOn(Schedulers.io()) as Maybe<PetModel>
 
         return (localDataSource.getPet(id) as Maybe<PetModel>)
-            .subscribeOn(Schedulers.io())
             .switchIfEmpty(fallback)
+            .subscribeOn(Schedulers.io())
             .onErrorComplete()
     }
 
@@ -215,7 +214,7 @@ class ActualRepository(
      */
     override fun getFavorites(): Single<List<PetModel>> {
         // Map ID to [Single<Notification<PetModel>>]
-        val mapper = { id: Long ->
+        val mapLambda = { id: Long ->
             getPet(id)
                 // Could use [Maybe.materialize()] here, but it is @Experimental
                 .toObservable().materialize()
@@ -226,7 +225,7 @@ class ActualRepository(
 
         return getFavoritesIDs()
             .flatMap { list ->
-                val maybes = list.map(mapper)
+                val maybes = list.map(mapLambda)
                 // Combine all notifications to list, get values, ignore nulls
                 Observable.zip(maybes) { notifications ->
                     (notifications.toList() as List<Notification<PetModel>>)
