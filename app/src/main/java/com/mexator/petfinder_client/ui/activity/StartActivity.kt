@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.mvvm.viewmodel.StartViewModel
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -38,7 +37,7 @@ class StartActivity : AppCompatActivity(), KoinComponent {
 
     private fun setupCheckAccountSubscription() {
         val job =
-            viewModel.checkAccountExistence()
+            viewModel.isReLoginNeeded()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { value ->

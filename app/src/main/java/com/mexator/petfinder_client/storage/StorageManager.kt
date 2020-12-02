@@ -71,23 +71,29 @@ object StorageManager : KoinComponent {
     }
 
     /**
-     * [saveCredentials] save access token of Petfinder user API to [authPreferences]
+     * [saveUserCookie] save access token of Petfinder user API to [authPreferences] together
+     * with date of when this cookie was given
      * @param userCookie Access cookie of user
      */
-    fun saveCredentials(userCookie: String) {
+    fun saveUserCookie(userCookie: String, initializedIn: Date) {
         with(authPreferences.edit()) {
             clear()
             putString("userCookie", userCookie)
+            putString("initializedIn", defaultDateTimeFormat.format(initializedIn))
             apply()
         }
     }
 
     /**
-     * [loadCredentials] is used to load data saved by [saveCredentials] from [authPreferences]
+     * [loadUserCookie] is used to load data saved by [saveUserCookie] from [authPreferences]
+     * @return user cookie of Petfinder User API and date when the cookie was given
      */
-    fun loadCredentials(): String {
+    fun loadUserCookie(): Pair<String?,Date?> {
         with(authPreferences) {
-            return getString("userCookie", "")!!
+            val cookie:String? = getString("userCookie", null)
+            val date: Date? = getString("initializedIn", null)
+                ?.let { defaultDateTimeFormat.parse(it) }
+            return Pair(cookie, date)
         }
     }
 

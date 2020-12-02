@@ -17,11 +17,13 @@ import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.network.NetworkService
 import com.mexator.petfinder_client.storage.StorageManager
 import io.reactivex.*
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.MultipartBody
 import org.koin.core.KoinComponent
 import org.koin.core.inject
+import java.util.*
 
 class ActualRepository(
     private val remoteDataSource: RemoteDataSource,
@@ -130,7 +132,7 @@ class ActualRepository(
         return petfinderUserAPI.checkLogin(body)
             .map { it.success }
             .doOnSuccess {
-                storageManager.saveCredentials(CookieHolder.userCookie)
+                storageManager.saveUserCookie(CookieHolder.userCookie, Date())
             }
     }
 
@@ -142,7 +144,7 @@ class ActualRepository(
      */
     override fun logout() {
         cookieHolder.userCookie = ""
-        storageManager.saveCredentials("")
+        storageManager.saveUserCookie("", Date())
         Completable.fromAction { localDataSource.deleteUser() }
             .subscribeOn(Schedulers.io())
             .subscribe()
@@ -159,9 +161,27 @@ class ActualRepository(
             }
     }
 
-    //TODO Remove
-    override fun setCookie(userCookie: String) {
-        cookieHolder.userCookie = userCookie
+    /**
+     * Loads user cookie from disk. This cookie is used to access Petfinder user API
+     * after that
+     *
+     * @return Single that emits **true** if cookie exists and still valid
+     * (TTL is not expired), **else** otherwise
+     */
+    override fun loadCookieFromDisk(): Single<Boolean> {
+        val userCookieTTL = 60 * 60 * 24
+
+
+        return Single.just(storageManager.loadUserCookie())
+            .doOnSuccess { cookieHolder.userCookie = it.first ?: "" }
+            .map {
+                // No cookie or date - not valid
+                if (it.first == null || it.second == null)
+                    false
+                else
+                // Checks that TTL not expired
+                    (Date().time - it.second!!.time) / 1000 < userCookieTTL
+            }.doOnSuccess { if (!it) logout() }
     }
 
     /**
