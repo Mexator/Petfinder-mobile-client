@@ -26,10 +26,13 @@ interface UserDataRepository {
     fun getUser(): Single<User>
 
     /**
-     * Set user cookie. Used by StartActivity to load cookie from file
-     * @TODO Remove method and change startup behavior to fetch cookie from server
+     * Loads user cookie from disk. This cookie is used to access Petfinder user API
+     * after that
+     *
+     * @return Single that emits **true** if cookie exists and still valid
+     * (TTL is not expired), **else** otherwise
      */
-    fun setCookie(userCookie: String)
+    fun loadCookieFromDisk(): Single<Boolean>
 
     /**
      * Get list of IDs of favorite pets. Usually this function is used when it
