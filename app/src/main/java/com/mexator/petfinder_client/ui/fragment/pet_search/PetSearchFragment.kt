@@ -17,9 +17,9 @@ import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.extensions.getTag
 import com.mexator.petfinder_client.mvvm.viewmodel.pet_search.PetSearchViewModel
-import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetAdapter
-import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetErrorAdapter
-import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetLoadingAdapter
+import com.mexator.petfinder_client.ui.petlist.PetAdapter
+import com.mexator.petfinder_client.ui.petlist.PetErrorAdapter
+import com.mexator.petfinder_client.ui.petlist.PetLoadingAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -54,15 +54,6 @@ class PetSearchFragment : Fragment() {
         loadingAdapter.setHasStableIds(true)
         errorAdapter.setHasStableIds(true)
     }
-
-    private val typeMap: Map<String, Int> = mapOf(
-        "Dog" to 0,
-        "Cat" to 1,
-        "Bird" to 2,
-        "Barnyard" to 3,
-        "Rabbit" to 4,
-        "Horse" to 5
-    )
 
     override fun onCreateView(
         inflater: LayoutInflater,

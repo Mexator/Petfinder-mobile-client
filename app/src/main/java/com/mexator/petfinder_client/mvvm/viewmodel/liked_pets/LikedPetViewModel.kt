@@ -5,6 +5,7 @@ import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.mvvm.viewstate.LikedPetsViewState
+import com.mexator.petfinder_client.ui.petlist.PetHolder
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -18,7 +19,6 @@ class LikedPetViewModel : ViewModel(), KoinComponent {
         get() = _viewState
 
     private val userDataRepository: UserDataRepository by inject()
-    private val petRepository: PetRepository by inject()
     private val compositeDisposable = CompositeDisposable()
 
     init {
@@ -46,7 +46,8 @@ class LikedPetViewModel : ViewModel(), KoinComponent {
                 .getFavorites()
                 .subscribeOn(Schedulers.io())
                 .subscribe { value ->
-                    _viewState.onNext(LikedPetsViewState(value, false))
+                    val tmp = value.map { PetHolder(it, true) }
+                    _viewState.onNext(LikedPetsViewState(tmp, false))
                 }
         compositeDisposable.add(job)
     }

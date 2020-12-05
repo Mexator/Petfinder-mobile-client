@@ -1,4 +1,4 @@
-package com.mexator.petfinder_client.ui.fragment.pet_search.list
+package com.mexator.petfinder_client.ui.petlist
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.PetRepository
-import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.extensions.getTag
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,16 +19,26 @@ import kotlinx.android.synthetic.main.result_item.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
-class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
+/**
+ * [PetHolder] class represents [PetModel] with some additional parameters needed
+ * to display it in RecyclerView with [PetAdapter]
+ */
+data class PetHolder(
+    val pet: PetModel,
+    val isFavorite: Boolean
+)
+
+class PetViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer, KoinComponent {
     private val petRepository: PetRepository by inject()
-    private val userDataRepository: UserDataRepository by inject()
     private val LOADING_POSITION = 0
     private val PHOTO_POSITION = 1
     private val compositeDisposable = CompositeDisposable()
 
-    fun bind(pet: PetModel, likeCallback: (PetModel, Boolean) -> Unit) {
+    fun bind(petHolder: PetHolder, likeCallback: (PetModel, Boolean) -> Unit) {
         compositeDisposable.clear()
+
+        val pet = petHolder.pet
 
         petDescription.text = pet.description
         petAge.text = pet.age
@@ -55,17 +64,10 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
         compositeDisposable.add(job)
 
         checkbox_like.setOnCheckedChangeListener(null)
-        val job2 = userDataRepository
-            .getFavoritesIDs()
-            .doAfterTerminate {
-                checkbox_like.setOnCheckedChangeListener { _, isChecked ->
-                    likeCallback(pet, isChecked)
-                }
-            }
-            .subscribe(
-                { checkbox_like.isChecked = pet.id in it },
-                { checkbox_like.isChecked = false })
-        compositeDisposable.add(job2)
+        checkbox_like.isChecked = petHolder.isFavorite
+        checkbox_like.setOnCheckedChangeListener { _, isChecked ->
+            likeCallback(pet, isChecked)
+        }
     }
 
     fun dispose() {
@@ -73,13 +75,13 @@ class PetHolder(override val containerView: View) : RecyclerView.ViewHolder(cont
     }
 }
 
-private object PetDiffCallback : DiffUtil.ItemCallback<PetModel>() {
-    override fun areItemsTheSame(oldItem: PetModel, newItem: PetModel): Boolean {
-        return oldItem.id == newItem.id
+private object PetHolderDiffCallback : DiffUtil.ItemCallback<PetHolder>() {
+    override fun areItemsTheSame(oldItem: PetHolder, newItem: PetHolder): Boolean {
+        return oldItem.pet.id == newItem.pet.id
     }
 
-    override fun areContentsTheSame(oldItem: PetModel, newItem: PetModel): Boolean {
-        return true
+    override fun areContentsTheSame(oldItem: PetHolder, newItem: PetHolder): Boolean {
+        return oldItem.isFavorite == newItem.isFavorite
     }
 }
 
@@ -87,10 +89,10 @@ class PetAdapter(
     private val onClickCallback: (PetModel) -> Unit,
     private val likeCallback: (PetModel, Boolean) -> Unit
 ) :
-    ListAdapter<PetModel, PetHolder>(PetDiffCallback) {
+    ListAdapter<PetHolder, PetViewHolder>(PetHolderDiffCallback) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetHolder =
-        PetHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetViewHolder =
+        PetViewHolder(
             LayoutInflater
                 .from(parent.context)
                 .inflate(R.layout.result_item, parent, false)
@@ -100,18 +102,18 @@ class PetAdapter(
         return R.layout.result_item
     }
 
-    override fun onBindViewHolder(holder: PetHolder, position: Int) {
-        val pet: PetModel = currentList[position]
-        holder.bind(pet, likeCallback)
-        holder.containerView.setOnClickListener { onClickCallback(pet) }
+    override fun onBindViewHolder(viewHolder: PetViewHolder, position: Int) {
+        val petHolder: PetHolder = currentList[position]
+        viewHolder.bind(petHolder, likeCallback)
+        viewHolder.containerView.setOnClickListener { onClickCallback(petHolder.pet) }
     }
 
-    override fun onViewRecycled(holder: PetHolder) {
-        super.onViewRecycled(holder)
-        holder.dispose()
+    override fun onViewRecycled(viewHolder: PetViewHolder) {
+        super.onViewRecycled(viewHolder)
+        viewHolder.dispose()
     }
 
     override fun getItemId(position: Int): Long {
-        return currentList[position].id
+        return currentList[position].pet.id
     }
 }

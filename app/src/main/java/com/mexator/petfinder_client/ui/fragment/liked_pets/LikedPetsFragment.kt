@@ -13,8 +13,8 @@ import com.mexator.petfinder_client.R
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.mvvm.viewmodel.liked_pets.LikedPetViewModel
 import com.mexator.petfinder_client.mvvm.viewstate.LikedPetsViewState
-import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetAdapter
-import com.mexator.petfinder_client.ui.fragment.pet_search.list.PetLoadingAdapter
+import com.mexator.petfinder_client.ui.petlist.PetAdapter
+import com.mexator.petfinder_client.ui.petlist.PetLoadingAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_liked.*

@@ -1,4 +1,4 @@
-package com.mexator.petfinder_client.ui.fragment.pet_search.list
+package com.mexator.petfinder_client.ui.petlist
 
 import android.view.LayoutInflater
 import android.view.View
