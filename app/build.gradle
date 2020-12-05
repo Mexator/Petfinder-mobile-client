@@ -9,6 +9,8 @@ def secretsPropertiesFile = rootProject.file("secrets.properties")
 def secretsProperties = new Properties()
 secretsProperties.load(new FileInputStream(secretsPropertiesFile))
 
+def gitHash = "git rev-parse --short HEAD".execute().text.trim()
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -27,8 +29,11 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
         multiDexEnabled true
+
+        // Put version to resources
+        resValue ("string","versionName", "$versionName - $gitHash")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true // This line here
