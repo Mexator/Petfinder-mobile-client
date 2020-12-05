@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/mainFragment">
+    app:startDestination="@id/petSearchFragment">
 
     <fragment
-        android:id="@+id/mainFragment"
+        android:id="@+id/petSearchFragment"
         android:name="com.mexator.petfinder_client.ui.fragment.pet_search.PetSearchFragment"
-        android:label="fragment_main"
-        tools:layout="@layout/fragment_main">
+        android:label="fragment_pet_search"
+        tools:layout="@layout/fragment_pet_search">
         <action
-            android:id="@+id/action_mainFragment_to_detailsFragment"
+            android:id="@+id/action_petSearchFragment_to_detailsFragment"
             app:destination="@id/detailsFragment"
             app:launchSingleTop="true" />
     </fragment>
@@ -34,8 +34,8 @@
     </fragment>
     <action
         android:id="@+id/action_main"
-        app:destination="@+id/mainFragment"
-        app:popUpTo="@id/mainFragment"
+        app:destination="@+id/petSearchFragment"
+        app:popUpTo="@id/petSearchFragment"
         app:popUpToInclusive="true" />
     <action
         android:id="@+id/action_liked"

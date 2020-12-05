@@ -22,7 +22,7 @@ import com.mexator.petfinder_client.ui.petlist.PetErrorAdapter
 import com.mexator.petfinder_client.ui.petlist.PetLoadingAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.fragment_pet_search.*
 
 class PetSearchFragment : Fragment() {
     private val viewModel: PetSearchViewModel by viewModels()
@@ -34,7 +34,7 @@ class PetSearchFragment : Fragment() {
         PetAdapter({ item ->
             val bundle = Bundle()
             bundle.putParcelable("content", item)
-            findNavController().navigate(R.id.action_mainFragment_to_detailsFragment, bundle)
+            findNavController().navigate(R.id.action_petSearchFragment_to_detailsFragment, bundle)
         }) { pet: PetModel, isChecked: Boolean ->
             if (isChecked) {
                 viewModel.addToFavorites(pet)
@@ -61,7 +61,7 @@ class PetSearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         Log.d((this as Any).getTag(), "onCreateView()")
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return inflater.inflate(R.layout.fragment_pet_search, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

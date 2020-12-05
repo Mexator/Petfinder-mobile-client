@@ -5,7 +5,7 @@ import com.mexator.petfinder_client.data.PetRepository
 import com.mexator.petfinder_client.data.UserDataRepository
 import com.mexator.petfinder_client.data.model.PetModel
 import com.mexator.petfinder_client.data.remote.pojo.SearchParameters
-import com.mexator.petfinder_client.mvvm.viewstate.MainViewState
+import com.mexator.petfinder_client.mvvm.viewstate.PetSearchViewState
 import com.mexator.petfinder_client.ui.petlist.PetHolder
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -24,14 +24,14 @@ import org.koin.core.inject
  * or it should be refreshed with [reloadPetsList]
  */
 class PetSearchViewModel : ViewModel(), KoinComponent {
-    val viewState: Observable<MainViewState> get() = _viewState
+    val viewState: Observable<PetSearchViewState> get() = _viewState
 
     var refreshNeeded: Boolean = true
         private set
 
     /* Subject that remembers last state of view and is used to emit events that
     * that viewState subscribers can see */
-    private var _viewState: BehaviorSubject<MainViewState> = BehaviorSubject.create()
+    private var _viewState: BehaviorSubject<PetSearchViewState> = BehaviorSubject.create()
 
     // Dependencies
     private val petRepository: PetRepository by inject()
@@ -49,7 +49,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
     // viewState shouldn't be empty
     init {
         _viewState.onNext(
-            MainViewState(
+            PetSearchViewState(
                 false,
                 emptyList(),
                 null,
@@ -134,7 +134,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
      */
     private fun receiveUpdate(value: List<PetHolder>, type: String?, breed: String?) {
         _viewState.onNext(
-            MainViewState(
+            PetSearchViewState(
                 updating = false,
                 petList = value,
                 requestType = type,
@@ -149,7 +149,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
     /**
      * Receive n-th page. Update viewState accordingly
      */
-    private fun receivePage(state: MainViewState, page: List<PetHolder>) {
+    private fun receivePage(state: PetSearchViewState, page: List<PetHolder>) {
         _viewState.onNext(
             state.copy(
                 updating = false,
@@ -163,7 +163,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
     /**
      * Process case when getting page finished with error
      */
-    private fun receivePageError(state: MainViewState, error: String) {
+    private fun receivePageError(state: PetSearchViewState, error: String) {
         _viewState.onNext(
             state.copy(
                 updating = false,
