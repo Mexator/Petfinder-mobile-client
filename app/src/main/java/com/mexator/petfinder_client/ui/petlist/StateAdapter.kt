@@ -8,11 +8,16 @@ import com.mexator.petfinder_client.R
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.result_error.*
 
-class PetLoadingHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+/**
+ * [PetLoadingAdapter] is used to display "Loading..." cell in Recycler view when it is needed
+ * @property showed if false, the cell is invisible, and visible if it is true.
+ */
+class PetLoadingAdapter : RecyclerView.Adapter<PetLoadingAdapter.PetLoadingHolder>() {
+    class PetLoadingHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-class PetLoadingAdapter : RecyclerView.Adapter<PetLoadingHolder>() {
     var showed: Boolean = false
         set(value) {
+            // Show animation only if state changed
             if (field == value)
                 return
 
@@ -47,10 +52,15 @@ class PetErrorHolder(override val containerView: View) : RecyclerView.ViewHolder
     }
 }
 
+/**
+ * [PetErrorAdapter] is used to display "Loading..." cell in Recycler view when it is needed
+ * @property error if null, the cell is invisible, and visible otherwise.
+ */
 class PetErrorAdapter(private val retryCallback: () -> Unit) :
     RecyclerView.Adapter<PetErrorHolder>() {
     var error: String? = null
         set(value) {
+            // Show animation only if state changed
             if (field == value)
                 return
 

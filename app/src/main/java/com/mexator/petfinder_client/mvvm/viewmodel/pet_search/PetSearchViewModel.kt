@@ -16,7 +16,7 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 
 /**
- * ViewModel for screen where user can search pets by some parameters
+ * [ViewModel] for screen where user can search pets by some parameters
  * and results are displayed in form of list
  * @property viewState Represents reactive state of View that is exposed by [PetSearchViewModel].
  * Shouldn't be empty
@@ -84,7 +84,7 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
     }
 
     /**
-     * Loads next page from repository and updates viewState according to newly arrived page
+     * Load next page from repository and update viewState according to newly arrived page
      */
     fun loadNextPage() {
         _viewState.value?.let { state ->

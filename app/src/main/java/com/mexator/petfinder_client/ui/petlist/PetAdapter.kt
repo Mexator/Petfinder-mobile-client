@@ -28,6 +28,10 @@ data class PetHolder(
     val isFavorite: Boolean
 )
 
+/**
+ * [PetViewHolder] is a class that inherits [RecyclerView.ViewHolder] and is capable of showing
+ * [PetModel]
+ */
 class PetViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
     LayoutContainer, KoinComponent {
     private val petRepository: PetRepository by inject()
@@ -35,6 +39,9 @@ class PetViewHolder(override val containerView: View) : RecyclerView.ViewHolder(
     private val PHOTO_POSITION = 1
     private val compositeDisposable = CompositeDisposable()
 
+    /**
+     * Setup child Views so that they will correctly show info about the [pet]
+     */
     fun bind(petHolder: PetHolder, likeCallback: (PetModel, Boolean) -> Unit) {
         compositeDisposable.clear()
 
@@ -75,6 +82,10 @@ class PetViewHolder(override val containerView: View) : RecyclerView.ViewHolder(
     }
 }
 
+/**
+ * The [PetHolderDiffCallback] is used to decide whether onBindViewHolder should be called
+ * on this cell of [RecyclerView] or not
+ */
 private object PetHolderDiffCallback : DiffUtil.ItemCallback<PetHolder>() {
     override fun areItemsTheSame(oldItem: PetHolder, newItem: PetHolder): Boolean {
         return oldItem.pet.id == newItem.pet.id
@@ -85,6 +96,9 @@ private object PetHolderDiffCallback : DiffUtil.ItemCallback<PetHolder>() {
     }
 }
 
+/**
+ * [PetAdapter] is an adapter class to show list of [PetModel] in a [RecyclerView]
+ */
 class PetAdapter(
     private val onClickCallback: (PetModel) -> Unit,
     private val likeCallback: (PetModel, Boolean) -> Unit
