@@ -57,5 +57,6 @@
     <string name="menu_title_logout">Logout</string>
     <string name="menu_title_favorite">Liked pets</string>
     <string name="menu_title_search">Search pets</string>
+    <string name="menu_title_about">About</string>
     <!--    Error messages -->
 </resources>
