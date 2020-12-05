@@ -32,9 +32,9 @@ object StorageManager : KoinComponent {
     private var defaultDateTimeFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.US)
 
     init {
-        val tokensFilename = appContext.resources.getString(R.string.tokens_file_name)
+        val tokensFilename = "TOKENS"
         tokensPreferences = appContext.getSharedPreferences(tokensFilename, Context.MODE_PRIVATE)
-        val authFilename = appContext.resources.getString(R.string.auth_file_name)
+        val authFilename = "AUTH"
         authPreferences = appContext.getSharedPreferences(authFilename, Context.MODE_PRIVATE)
     }
 
