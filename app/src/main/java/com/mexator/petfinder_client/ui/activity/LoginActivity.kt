@@ -18,6 +18,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var viewModel: LoginViewModel
 
     private val compositeDisposable = CompositeDisposable()
+    private val TAG = "LoginActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

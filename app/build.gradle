@@ -3,15 +3,25 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
-// Load secrets from file
-
+// Load secrets from files
+// API key and secret
 def secretsPropertiesFile = rootProject.file("secrets.properties")
 def secretsProperties = new Properties()
 secretsProperties.load(new FileInputStream(secretsPropertiesFile))
-
-def gitHash = "git rev-parse --short HEAD".execute().text.trim()
+// Keystore with signing configs
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
+    signingConfigs {
+        release {
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
@@ -28,12 +38,13 @@ android {
         applicationId "com.mexator.petfinder_client"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 12
+        versionName "1.0.1 - Fix login error"
         multiDexEnabled true
 
         // Put version to resources
-        resValue ("string","versionName", "$versionName - $gitHash")
+        def gitHash = "git rev-parse --short HEAD".execute().text.trim()
+        resValue("string", "versionName", "$versionName - $gitHash")
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true // This line here
@@ -41,11 +52,12 @@ android {
         // Secret API keys
         buildConfigField("String", "API_KEY", "\"${secretsProperties["API_KEY"]}\"")
         buildConfigField("String", "API_SECRET", "\"${secretsProperties["API_SECRET"]}\"")
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

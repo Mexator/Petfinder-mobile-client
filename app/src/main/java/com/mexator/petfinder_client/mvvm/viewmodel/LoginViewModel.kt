@@ -1,5 +1,6 @@
 package com.mexator.petfinder_client.mvvm.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.mexator.petfinder_client.data.UserDataRepository
 import io.reactivex.Observable
@@ -13,10 +14,12 @@ class LoginViewModel : ViewModel(), KoinComponent {
 
     private val progress: BehaviorSubject<Boolean> = BehaviorSubject.create()
 
+    private val TAG = "LoginViewModel"
     fun isCredentialDataValid(username: String, password: String): Single<Boolean> {
         return repository.login(username, password)
             .doOnSubscribe { progress.onNext(true) }
             .doOnEvent { _, _ -> progress.onNext(false) }
+            .doOnError { Log.e(TAG, it.message) }
             .onErrorReturnItem(false)
     }
 

@@ -67,8 +67,13 @@ val networkModule = module {
     single { Glide.with(get<Context>()) }
 }
 
-fun createLoggingInterceptor() = HttpLoggingInterceptor()
-    .setLevel(HttpLoggingInterceptor.Level.HEADERS)
+fun createLoggingInterceptor(): HttpLoggingInterceptor {
+    val level =
+        if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY
+        else HttpLoggingInterceptor.Level.NONE
+    return HttpLoggingInterceptor()
+        .setLevel(level)
+}
 
 fun createClient(interceptors: List<Interceptor>): OkHttpClient {
     val clientBuilder = OkHttpClient.Builder()

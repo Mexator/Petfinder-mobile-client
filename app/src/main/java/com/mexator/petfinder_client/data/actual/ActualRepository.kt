@@ -42,6 +42,8 @@ class ActualRepository(
     // Disposable for background jobs
     private var compositeDisposable = CompositeDisposable()
 
+    private val TAG = "ActualRepository"
+
     /**
     Start of [PetRepository]-implementing functions
      */
@@ -129,7 +131,10 @@ class ActualRepository(
             .build()
 
         return petfinderUserAPI.checkLogin(body)
-            .map { it.success }
+            .map {
+                Log.d(TAG,"checkLogin:$it")
+                it.success
+            }
             .doOnSuccess {
                 storageManager.saveUserCookie(CookieHolder.userCookie, Date())
             }
@@ -170,12 +175,11 @@ class ActualRepository(
     override fun loadCookieFromDisk(): Single<Boolean> {
         val userCookieTTL = 60 * 60 * 24
 
-
         return Single.just(storageManager.loadUserCookie())
             .doOnSuccess { cookieHolder.userCookie = it.first ?: "" }
             .map {
                 // No cookie or date - not valid
-                if (it.first == null || it.second == null)
+                if (it.first.isNullOrBlank() || it.second == null)
                     false
                 else
                 // Checks that TTL not expired
@@ -192,7 +196,6 @@ class ActualRepository(
      */
     override fun getFavoritesIDs(): Single<List<Long>> {
         // Get new favorites in background
-        // TODO: rework this, because it is not ok to request list of favorites for every pet
         val job = remoteDataSource
             .getFavoritesIDs(cookieHolder.userCookie)
             .subscribeOn(Schedulers.io())
