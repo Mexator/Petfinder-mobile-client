@@ -41,8 +41,8 @@ android {
         applicationId "com.mexator.petfinder_client"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 12
-        versionName "1.0.1 - Fix login error"
+        versionCode 13
+        versionName "1.0.3 - Fix minor issues"
         multiDexEnabled true
 
         // Put version to resources

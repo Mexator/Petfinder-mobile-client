@@ -25,7 +25,7 @@ import org.koin.core.inject
  */
 data class PetHolder(
     val pet: PetModel,
-    val isFavorite: Boolean
+    var isFavorite: Boolean
 )
 
 /**

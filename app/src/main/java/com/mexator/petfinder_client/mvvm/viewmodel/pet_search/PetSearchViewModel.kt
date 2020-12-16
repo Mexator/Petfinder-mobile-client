@@ -101,7 +101,17 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
      * Add [pet] to list of favorites
      */
     fun addToFavorites(pet: PetModel) {
+        // Update via repository and with viewstate separately
+        // Seems like crunch but works...
         userDataRepository.like(pet)
+        val state = _viewState.value!!
+        for (item in state.petList) {
+            if (item.pet.id == pet.id) {
+                item.isFavorite = true
+                break
+            }
+        }
+        _viewState.onNext(state)
     }
 
 
@@ -110,6 +120,15 @@ class PetSearchViewModel : ViewModel(), KoinComponent {
      */
     fun removeFromFavorites(pet: PetModel) {
         userDataRepository.unLike(pet)
+        val state = _viewState.value!!
+        for (item in state.petList) {
+            if (item.pet.id == pet.id) {
+                item.isFavorite = false
+                break
+            }
+        }
+        _viewState.onNext(state)
+
     }
 
     /**
