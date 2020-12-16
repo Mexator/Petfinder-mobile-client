@@ -21,7 +21,7 @@ jobs:
           echo "API_SECRET=$API_SECRET" >> secrets.properties
       
       - name: Build project
-        run: ./gradlew assemble
+        run: ./gradlew assembleDebug
       - name: Upload debug version
         uses: actions/upload-artifact@v2
         with: 
